@@ -1,0 +1,28 @@
+name: "Replication website: educational influence in CDN"
+output_dir: "docs"
+navbar:
+  title: "Replication Website"
+  left:
+  - text: "About"
+    icon: fa-info
+    href: index.html
+    menu:
+  - text: "Data preperation"
+    icon: far fa-file-code
+    menu:
+  - text: "Analysis"
+    icon: fa-bar-chart
+    menu:
+  - text: "Robustness"
+    icon: fa-shield
+    menu:
+  right:
+  - text: "Github"
+    icon: fab fa-github
+    href: https://github.com/thijmenjeroense/cdn-educational-influence
+output:
+  html_document:
+    theme: flatly
+    highlight: default
+    include:
+      after_body: footer.html
