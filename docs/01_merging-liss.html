@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Thijmen Jeroense" />
+
+
+<title>Merging LISS datafiles</title>
+
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/simplex.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.2.1/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.2.1/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Replication Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-info"></span>
+     
+    About
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="far fa-file-code"></span>
+     
+    Data preperation
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01_merging-liss.html">1 Merging LISS core module</a>
+    </li>
+    <li>
+      <a href="02_dataprep-liss.html">2 Data prep LISS core modules</a>
+    </li>
+    <li>
+      <a href="03_alter-relations.html">3 Confidant relations</a>
+    </li>
+    <li>
+      <a href="04_clean-alters.html">4 Clean confidant data</a>
+    </li>
+    <li>
+      <a href="05_prep-cldata.html">5 Prepare Cross Lagged data</a>
+    </li>
+    <li>
+      <a href="06_prep-riclpm-data.html">6 Prepare RI-CLPM data</a>
+    </li>
+    <li>
+      <a href="07_bias-corrected-means.html">7 Bias corrected means</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-bar-chart"></span>
+     
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="10_descriptive-statistics.html">1 Descriptive statistics</a>
+    </li>
+    <li>
+      <a href="08_analysis-riclpm.html">2 Main RICLPM results</a>
+    </li>
+    <li>
+      <a href="09_moderation-analysis-riclpm.html">3 Moderation analysis</a>
+    </li>
+    <li>
+      <a href="14_results-plots.html">4 Plots and Tables</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-shield"></span>
+     
+    Robustness
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="13_robustness-model-specifications.html">1 Sensitivity to model specifications</a>
+    </li>
+    <li>
+      <a href="11_robustness-nosibling-education.html">2 Sensitivity to sibling inclusion and education transformation</a>
+    </li>
+    <li>
+      <a href="12_robustness-confounders.html">3 Sensitivity to time varying confounders</a>
+    </li>
+    <li>
+      <a href="14_robustness-changes-cdn-education.html">4 Analysis of changes in mean CDN educational attainment</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/thijmenjeroense/cdn-educational-influence">
+    <span class="fab fa-github"></span>
+     
+    Github
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+<li role="separator" class="divider"></li>
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Merging LISS datafiles</h1>
+<h4 class="author">Thijmen Jeroense</h4>
+<h4 class="date">Last compiled on 14 november, 2024</h4>
+
+</div>
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Goals of this script is to merge all the relevant LISS core module
+files into one dataframe.</p>
+</div>
+<div id="packages" class="section level2">
+<h2>Packages</h2>
+<pre class="r"><code>#load packages
+library(dplyr)
+library(purrr)
+library(tidyr)
+library(tidyselect)
+library(haven)
+library(magrittr)</code></pre>
+</div>
+<div id="data-import-of-the-different-liss-modules"
+class="section level2">
+<h2>Data import of the different LISS modules</h2>
+<pre class="r"><code>#create directory name
+dir &lt;- file.path(&quot;data&quot;,
+          &quot;data-processed&quot;,
+          &quot;liss_merged&quot;,
+          &quot;modules&quot;)
+
+#create directory
+if(!dir.exists(dir)) {
+  dir.create(dir)
+}</code></pre>
+<div id="liss-leisure-and-integration-module" class="section level3">
+<h3>LISS leisure and integration module</h3>
+<pre class="r"><code>#import the different liss files from their directory. 
+
+#set data name
+file_name &lt;- file.path(dir,&quot;leisure_integration_combined.Rdata&quot;)
+
+#conditional on file.exists
+if(!file.exists(file_name)) {
+liss_files &lt;- list.files(&quot;data/data-raw/leisure_integration/&quot;, full.names = T) %&gt;%
+  map(read_sav)
+
+#For a full outer join.
+liss_merged &lt;- liss_files %&gt;%
+  reduce(full_join, by = &#39;nomem_encr&#39;) %&gt;%
+  arrange(nomem_encr)
+
+#save merged data
+save(liss_merged,
+     file = file_name)
+} else{
+  load(file_name)
+}</code></pre>
+<p>This results in a df with 14473 observations and 4909 variables.</p>
+</div>
+<div id="politics-and-values-module" class="section level3">
+<h3>Politics and values module</h3>
+<pre class="r"><code>#set data name
+file_name &lt;- file.path(dir, &quot;polval_combined.Rdata&quot;)
+
+#conditional on file.exists
+if (!file.exists(file_name)) {
+  #import the data files.
+  liss_files &lt;-
+    list.files(&quot;data/data-raw/pol_values_data/&quot;, full.names = T) %&gt;%
+    map(read_sav)
+  
+  #merge the data into one file.
+  liss_pol &lt;- liss_files %&gt;%
+    reduce(full_join, by = &#39;nomem_encr&#39;) %&gt;%
+    #order on nomem_encr
+    arrange(nomem_encr)
+  
+  #save data
+  save(liss_pol,
+       file = file_name)
+} else{
+  load(file_name)
+}</code></pre>
+<p>This results in a df with 14040 observations of 1978 variables.</p>
+<pre class="r"><code>#remove the household id variables from the liss_pol and liss_merged file.
+# they are incomplete as in some waves they are not present. I will add them later with the background data. 
+liss_pol[,c(&quot;nohouse_encr&quot;, &quot;nohouse_encr.x&quot;, &quot;nohouse_encr.y&quot;, &quot;nohouse_encr.x.x&quot;, &quot;nohouse_encr.y.y&quot;)] &lt;- NULL
+liss_merged[,c(&quot;nohouse_encr&quot;, &quot;nohouse_encr.x&quot;, &quot;nohouse_encr.y&quot;, &quot;nohouse_encr.x.x&quot;, &quot;nohouse_encr.y.y&quot;)] &lt;- NULL</code></pre>
+</div>
+<div id="liss-cdn-alter-id" class="section level3">
+<h3>LISS CDN alter id</h3>
+<pre class="r"><code>#set data name
+file_name &lt;- file.path(dir, &quot;alterids_combined.Rdata&quot;)
+
+#conditional on file.exists
+if (!file.exists(file_name)) {
+#import the data files.
+liss_files &lt;- list.files(&quot;data/data-raw/alter_ids/&quot;, full.names = T) %&gt;%
+  map(read_sav)
+
+#just to be sure, order the files on nomem_encr and add suffixes to the data.
+#Then we can correctly identify the different waves. 
+liss_files &lt;- lapply(1:11, function(i) {
+  data &lt;- liss_files[[i]]
+  #Now I add suffixes to all the variables except the ID var, so we can correctly Identify the wave to which a variable belongs in the merged data. Otherwise we will have 11 sets of the same variables with a random .x or .y. 
+  names(data)[-1] &lt;- paste0(names(data)[-1], sep = &quot;.&quot;, c(1:11)[i])
+  return(data)
+})
+
+#merge the data
+liss_alter &lt;- liss_files %&gt;%
+  reduce(full_join, by = &#39;nomem_encr&#39;) %&gt;%
+  arrange(nomem_encr)
+
+#save data
+save(liss_alter, 
+     file = file_name)
+} else{
+  load(file_name)
+}</code></pre>
+</div>
+<div id="liss-background" class="section level3">
+<h3>LISS background</h3>
+<pre class="r"><code>#set data name
+file_name &lt;- file.path(dir, &quot;background_combined.Rdata&quot;)
+
+#conditional on file.exists
+if (!file.exists(file_name)) {
+#import the background variable data. 
+#import data files.
+liss_files &lt;- list.files(&quot;data/data-raw/background/&quot;, full.names = T) %&gt;%
+  map(read_sav)
+
+#just to be sure, order the files on nomem_encr and add suffixes to the data 
+liss_files &lt;- lapply(1:11, function(i) {
+  data &lt;- liss_files[[i]][base::order(liss_files[[i]]$nomem_encr),]
+  names(data)[-1] &lt;- paste0(names(data)[-1], sep = &quot;.&quot;, c(1:11)[i])
+  return(data)
+})
+
+#merge the data. 
+liss_background &lt;- liss_files %&gt;%
+  reduce(full_join, by = &#39;nomem_encr&#39;) %&gt;%
+  arrange(nomem_encr)
+
+#save data
+save(liss_background,
+     file = file_name)
+} else(
+  load(file_name)
+)</code></pre>
+<p>[1] “liss_background”</p>
+</div>
+<div id="merge-all-files" class="section level3">
+<h3>Merge all files</h3>
+<pre class="r"><code>#merge all the data with a full outer join into one file. 
+#okay, let&#39;s merge the liss_merged, liss_alter and the politics and values waves.
+liss &lt;- liss_merged %&gt;%
+  full_join(liss_alter, by = &quot;nomem_encr&quot;) %&gt;%
+  full_join(liss_pol, by = &quot;nomem_encr&quot;) %&gt;%
+  full_join(liss_background, by = &quot;nomem_encr&quot;) %&gt;%
+  arrange(nomem_encr)</code></pre>
+<p>Full dataframe consists of 25306 observations and 7271 variables</p>
+</div>
+</div>
+<div id="export-data" class="section level2">
+<h2>Export data</h2>
+<p>The final DF consists of 25306 observations with 7271 variables.</p>
+<pre class="r"><code>#clean the global environment.
+rm(list=ls()[! ls() %in% c(&quot;liss&quot;)])</code></pre>
+<pre class="r"><code>save(liss, 
+     file = file.path(&quot;data&quot;,
+          &quot;data-processed&quot;,
+          &quot;liss_merged&quot;,
+       &quot;liss_merged_raw.Rdata&quot;))</code></pre>
+</div>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIk1lcmdpbmcgTElTUyBkYXRhZmlsZXMiDQphdXRob3I6ICJUaGlqbWVuIEplcm9lbnNlIg0KZGF0ZTogIkxhc3QgY29tcGlsZWQgb24gYHIgZm9ybWF0KFN5cy50aW1lKCksICclZCAlQiwgJVknKWAiDQpvdXRwdXQ6DQogIGh0bWxfZG9jdW1lbnQ6DQogICAgdG9jOiBUUlVFDQogICAgdG9jX2RlcHRoOiAzDQogICAgdG9jX2Zsb2F0OiBUUlVFDQogICAgY29kZV9mb2xkaW5nOiBzaG93DQogICAgY29kZV9kb3dubG9hZDogVFJVRQ0KLS0tDQoNCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFfQ0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KA0KICBjYWNoZSA9IFRSVUUsDQogIG1lc3NhZ2UgPSBGQUxTRSwNCiAgd2FybmluZyA9IEZBTFNFLA0KICByZXN1bHRzID0gImFzaXMiLA0KICBmaWcuYWxpZ24gPSAiY2VudGVyIg0KKQ0KYGBgDQoNCiMjIEludHJvZHVjdGlvbg0KDQpHb2FscyBvZiB0aGlzIHNjcmlwdCBpcyB0byBtZXJnZSBhbGwgdGhlIHJlbGV2YW50IExJU1MgY29yZSBtb2R1bGUgZmlsZXMgaW50byBvbmUgZGF0YWZyYW1lLg0KDQojIyBQYWNrYWdlcw0KYGBge3IgcGFja2FnZXN9DQojbG9hZCBwYWNrYWdlcw0KbGlicmFyeShkcGx5cikNCmxpYnJhcnkocHVycnIpDQpsaWJyYXJ5KHRpZHlyKQ0KbGlicmFyeSh0aWR5c2VsZWN0KQ0KbGlicmFyeShoYXZlbikNCmxpYnJhcnkobWFncml0dHIpDQpgYGANCg0KDQojIyBEYXRhIGltcG9ydCBvZiB0aGUgZGlmZmVyZW50IExJU1MgbW9kdWxlcw0KDQpgYGB7ciBpbml0aWFsaXppbmd9DQojY3JlYXRlIGRpcmVjdG9yeSBuYW1lDQpkaXIgPC0gZmlsZS5wYXRoKCJkYXRhIiwNCiAgICAgICAgICAiZGF0YS1wcm9jZXNzZWQiLA0KICAgICAgICAgICJsaXNzX21lcmdlZCIsDQogICAgICAgICAgIm1vZHVsZXMiKQ0KDQojY3JlYXRlIGRpcmVjdG9yeQ0KaWYoIWRpci5leGlzdHMoZGlyKSkgew0KICBkaXIuY3JlYXRlKGRpcikNCn0NCmBgYA0KDQoNCiMjIyBMSVNTIGxlaXN1cmUgYW5kIGludGVncmF0aW9uIG1vZHVsZQ0KDQpgYGB7ciBsZWlzdXJlIGFuZCBpbnRlZ3JhdGlvbn0NCiNpbXBvcnQgdGhlIGRpZmZlcmVudCBsaXNzIGZpbGVzIGZyb20gdGhlaXIgZGlyZWN0b3J5LiANCg0KI3NldCBkYXRhIG5hbWUNCmZpbGVfbmFtZSA8LSBmaWxlLnBhdGgoZGlyLCJsZWlzdXJlX2ludGVncmF0aW9uX2NvbWJpbmVkLlJkYXRhIikNCg0KI2NvbmRpdGlvbmFsIG9uIGZpbGUuZXhpc3RzDQppZighZmlsZS5leGlzdHMoZmlsZV9uYW1lKSkgew0KbGlzc19maWxlcyA8LSBsaXN0LmZpbGVzKCJkYXRhL2RhdGEtcmF3L2xlaXN1cmVfaW50ZWdyYXRpb24vIiwgZnVsbC5uYW1lcyA9IFQpICU+JQ0KICBtYXAocmVhZF9zYXYpDQoNCiNGb3IgYSBmdWxsIG91dGVyIGpvaW4uDQpsaXNzX21lcmdlZCA8LSBsaXNzX2ZpbGVzICU+JQ0KICByZWR1Y2UoZnVsbF9qb2luLCBieSA9ICdub21lbV9lbmNyJykgJT4lDQogIGFycmFuZ2Uobm9tZW1fZW5jcikNCg0KI3NhdmUgbWVyZ2VkIGRhdGENCnNhdmUobGlzc19tZXJnZWQsDQogICAgIGZpbGUgPSBmaWxlX25hbWUpDQp9IGVsc2V7DQogIGxvYWQoZmlsZV9uYW1lKQ0KfQ0KDQpgYGANCg0KVGhpcyByZXN1bHRzIGluIGEgZGYgd2l0aCAxNDQ3MyBvYnNlcnZhdGlvbnMgYW5kIDQ5MDkgdmFyaWFibGVzLiANCg0KIyMjIFBvbGl0aWNzIGFuZCB2YWx1ZXMgbW9kdWxlDQoNCmBgYHtyIGltcG9ydCBwb2x2YWwgbW9kdWxlIH0NCiNzZXQgZGF0YSBuYW1lDQpmaWxlX25hbWUgPC0gZmlsZS5wYXRoKGRpciwgInBvbHZhbF9jb21iaW5lZC5SZGF0YSIpDQoNCiNjb25kaXRpb25hbCBvbiBmaWxlLmV4aXN0cw0KaWYgKCFmaWxlLmV4aXN0cyhmaWxlX25hbWUpKSB7DQogICNpbXBvcnQgdGhlIGRhdGEgZmlsZXMuDQogIGxpc3NfZmlsZXMgPC0NCiAgICBsaXN0LmZpbGVzKCJkYXRhL2RhdGEtcmF3L3BvbF92YWx1ZXNfZGF0YS8iLCBmdWxsLm5hbWVzID0gVCkgJT4lDQogICAgbWFwKHJlYWRfc2F2KQ0KICANCiAgI21lcmdlIHRoZSBkYXRhIGludG8gb25lIGZpbGUuDQogIGxpc3NfcG9sIDwtIGxpc3NfZmlsZXMgJT4lDQogICAgcmVkdWNlKGZ1bGxfam9pbiwgYnkgPSAnbm9tZW1fZW5jcicpICU+JQ0KICAgICNvcmRlciBvbiBub21lbV9lbmNyDQogICAgYXJyYW5nZShub21lbV9lbmNyKQ0KICANCiAgI3NhdmUgZGF0YQ0KICBzYXZlKGxpc3NfcG9sLA0KICAgICAgIGZpbGUgPSBmaWxlX25hbWUpDQp9IGVsc2V7DQogIGxvYWQoZmlsZV9uYW1lKQ0KfQ0KYGBgDQoNClRoaXMgcmVzdWx0cyBpbiBhIGRmIHdpdGggMTQwNDAgb2JzZXJ2YXRpb25zIG9mIDE5NzggdmFyaWFibGVzLiANCg0KYGBge3IgcmVtb3ZlIGhoIGlkc30NCiNyZW1vdmUgdGhlIGhvdXNlaG9sZCBpZCB2YXJpYWJsZXMgZnJvbSB0aGUgbGlzc19wb2wgYW5kIGxpc3NfbWVyZ2VkIGZpbGUuDQojIHRoZXkgYXJlIGluY29tcGxldGUgYXMgaW4gc29tZSB3YXZlcyB0aGV5IGFyZSBub3QgcHJlc2VudC4gSSB3aWxsIGFkZCB0aGVtIGxhdGVyIHdpdGggdGhlIGJhY2tncm91bmQgZGF0YS4gDQpsaXNzX3BvbFssYygibm9ob3VzZV9lbmNyIiwgIm5vaG91c2VfZW5jci54IiwgIm5vaG91c2VfZW5jci55IiwgIm5vaG91c2VfZW5jci54LngiLCAibm9ob3VzZV9lbmNyLnkueSIpXSA8LSBOVUxMDQpsaXNzX21lcmdlZFssYygibm9ob3VzZV9lbmNyIiwgIm5vaG91c2VfZW5jci54IiwgIm5vaG91c2VfZW5jci55IiwgIm5vaG91c2VfZW5jci54LngiLCAibm9ob3VzZV9lbmNyLnkueSIpXSA8LSBOVUxMDQoNCmBgYA0KDQojIyMgTElTUyBDRE4gYWx0ZXIgaWQNCg0KYGBge3IgY2RuIGFsdGVyIGlkc30NCiNzZXQgZGF0YSBuYW1lDQpmaWxlX25hbWUgPC0gZmlsZS5wYXRoKGRpciwgImFsdGVyaWRzX2NvbWJpbmVkLlJkYXRhIikNCg0KI2NvbmRpdGlvbmFsIG9uIGZpbGUuZXhpc3RzDQppZiAoIWZpbGUuZXhpc3RzKGZpbGVfbmFtZSkpIHsNCiNpbXBvcnQgdGhlIGRhdGEgZmlsZXMuDQpsaXNzX2ZpbGVzIDwtIGxpc3QuZmlsZXMoImRhdGEvZGF0YS1yYXcvYWx0ZXJfaWRzLyIsIGZ1bGwubmFtZXMgPSBUKSAlPiUNCiAgbWFwKHJlYWRfc2F2KQ0KDQojanVzdCB0byBiZSBzdXJlLCBvcmRlciB0aGUgZmlsZXMgb24gbm9tZW1fZW5jciBhbmQgYWRkIHN1ZmZpeGVzIHRvIHRoZSBkYXRhLg0KI1RoZW4gd2UgY2FuIGNvcnJlY3RseSBpZGVudGlmeSB0aGUgZGlmZmVyZW50IHdhdmVzLiANCmxpc3NfZmlsZXMgPC0gbGFwcGx5KDE6MTEsIGZ1bmN0aW9uKGkpIHsNCiAgZGF0YSA8LSBsaXNzX2ZpbGVzW1tpXV0NCiAgI05vdyBJIGFkZCBzdWZmaXhlcyB0byBhbGwgdGhlIHZhcmlhYmxlcyBleGNlcHQgdGhlIElEIHZhciwgc28gd2UgY2FuIGNvcnJlY3RseSBJZGVudGlmeSB0aGUgd2F2ZSB0byB3aGljaCBhIHZhcmlhYmxlIGJlbG9uZ3MgaW4gdGhlIG1lcmdlZCBkYXRhLiBPdGhlcndpc2Ugd2Ugd2lsbCBoYXZlIDExIHNldHMgb2YgdGhlIHNhbWUgdmFyaWFibGVzIHdpdGggYSByYW5kb20gLnggb3IgLnkuIA0KICBuYW1lcyhkYXRhKVstMV0gPC0gcGFzdGUwKG5hbWVzKGRhdGEpWy0xXSwgc2VwID0gIi4iLCBjKDE6MTEpW2ldKQ0KICByZXR1cm4oZGF0YSkNCn0pDQoNCiNtZXJnZSB0aGUgZGF0YQ0KbGlzc19hbHRlciA8LSBsaXNzX2ZpbGVzICU+JQ0KICByZWR1Y2UoZnVsbF9qb2luLCBieSA9ICdub21lbV9lbmNyJykgJT4lDQogIGFycmFuZ2Uobm9tZW1fZW5jcikNCg0KI3NhdmUgZGF0YQ0Kc2F2ZShsaXNzX2FsdGVyLCANCiAgICAgZmlsZSA9IGZpbGVfbmFtZSkNCn0gZWxzZXsNCiAgbG9hZChmaWxlX25hbWUpDQp9DQpgYGANCg0KIyMjIExJU1MgYmFja2dyb3VuZA0KDQpgYGB7ciBsaXNzIGJhY2tncm91bmR9DQojc2V0IGRhdGEgbmFtZQ0KZmlsZV9uYW1lIDwtIGZpbGUucGF0aChkaXIsICJiYWNrZ3JvdW5kX2NvbWJpbmVkLlJkYXRhIikNCg0KI2NvbmRpdGlvbmFsIG9uIGZpbGUuZXhpc3RzDQppZiAoIWZpbGUuZXhpc3RzKGZpbGVfbmFtZSkpIHsNCiNpbXBvcnQgdGhlIGJhY2tncm91bmQgdmFyaWFibGUgZGF0YS4gDQojaW1wb3J0IGRhdGEgZmlsZXMuDQpsaXNzX2ZpbGVzIDwtIGxpc3QuZmlsZXMoImRhdGEvZGF0YS1yYXcvYmFja2dyb3VuZC8iLCBmdWxsLm5hbWVzID0gVCkgJT4lDQogIG1hcChyZWFkX3NhdikNCg0KI2p1c3QgdG8gYmUgc3VyZSwgb3JkZXIgdGhlIGZpbGVzIG9uIG5vbWVtX2VuY3IgYW5kIGFkZCBzdWZmaXhlcyB0byB0aGUgZGF0YSANCmxpc3NfZmlsZXMgPC0gbGFwcGx5KDE6MTEsIGZ1bmN0aW9uKGkpIHsNCiAgZGF0YSA8LSBsaXNzX2ZpbGVzW1tpXV1bYmFzZTo6b3JkZXIobGlzc19maWxlc1tbaV1dJG5vbWVtX2VuY3IpLF0NCiAgbmFtZXMoZGF0YSlbLTFdIDwtIHBhc3RlMChuYW1lcyhkYXRhKVstMV0sIHNlcCA9ICIuIiwgYygxOjExKVtpXSkNCiAgcmV0dXJuKGRhdGEpDQp9KQ0KDQojbWVyZ2UgdGhlIGRhdGEuIA0KbGlzc19iYWNrZ3JvdW5kIDwtIGxpc3NfZmlsZXMgJT4lDQogIHJlZHVjZShmdWxsX2pvaW4sIGJ5ID0gJ25vbWVtX2VuY3InKSAlPiUNCiAgYXJyYW5nZShub21lbV9lbmNyKQ0KDQojc2F2ZSBkYXRhDQpzYXZlKGxpc3NfYmFja2dyb3VuZCwNCiAgICAgZmlsZSA9IGZpbGVfbmFtZSkNCn0gZWxzZSgNCiAgbG9hZChmaWxlX25hbWUpDQopDQpgYGANCg0KIyMjIE1lcmdlIGFsbCBmaWxlcw0KYGBge3IgY29tYmluZSBsaXNzIG1vZHVsZXMgfQ0KI21lcmdlIGFsbCB0aGUgZGF0YSB3aXRoIGEgZnVsbCBvdXRlciBqb2luIGludG8gb25lIGZpbGUuIA0KI29rYXksIGxldCdzIG1lcmdlIHRoZSBsaXNzX21lcmdlZCwgbGlzc19hbHRlciBhbmQgdGhlIHBvbGl0aWNzIGFuZCB2YWx1ZXMgd2F2ZXMuDQpsaXNzIDwtIGxpc3NfbWVyZ2VkICU+JQ0KICBmdWxsX2pvaW4obGlzc19hbHRlciwgYnkgPSAibm9tZW1fZW5jciIpICU+JQ0KICBmdWxsX2pvaW4obGlzc19wb2wsIGJ5ID0gIm5vbWVtX2VuY3IiKSAlPiUNCiAgZnVsbF9qb2luKGxpc3NfYmFja2dyb3VuZCwgYnkgPSAibm9tZW1fZW5jciIpICU+JQ0KICBhcnJhbmdlKG5vbWVtX2VuY3IpDQpgYGANCg0KRnVsbCBkYXRhZnJhbWUgY29uc2lzdHMgb2YgMjUzMDYgb2JzZXJ2YXRpb25zIGFuZCA3MjcxIHZhcmlhYmxlcw0KDQojIyBFeHBvcnQgZGF0YQ0KVGhlIGZpbmFsIERGIGNvbnNpc3RzIG9mIDI1MzA2IG9ic2VydmF0aW9ucyB3aXRoIDcyNzEgdmFyaWFibGVzLg0KYGBge3IgY2xlYW4gZW52aXJvbmVtbnQgYW5kIGV4cG9ydCBkYXRhfQ0KI2NsZWFuIHRoZSBnbG9iYWwgZW52aXJvbm1lbnQuDQpybShsaXN0PWxzKClbISBscygpICVpbiUgYygibGlzcyIpXSkNCmBgYA0KDQpgYGB7ciBleHBvcnR9DQpzYXZlKGxpc3MsIA0KICAgICBmaWxlID0gZmlsZS5wYXRoKCJkYXRhIiwNCiAgICAgICAgICAiZGF0YS1wcm9jZXNzZWQiLA0KICAgICAgICAgICJsaXNzX21lcmdlZCIsDQogICAgICAgImxpc3NfbWVyZ2VkX3Jhdy5SZGF0YSIpKQ0KYGBgDQoNCg==</div>
+<style>
+.center {
+  text-align: center;
+  color: black;
+}
+</style>
+
+<hr>
+<br>
+<p class="center">Copyright &copy; 2024 Jeroense Thijmen</p>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("01_merging-liss.Rmd");
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

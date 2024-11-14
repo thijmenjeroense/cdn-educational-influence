@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Thijmen Jeroense" />
+
+
+<title>Descriptive statistics</title>
+
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/simplex.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.2.1/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.2.1/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Replication Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-info"></span>
+     
+    About
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="far fa-file-code"></span>
+     
+    Data preperation
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01_merging-liss.html">1 Merging LISS core module</a>
+    </li>
+    <li>
+      <a href="02_dataprep-liss.html">2 Data prep LISS core modules</a>
+    </li>
+    <li>
+      <a href="03_alter-relations.html">3 Confidant relations</a>
+    </li>
+    <li>
+      <a href="04_clean-alters.html">4 Clean confidant data</a>
+    </li>
+    <li>
+      <a href="05_prep-cldata.html">5 Prepare Cross Lagged data</a>
+    </li>
+    <li>
+      <a href="06_prep-riclpm-data.html">6 Prepare RI-CLPM data</a>
+    </li>
+    <li>
+      <a href="07_bias-corrected-means.html">7 Bias corrected means</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-bar-chart"></span>
+     
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="10_descriptive-statistics.html">1 Descriptive statistics</a>
+    </li>
+    <li>
+      <a href="08_analysis-riclpm.html">2 Main RICLPM results</a>
+    </li>
+    <li>
+      <a href="09_moderation-analysis-riclpm.html">3 Moderation analysis</a>
+    </li>
+    <li>
+      <a href="14_results-plots.html">4 Plots and Tables</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-shield"></span>
+     
+    Robustness
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="13_robustness-model-specifications.html">1 Sensitivity to model specifications</a>
+    </li>
+    <li>
+      <a href="11_robustness-nosibling-education.html">2 Sensitivity to sibling inclusion and education transformation</a>
+    </li>
+    <li>
+      <a href="12_robustness-confounders.html">3 Sensitivity to time varying confounders</a>
+    </li>
+    <li>
+      <a href="14_robustness-changes-cdn-education.html">4 Analysis of changes in mean CDN educational attainment</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/thijmenjeroense/cdn-educational-influence">
+    <span class="fab fa-github"></span>
+     
+    Github
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Descriptive statistics</h1>
+<h4 class="author">Thijmen Jeroense</h4>
+<h4 class="date">Last compiled on 14 november, 2024</h4>
+
+</div>
+
+
+<div id="goal" class="section level1">
+<h1>Goal</h1>
+<p>Recreate the descriptive statistics in the paper</p>
+</div>
+<div id="set-up-and-data-import" class="section level1">
+<h1>Set up and data import</h1>
+<pre class="r"><code>library(tidyverse)
+library(data.table)
+library(patchwork)
+library(ggrepel)
+library(viridis)
+
+#data
+load(&quot;results/riclpm/23-03-13_lavaan-main-results.Rdata&quot;)
+load(&quot;results/riclpm/23-03-14_lavaan-moderation-results.Rdata&quot;)</code></pre>
+</div>
+<div id="data-preperation" class="section level1">
+<h1>Data preperation</h1>
+<p>Create plot data.</p>
+<pre class="r"><code>plot_data &lt;- MyData %&gt;% 
+  select(nomem_encr, 
+         starts_with(&quot;eu&quot;),
+         starts_with(&quot;cult&quot;),
+         starts_with(&quot;inc_diff&quot;),
+         starts_with(&quot;educ&quot;),
+         starts_with(&quot;poltalk_a&quot;)
+         ) %&gt;% 
+  select(-starts_with(&quot;educ_dis&quot;),
+         -starts_with(&quot;educ_sim&quot;)) %&gt;% 
+  pivot_longer(cols = 2:166,
+               names_to = c(&quot;measure&quot;, &quot;wave&quot;),
+               names_pattern = &quot;(.+)\\_(.+)&quot;,
+               values_to = &quot;value&quot;) %&gt;% 
+  pivot_wider(id_cols = c(&quot;nomem_encr&quot;, &quot;wave&quot;), 
+              names_from = &quot;measure&quot;,
+              values_from = &quot;value&quot;)</code></pre>
+</div>
+<div id="descriptive-statistics" class="section level1">
+<h1>Descriptive statistics</h1>
+<div id="political-attitudes" class="section level2">
+<h2>Political Attitudes</h2>
+<div id="trend-plot" class="section level3">
+<h3>Trend plot</h3>
+<pre class="r"><code>#create time_cohort
+plot_data &lt;- plot_data %&gt;%
+  mutate(year = as.numeric(wave),
+         year = ifelse(year == 1, 2008, year),
+         year = ifelse(year == 2, 2009, year),
+         year = ifelse(year == 3, 2010, year),
+         year = ifelse(year == 4, 2011, year),
+         year = ifelse(year == 5, 2012, year),
+         year = ifelse(year == 6, 2013, year),
+         year = ifelse(year == 7, 2014, year),
+         year = ifelse(year == 8, 2016, year),
+         year = ifelse(year == 9, 2017, year),
+         year = ifelse(year == 10, 2018, year),
+         year = ifelse(year == 11, 2019, year)) %&gt;%
+  mutate(educ_rec = ifelse(educ &lt; 6, 6, educ))
+
+#create plot DF
+plot_attitudes &lt;- list()
+
+plot_attitudes[[1]] &lt;- plot_data %&gt;% 
+  group_by(year) %&gt;%
+  summarise(mean = mean(eu, na.rm = T),
+            n = sum(!is.na(eu)),
+            se = 1.96 * (sd(eu, na.rm=T)/sqrt(sum(!is.na(eu)))),
+            name = &quot;EU integration&quot;)
+
+plot_attitudes[[2]] &lt;- plot_data %&gt;% 
+  group_by(year) %&gt;%
+  summarise(mean = mean(cult, na.rm = T),
+            n = sum(!is.na(cult)),
+            se = 1.96 * (sd(cult, na.rm=T)/sqrt(sum(!is.na(cult)))),
+            name = &quot;Cultural Inclusion&quot;)
+
+plot_attitudes[[3]] &lt;- plot_data %&gt;% 
+  group_by(year) %&gt;%
+  summarise(mean = mean(inc_diff, na.rm = T),
+            n = sum(!is.na(inc_diff)),
+            se = 1.96 * (sd(inc_diff, na.rm=T)/sqrt(sum(!is.na(inc_diff)))),
+            name = &quot;Income Equality&quot;)
+
+plot_attitudes &lt;- plot_attitudes %&gt;%
+  rbindlist()
+
+#mean plot
+trend_att &lt;- plot_attitudes %&gt;%
+  ggplot(aes(x = year, y = mean, group = name)) +
+  geom_line(aes(colour = name)) +
+  geom_errorbar(aes(ymin = mean - se, 
+                     ymax = mean + se,
+                     colour = name),
+                width = 0.1) +
+  geom_point(aes(colour = name)) +
+  scale_y_continuous(breaks = c(1, 1.5, 2, 2.5, 3, 3.5),
+                     limits = c(1, 3.5)) +
+  scale_x_continuous(breaks = c(2009:2019), name = element_blank()) + 
+  scale_colour_viridis(option = &quot;D&quot;, discrete = T) +
+  labs(x = &quot;Year&quot;, y = &quot;Mean&quot;) +
+  theme(
+    plot.subtitle = element_text(
+      size = rel(1.2),
+      hjust = 0.5,
+      margin = margin(0, 0, 20, 0)
+    ),
+    text = element_text(),
+    plot.background = element_rect(fill = &quot;#FFFFFF&quot;),
+    panel.background = element_rect(fill = &quot;#FFFFFF&quot;),
+    panel.border = element_rect(
+      fill = NA,
+      color = &quot;#FFFFFF&quot;,
+      size = 0.5,
+      linetype = &quot;solid&quot;
+    ),
+    axis.title = element_text(size = rel(1)),
+    axis.title.y = element_text(angle = 90, vjust = 2),
+    axis.title.x = element_text(vjust = -0.2),
+    axis.text = element_text(),
+    axis.text.x = element_text(angle = 45, vjust = 0.2),
+    axis.line.x = element_blank(),
+    axis.line.y = element_blank(),
+    axis.ticks = element_line(),
+    panel.grid.major = element_line(colour = &quot;grey&quot;),
+    panel.grid.major.x  = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.position = &quot;bottom&quot;,
+    legend.direction = &quot;horizontal&quot;,
+    legend.box = &quot;vertical&quot;,
+    legend.title = element_blank(),
+    strip.background = element_rect(colour = &quot;#FFFFFF&quot;, fill = &quot;#FFFFFF&quot;),
+    strip.text = element_text(face = &quot;bold&quot;),
+    legend.key = element_rect(colour = &quot;#FFFFFF&quot;, fill = &quot;#FFFFFF&quot;)
+  )
+
+trend_att</code></pre>
+<p><img src="10_descriptive-statistics_files/figure-html/attitudes-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(plot = trend_att, 
+       filename = &quot;plots/descriptives/trend_att.eps&quot;,
+       dpi = 600,
+       height = 4,
+       width = 5)
+
+#save bw version
+#mean plot
+trend_att_bw &lt;- plot_attitudes %&gt;%
+  ggplot(aes(x = year, y = mean, group = name)) +
+  geom_line(aes(colour = name)) +
+  geom_errorbar(aes(ymin = mean - se, 
+                     ymax = mean + se,
+                     colour = name),
+                width = 0.1) +
+  geom_point(aes(colour = name)) +
+  scale_y_continuous(breaks = c(1, 1.5, 2, 2.5, 3, 3.5),
+                     limits = c(1, 3.5)) +
+  scale_x_continuous(breaks = c(2009:2019), name = element_blank()) + 
+  scale_colour_grey() +
+  labs(x = &quot;Year&quot;, y = &quot;Mean&quot;) +
+  theme(
+    plot.subtitle = element_text(
+      size = rel(1.2),
+      hjust = 0.5,
+      margin = margin(0, 0, 20, 0)
+    ),
+    text = element_text(),
+    plot.background = element_rect(fill = &quot;#FFFFFF&quot;),
+    panel.background = element_rect(fill = &quot;#FFFFFF&quot;),
+    panel.border = element_rect(
+      fill = NA,
+      color = &quot;#FFFFFF&quot;,
+      size = 0.5,
+      linetype = &quot;solid&quot;
+    ),
+    axis.title = element_text(size = rel(1)),
+    axis.title.y = element_text(angle = 90, vjust = 2),
+    axis.title.x = element_text(vjust = -0.2),
+    axis.text = element_text(),
+    axis.text.x = element_text(angle = 45, vjust = 0.2),
+    axis.line.x = element_blank(),
+    axis.line.y = element_blank(),
+    axis.ticks = element_line(),
+    panel.grid.major = element_line(colour = &quot;grey&quot;),
+    panel.grid.major.x  = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.position = &quot;bottom&quot;,
+    legend.direction = &quot;horizontal&quot;,
+    legend.box = &quot;vertical&quot;,
+    legend.title = element_blank(),
+    strip.background = element_rect(colour = &quot;#FFFFFF&quot;, fill = &quot;#FFFFFF&quot;),
+    strip.text = element_text(face = &quot;bold&quot;),
+    legend.key = element_rect(colour = &quot;#FFFFFF&quot;, fill = &quot;#FFFFFF&quot;)
+  )
+
+ggsave(plot = trend_att_bw, 
+       filename = &quot;plots/descriptives/trend_att_bw.eps&quot;,
+       dpi = 600,
+       height = 4,
+       width = 5)</code></pre>
+</div>
+<div id="change-scores-heatmap" class="section level3">
+<h3>Change scores heatmap</h3>
+<p>Datapreperation for heatmap</p>
+<pre class="r"><code>plot_data &lt;- plot_data %&gt;%
+  group_by(nomem_encr) %&gt;%
+  mutate(wave = as.numeric(wave)) %&gt;% 
+  arrange(nomem_encr, wave) %&gt;% 
+  mutate(eu_change = eu - dplyr::lag(eu),
+         eu_change = ifelse(eu_change &gt; 2, 3, eu_change),
+         eu_change = ifelse(eu_change &lt; -2, -3, eu_change),
+         cult_change = cult - dplyr::lag(cult),
+         cult_change = ifelse(cult_change &gt; 2, 3, cult_change),
+         cult_change = ifelse(cult_change &lt; -2, -3, cult_change),
+         inc_change = inc_diff - dplyr::lag(inc_diff),
+         inc_change = ifelse(inc_change &gt; 2, 3, inc_change),
+         inc_change = ifelse(inc_change &lt; -2, -3, inc_change)
+         ) %&gt;%
+  ungroup()</code></pre>
+<p>Heatmap plot</p>
+<pre class="r"><code>#create list to store the dfs in
+plot_data_heatmap &lt;- list()
+
+#eu_change
+plot_data_heatmap[[1]] &lt;- plot_data %&gt;%
+  select(nomem_encr, eu_change, year) %&gt;%
+  filter(year &gt; 2008) %&gt;% #filter out the first year (no change scores possible)
+  group_by(year) %&gt;% #group by year
+  count(eu_change) %&gt;% #create counts per year of change values
+  mutate(name = &quot;EU Integration&quot;)  %&gt;% #create identifier
+  rename(change = eu_change) %&gt;% #rename eu_change into change score
+  ungroup()
+
+#cult_change
+plot_data_heatmap[[2]] &lt;- plot_data %&gt;%
+  select(nomem_encr, cult_change, year) %&gt;%
+  filter(year &gt; 2008) %&gt;%
+  group_by(year) %&gt;%
+  count(cult_change) %&gt;%
+  mutate(name = &quot;Cultural Inclusion&quot;)  %&gt;%
+  rename(change = cult_change) %&gt;%
+  ungroup()
+
+#inc_change
+plot_data_heatmap[[3]] &lt;- plot_data %&gt;%
+  select(nomem_encr, inc_change, year) %&gt;%
+  filter(year &gt; 2008) %&gt;%
+  group_by(year) %&gt;%
+  count(inc_change) %&gt;%
+  mutate(name = &quot;Income Equality&quot;)  %&gt;%
+  rename(change = inc_change) %&gt;%
+  ungroup()
+
+plot_data_heatmap &lt;- plot_data_heatmap %&gt;%
+  rbindlist() %&gt;%
+  filter(!is.na(change))
+
+change_att_heatmap &lt;- plot_data %&gt;%
+  count(year, name = &quot;n_year&quot;) %&gt;%
+  right_join(plot_data_heatmap, by = &quot;year&quot;) %&gt;%
+  group_by(year, name) %&gt;%
+  mutate(sum_n = sum(n)) %&gt;%
+  ungroup() %&gt;%
+  mutate(per_change = (n/sum_n)*100,
+         change = factor(change, levels = -3:3, labels = c(&quot;-3 | -4&quot;, &quot;-2&quot;, &quot;-1&quot;, &quot;0&quot;, &quot;1&quot;, &quot;2&quot;, &quot;3 | 4&quot;))) %&gt;%
+  ggplot(aes(x = as.factor(year), y = change, fill = per_change)) +
+  geom_raster() +
+  geom_text(aes(label = round(per_change, 1)),
+            colour = &quot;black&quot;,
+            size = 5) +
+  facet_wrap(vars(name)) + 
+  labs(fill = &quot;% yearly \n observations&quot;,y = expression(Delta*&quot; Attitude&quot;), x = &quot;Year&quot;) +
+  scale_fill_viridis(option = &quot;D&quot;, limits = c(0,65)) +
+ # scale_x_continuous(breaks = c(2009:2019), name = element_blank()) + 
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.2),
+        plot.title = element_text(color=&quot;black&quot;,hjust=0,vjust=1, size=rel(2)),
+    plot.background = element_rect(fill=&quot;#FFFFFF&quot;),
+    panel.background = element_rect(fill=&quot;#FFFFFF&quot;),
+    panel.border = element_rect(fill=NA,color=&quot;#FFFFFF&quot;, size=0.5, linetype=&quot;solid&quot;),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    strip.text = element_text(face=&quot;bold&quot;, size=10,lineheight=5.0, colour = &quot;black&quot;),
+    axis.line = element_blank(),
+    axis.ticks = element_blank(), 
+    axis.text = element_text(color=&quot;black&quot;),
+    axis.text.y  = element_text(hjust=1),
+    legend.text = element_text(color=&quot;black&quot;, size=rel(1.3)),
+    legend.background = element_rect(fill=&quot;#FFFFFF&quot;),
+    legend.position = &quot;bottom&quot;,
+    strip.background=element_rect(colour=&quot;#A9A9A9&quot;,fill=&quot;#A9A9A9&quot;))
+
+#show plot
+change_att_heatmap</code></pre>
+<p><img src="10_descriptive-statistics_files/figure-html/change%20score%20heatmaps-1.png" width="1344" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#save plot
+ggsave(plot = change_att_heatmap, 
+       filename = &quot;plots/descriptives/heatmap_change_att.eps&quot;,
+       dpi = 600, 
+       height = 8, 
+       width = 16)</code></pre>
+<pre class="r"><code>#save bw version
+change_att_heatmap_bw &lt;-  plot_data %&gt;%
+  count(year, name = &quot;n_year&quot;) %&gt;%
+  right_join(plot_data_heatmap, by = &quot;year&quot;) %&gt;%
+  group_by(year, name) %&gt;%
+  mutate(sum_n = sum(n)) %&gt;%
+  ungroup() %&gt;%
+  mutate(
+    per_change = (n / sum_n) * 100,
+    change = factor(
+      change,
+      levels = -3:3,
+      labels = c(&quot;-3 | -4&quot;, &quot;-2&quot;, &quot;-1&quot;, &quot;0&quot;, &quot;1&quot;, &quot;2&quot;, &quot;3 | 4&quot;)
+    ),
+    per_change_factor = cut(
+      per_change,
+      breaks = c(0,
+                 10,
+                 20,
+                 30,
+                 40,
+                 50,
+                 60,
+                 70,
+                 80,
+                 90,
+                 100)),
+    per_change_factor = case_when(
+      per_change_factor == &quot;(0,10]&quot; ~ &quot;0-10%&quot;,
+      per_change_factor == &quot;(10,20]&quot; ~ &quot;10-20%&quot;,
+      per_change_factor == &quot;(20,30]&quot; ~ &quot;20-30%&quot;,
+      per_change_factor == &quot;(30,40]&quot; ~ &quot;30-40%&quot;,
+      per_change_factor == &quot;(40,50]&quot; ~ &quot;40-50%&quot;,
+      per_change_factor == &quot;(50,60]&quot; ~ &quot;50-60%&quot;,
+      per_change_factor == &quot;(60,70]&quot; ~ &quot;60-70%&quot;,
+    )) %&gt;%
+  ggplot(aes(x = as.factor(year),
+             y = change, 
+             fill = per_change_factor)) +
+  geom_raster(alpha = 0.8) +
+  geom_text(aes(label = round(per_change, 1)),
+            colour = &quot;white&quot;,
+            size = 5) +
+  facet_wrap(vars(name)) + 
+  labs(fill = &quot;% yearly \n observations&quot;,y = expression(Delta*&quot; Attitude&quot;), x = &quot;Year&quot;) +
+  scale_fill_grey() +
+ # scale_x_continuous(breaks = c(2009:2019), name = element_blank()) + 
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.2),
+        plot.title = element_text(color=&quot;black&quot;,hjust=0,vjust=1, size=rel(2)),
+    plot.background = element_rect(fill=&quot;#FFFFFF&quot;),
+    panel.background = element_rect(fill=&quot;#FFFFFF&quot;),
+    panel.border = element_rect(fill=NA,color=&quot;#FFFFFF&quot;, size=0.5, linetype=&quot;solid&quot;),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    strip.text = element_text(face=&quot;bold&quot;, size=10,lineheight=5.0, colour = &quot;black&quot;),
+    axis.line = element_blank(),
+    axis.ticks = element_blank(), 
+    axis.text = element_text(color=&quot;black&quot;),
+    axis.text.y  = element_text(hjust=1),
+    legend.text = element_text(color=&quot;black&quot;, size=rel(1.3)),
+    #legend.background = element_rect(fill=&quot;#FFFFFF&quot;),
+    legend.position = &quot;bottom&quot;,
+    strip.background=element_rect(colour=&quot;#A9A9A9&quot;,fill=&quot;#A9A9A9&quot;))
+
+change_att_heatmap_bw</code></pre>
+<p><img src="10_descriptive-statistics_files/figure-html/pol%20att%20heatmap%20bw-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(plot = change_att_heatmap_bw, 
+       filename = &quot;plots/descriptives/heatmap_change_bw_att.pdf&quot;,
+       dpi = 300, 
+       height = 8, 
+       width = 16)</code></pre>
+</div>
+</div>
+<div id="cdn-network-changes" class="section level2">
+<h2>CDN network changes</h2>
+<pre class="r"><code>#create mean for education and political discussion
+plot_data &lt;- plot_data %&gt;%
+  rowwise() %&gt;%
+  mutate(cdn_educ = mean(c_across(starts_with(&quot;educ_a&quot;)), na.rm = T),
+         cdn_pol = mean(c_across(starts_with(&quot;poltalk_a&quot;)), na.rm = T)) %&gt;%
+  ungroup()</code></pre>
+<div id="trend-plot-1" class="section level3">
+<h3>Trend plot</h3>
+<pre class="r"><code>#create list to store information. 
+cdn_trend &lt;- list()
+
+#create plot df for education
+cdn_trend[[1]] &lt;- plot_data %&gt;%
+  group_by(year) %&gt;%
+  summarise(mean = mean(cdn_educ, na.rm = T),
+            se = 1.96 * (sd(cdn_educ, na.rm=T)/sqrt(sum(!is.na(cdn_educ)))),
+            name = &quot;Education&quot;) %&gt;% 
+  ungroup()
+
+#create plot df for political discussion. 
+cdn_trend[[2]] &lt;- plot_data %&gt;%
+  group_by(year) %&gt;%
+  summarise(mean = mean(cdn_pol, na.rm = T),
+            se = 1.96 * (sd(cdn_pol, na.rm=T)/sqrt(sum(!is.na(cdn_pol)))),
+            name = &quot;Political Discussion&quot;) %&gt;% 
+  ungroup()
+
+#create educ trend plot
+cdn_educ_trend &lt;- cdn_trend %&gt;%
+  bind_rows() %&gt;%
+  filter(name == &quot;Education&quot;) %&gt;%
+  ggplot(aes(x = as.numeric(year), y = mean)) +
+  geom_point() +
+  geom_line() +
+  geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = .1) +
+  scale_y_continuous(breaks = 10:14, limits = c(10,14)) +
+  scale_x_continuous(breaks = c(2008:2019), name = element_blank()) + 
+  labs(y = &quot;Years&quot;) +
+  theme(
+    plot.subtitle = element_text(
+      size = rel(1.2),
+      hjust = 0.5,
+      margin = margin(0, 0, 20, 0)
+    ),
+    text = element_text(),
+    plot.background = element_rect(fill = &quot;#FFFFFF&quot;),
+    panel.background = element_rect(fill = &quot;#FFFFFF&quot;),
+    panel.border = element_rect(
+      fill = NA,
+      color = &quot;#FFFFFF&quot;,
+      size = 0.5,
+      linetype = &quot;solid&quot;
+    ),
+    axis.title = element_text(size = rel(1)),
+    axis.title.y = element_text(angle = 90, vjust = 2),
+    axis.title.x = element_text(vjust = -0.2),
+    axis.text = element_text(),
+    axis.text.x = element_text(angle = 45, vjust = 0.2),
+    axis.line.x = element_blank(),
+    axis.line.y = element_blank(),
+    axis.ticks = element_line(),
+    panel.grid.major = element_line(colour = &quot;grey&quot;),
+    panel.grid.major.x  = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.position = &quot;bottom&quot;,
+    legend.direction = &quot;horizontal&quot;,
+    legend.box = &quot;vertical&quot;,
+    legend.title = element_blank(),
+    strip.background = element_rect(colour = &quot;#FFFFFF&quot;, fill = &quot;#FFFFFF&quot;),
+    strip.text = element_text(face = &quot;bold&quot;),
+    legend.key = element_rect(colour = &quot;#FFFFFF&quot;, fill = &quot;#FFFFFF&quot;)
+  )
+
+#save trend plot
+ggsave(plot = cdn_educ_trend, 
+       filename = &quot;plots/descriptives/cdn_educ_trend.eps&quot;, 
+       dpi = 600, 
+       height = 4, 
+       width = 4)</code></pre>
+</div>
+<div id="changes-heatmap-plot" class="section level3">
+<h3>Changes heatmap plot</h3>
+<pre class="r"><code>#create plot data
+plot_data &lt;- plot_data %&gt;%
+  group_by(nomem_encr) %&gt;%
+  mutate(educ_change = cdn_educ - dplyr::lag(cdn_educ),
+         pol_change = cdn_pol - dplyr::lag(cdn_pol),
+         ) %&gt;%
+  ungroup() %&gt;%
+  mutate(educ_change_rec = ifelse(educ_change &lt; -5, 1, educ_change),
+         educ_change_rec = ifelse((educ_change &lt; -4) &amp; (educ_change &gt;= -5), 2, educ_change_rec),
+         educ_change_rec = ifelse((educ_change &lt; -3) &amp; (educ_change &gt;= -4), 3, educ_change_rec),
+         educ_change_rec = ifelse((educ_change &lt; -2) &amp; (educ_change &gt;= -3), 4, educ_change_rec),
+         educ_change_rec = ifelse((educ_change &lt; -1) &amp; (educ_change &gt;= -2), 5, educ_change_rec),
+         educ_change_rec = ifelse((educ_change &lt; 0) &amp; (educ_change &gt;= -1), 6, educ_change_rec),
+         educ_change_rec = ifelse((educ_change &lt; 1) &amp; (educ_change &gt;= 0), 7, educ_change_rec),
+         educ_change_rec = ifelse((educ_change &lt; 2) &amp; (educ_change &gt;= 1), 8, educ_change_rec),
+         educ_change_rec = ifelse((educ_change &lt; 3) &amp; (educ_change &gt;= 2), 9, educ_change_rec),
+         educ_change_rec = ifelse((educ_change &lt; 4) &amp; (educ_change &gt;= 3), 10, educ_change_rec),
+         educ_change_rec = ifelse((educ_change &lt; 5) &amp; (educ_change &gt;= 4), 11, educ_change_rec),
+         educ_change_rec = ifelse(educ_change &gt; 5, 12, educ_change_rec),
+         educ_change_rec = factor(educ_change_rec, levels = 1:12, labels = c(&quot;&lt;-5&quot;, &quot;-4/-5&quot;, &quot;-3/-4&quot;,&quot;-2/-3&quot;,
+                                                                             &quot;-1/-2&quot;, &quot;0/-1&quot;, &quot;0/1&quot;, &quot;1/2&quot;,
+                                                                             &quot;2/3&quot;, &quot;3/4&quot;, &quot;4/5&quot;, &quot;&gt;5&quot;)
+                                                                             ),
+         pol_change_rec = ifelse(pol_change &lt; -5, 1, pol_change),
+         pol_change_rec = ifelse((pol_change &lt; -4) &amp; (pol_change &gt;= -5), 2, pol_change_rec),
+         pol_change_rec = ifelse((pol_change &lt; -3) &amp; (pol_change &gt;= -4), 3, pol_change_rec),
+         pol_change_rec = ifelse((pol_change &lt; -2) &amp; (pol_change &gt;= -3), 4, pol_change_rec),
+         pol_change_rec = ifelse((pol_change &lt; -1) &amp; (pol_change &gt;= -2), 5, pol_change_rec),
+         pol_change_rec = ifelse((pol_change &lt; 0) &amp; (pol_change &gt;= -1), 6, pol_change_rec),
+         pol_change_rec = ifelse((pol_change &lt; 1) &amp; (pol_change &gt;= 0), 7, pol_change_rec),
+         pol_change_rec = ifelse((pol_change &lt; 2) &amp; (pol_change &gt;= 1), 8, pol_change_rec),
+         pol_change_rec = ifelse((pol_change &lt; 3) &amp; (pol_change &gt;= 2), 9, pol_change_rec),
+         pol_change_rec = ifelse((pol_change &lt; 4) &amp; (pol_change &gt;= 3), 10, pol_change_rec),
+         pol_change_rec = ifelse((pol_change &lt; 5) &amp; (pol_change &gt;= 4), 11, pol_change_rec),
+         pol_change_rec = ifelse(pol_change &gt; 5, 12, pol_change_rec),
+         pol_change_rec = factor(pol_change_rec, levels = 1:12, labels = c(&quot;&lt;-5&quot;, &quot;-4/-5&quot;, &quot;-3/-4&quot;,&quot;-2/-3&quot;,
+                                                                             &quot;-1/-2&quot;, &quot;0/-1&quot;, &quot;0/1&quot;, &quot;1/2&quot;,
+                                                                             &quot;2/3&quot;, &quot;3/4&quot;, &quot;4/5&quot;, &quot;&gt;5&quot;)
+                                                                             ))</code></pre>
+<pre class="r"><code>#create list to store the dfs in
+plot_data_cdn_heatmap &lt;- list()
+
+#CDN Education
+plot_data_cdn_heatmap[[1]] &lt;- plot_data %&gt;%
+  select(nomem_encr, educ_change_rec, year) %&gt;%
+  filter(year &gt; 2008) %&gt;% #filter out the first year (no change scores possible)
+  group_by(year) %&gt;% #group by year
+  count(educ_change_rec) %&gt;% #create counts per year of change values
+  mutate(name = &quot;CDN Education&quot;)  %&gt;% #create identifier
+  rename(change = educ_change_rec) %&gt;% #rename eu_change into change score
+  ungroup()
+
+#CDN Political discussion
+plot_data_cdn_heatmap[[2]] &lt;- plot_data %&gt;%
+  select(nomem_encr, pol_change_rec, year) %&gt;%
+  filter(year &gt; 2008) %&gt;%
+  group_by(year) %&gt;%
+  count(pol_change_rec) %&gt;%
+  mutate(name = &quot;CDN Political discussion&quot;)  %&gt;%
+  rename(change = pol_change_rec) %&gt;%
+  ungroup()
+
+#combine plot data into one file
+plot_data_cdn_heatmap &lt;- plot_data_cdn_heatmap %&gt;%
+  rbindlist() %&gt;%
+  filter(!is.na(change))
+
+#create heatmap
+change_cdn_heatmap &lt;- plot_data %&gt;%
+  count(year, name = &quot;n_year&quot;) %&gt;%
+  right_join(plot_data_cdn_heatmap, by = &quot;year&quot;) %&gt;%
+  filter(name == &quot;CDN Education&quot;) %&gt;%
+  group_by(year) %&gt;%
+  mutate(sum_n = sum(n)) %&gt;%
+  ungroup() %&gt;%
+  mutate(per_change = (n/sum_n)*100) %&gt;%
+  ggplot(aes(x = as.factor(year), y = change, fill = per_change)) +
+  geom_raster() +
+  geom_text(aes(label = round(per_change, 1)), colour = &quot;black&quot;) +
+  labs(fill = &quot;% of yearly observations&quot;,y = expression(Delta)) +
+  scale_fill_viridis(option = &quot;D&quot;) +
+  scale_x_discrete(name = element_blank()) + 
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.2),
+        plot.title = element_text(color=&quot;black&quot;,hjust=0,vjust=1, size=rel(2)),
+    plot.background = element_rect(fill=&quot;#FFFFFF&quot;),
+    panel.background = element_rect(fill=&quot;#FFFFFF&quot;),
+    panel.border = element_rect(fill=NA,color=&quot;#FFFFFF&quot;, size=0.5, linetype=&quot;solid&quot;),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    strip.text = element_text(face=&quot;bold&quot;, size=10,lineheight=5.0, colour = &quot;black&quot;),
+    strip.background = element_rect(fill=&quot;#FFFFFF&quot;, colour=&quot;#808080&quot;, size=1),
+    axis.line = element_blank(),
+    axis.ticks = element_blank(), 
+    axis.text = element_text(color=&quot;black&quot;),
+    axis.text.y  = element_text(hjust=1),
+    legend.text = element_text(color=&quot;black&quot;, size=rel(1.3)),
+    legend.background = element_rect(fill=&quot;#FFFFFF&quot;),
+    legend.position = &quot;bottom&quot;)
+
+#show plot
+change_cdn_heatmap</code></pre>
+<p><img src="10_descriptive-statistics_files/figure-html/change%20score%20heatmaps%20cdn-1.png" width="1344" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#save plot
+ggsave(plot = change_cdn_heatmap, 
+       filename = &quot;plots/descriptives/heatmap_change_cdn.eps&quot;, 
+       dpi = 600, 
+       height = 6, 
+       width = 6)</code></pre>
+<pre class="r"><code>#create bw version
+#create heatmap
+change_cdn_heatmap_bw &lt;- plot_data %&gt;%
+  count(year, name = &quot;n_year&quot;) %&gt;%
+  right_join(plot_data_cdn_heatmap, by = &quot;year&quot;) %&gt;%
+  filter(name == &quot;CDN Education&quot;) %&gt;%
+  group_by(year) %&gt;%
+  mutate(sum_n = sum(n)) %&gt;%
+  ungroup() %&gt;%
+mutate(
+    per_change = (n / sum_n) * 100,
+    per_change_factor = cut(
+      per_change,
+      breaks = c(0,
+                 10,
+                 20,
+                 30,
+                 40,
+                 50,
+                 60,
+                 70,
+                 80,
+                 90,
+                 100)),
+    per_change_factor = case_when(
+      per_change_factor == &quot;(0,10]&quot; ~ &quot;0-10%&quot;,
+      per_change_factor == &quot;(10,20]&quot; ~ &quot;10-20%&quot;,
+      per_change_factor == &quot;(20,30]&quot; ~ &quot;20-30%&quot;,
+      per_change_factor == &quot;(30,40]&quot; ~ &quot;30-40%&quot;,
+      per_change_factor == &quot;(40,50]&quot; ~ &quot;40-50%&quot;,
+      per_change_factor == &quot;(50,60]&quot; ~ &quot;50-60%&quot;,
+      per_change_factor == &quot;(60,70]&quot; ~ &quot;60-70%&quot;,
+    )) %&gt;%
+  ggplot(aes(x = as.factor(year),
+             y = change, 
+             fill = per_change_factor)) +
+  geom_raster(alpha = 0.8) +
+  geom_text(aes(label = round(per_change, 1)), colour = &quot;white&quot;) +
+  labs(fill = &quot;% yearly \n observations&quot;,y = expression(Delta*&quot; Attitude&quot;), x = &quot;Year&quot;) +
+  scale_fill_grey() +
+  scale_x_discrete(name = element_blank()) + 
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.2),
+        plot.title = element_text(color=&quot;black&quot;,hjust=0,vjust=1, size=rel(2)),
+    plot.background = element_rect(fill=&quot;#FFFFFF&quot;),
+    panel.background = element_rect(fill=&quot;#FFFFFF&quot;),
+    panel.border = element_rect(fill=NA,color=&quot;#FFFFFF&quot;, size=0.5, linetype=&quot;solid&quot;),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    strip.text = element_text(face=&quot;bold&quot;, size=10,lineheight=5.0, colour = &quot;black&quot;),
+    strip.background = element_rect(fill=&quot;#FFFFFF&quot;, colour=&quot;#808080&quot;, size=1),
+    axis.line = element_blank(),
+    axis.ticks = element_blank(), 
+    axis.text = element_text(color=&quot;black&quot;),
+    axis.text.y  = element_text(hjust=1),
+    legend.text = element_text(color=&quot;black&quot;, size=rel(1.3)),
+    legend.background = element_rect(fill=&quot;#FFFFFF&quot;),
+    legend.position = &quot;bottom&quot;)
+
+#show plot
+change_cdn_heatmap_bw</code></pre>
+<p><img src="10_descriptive-statistics_files/figure-html/bw%20version%20cdn%20heatmap-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#save plot
+ggsave(plot = change_cdn_heatmap_bw, 
+       filename = &quot;plots/descriptives/heatmap_change_cdn_bw.eps&quot;, 
+       dpi = 600, 
+       height = 6, 
+       width = 6)
+
+#save plot
+ggsave(plot = change_cdn_heatmap_bw, 
+       filename = &quot;plots/descriptives/heatmap_change_cdn_bw.pdf&quot;, 
+       dpi = 300, 
+       height = 6, 
+       width = 7)
+
+#show plot
+change_cdn_heatmap_bw</code></pre>
+<p><img src="10_descriptive-statistics_files/figure-html/bw%20version%20cdn%20heatmap-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+
+<style>
+.center {
+  text-align: center;
+  color: black;
+}
+</style>
+
+<hr>
+<br>
+<p class="center">Copyright &copy; 2024 Jeroense Thijmen</p>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -9,15 +9,15 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Thijmen jeroense" />
+<meta name="author" content="Thijmen Jeroense" />
 
 
-<title>Replication website</title>
+<title>Replication Website</title>
 
-<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/simplex.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
@@ -33,8 +33,8 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
-<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.2.1/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.2.1/css/v4-shims.min.css" rel="stylesheet" />
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -252,9 +252,84 @@ $(document).ready(function () {
     About
   </a>
 </li>
-<li class="dropdown-header">Data preperation</li>
-<li class="dropdown-header">Analysis</li>
-<li class="dropdown-header">Robustness</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="far fa-file-code"></span>
+     
+    Data preperation
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01_merging-liss.html">1 Merging LISS core module</a>
+    </li>
+    <li>
+      <a href="02_dataprep-liss.html">2 Data prep LISS core modules</a>
+    </li>
+    <li>
+      <a href="03_alter-relations.html">3 Confidant relations</a>
+    </li>
+    <li>
+      <a href="04_clean-alters.html">4 Clean confidant data</a>
+    </li>
+    <li>
+      <a href="05_prep-cldata.html">5 Prepare Cross Lagged data</a>
+    </li>
+    <li>
+      <a href="06_prep-riclpm-data.html">6 Prepare RI-CLPM data</a>
+    </li>
+    <li>
+      <a href="07_bias-corrected-means.html">7 Bias corrected means</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-bar-chart"></span>
+     
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="10_descriptive-statistics.html">1 Descriptive statistics</a>
+    </li>
+    <li>
+      <a href="08_analysis-riclpm.html">2 Main RICLPM results</a>
+    </li>
+    <li>
+      <a href="09_moderation-analysis-riclpm.html">3 Moderation analysis</a>
+    </li>
+    <li>
+      <a href="14_results-plots.html">4 Plots and Tables</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-shield"></span>
+     
+    Robustness
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="13_robustness-model-specifications.html">1 Sensitivity to model specifications</a>
+    </li>
+    <li>
+      <a href="11_robustness-nosibling-education.html">2 Sensitivity to sibling inclusion and education transformation</a>
+    </li>
+    <li>
+      <a href="12_robustness-confounders.html">3 Sensitivity to time varying confounders</a>
+    </li>
+    <li>
+      <a href="14_robustness-changes-cdn-education.html">4 Analysis of changes in mean CDN educational attainment</a>
+    </li>
+  </ul>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
@@ -273,22 +348,38 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Replication website</h1>
-<h4 class="author">Thijmen jeroense</h4>
-<h4 class="date">Last updated on 2024-11-01</h4>
+<h1 class="title toc-ignore"><strong>Replication Website</strong></h1>
+<h4 class="author">Thijmen Jeroense</h4>
+<h4 class="date">Last compiled on 14 november, 2024</h4>
 
 </div>
 
 
-<div id="read-me" class="section level1">
-<h1>Read me</h1>
-<p>Replication website for publication:</p>
-<p>Jeroense, T., Spierings, N. &amp; Tolsma, J. (Forthcoming). How the
-educational level of confidants impacts our political attitudes?
-<em>European Sociological Review.</em> DOI: 10.1093/esr/jcae041</p>
-<p>Work in progress. Soon the replication website will be uploaded. In
-the meantime, please contact <a href="mailto:t.m.g.jeroense@rug.nl"
-class="email">t.m.g.jeroense@rug.nl</a> for any questions.</p>
+<p><br></p>
+<div id="about-this-website" class="section level3">
+<h3>About this website</h3>
+<p>This is the replication website of the research article “How the
+educational level of confidants impacts our political attitudes?”</p>
+<p>On this website we have stored all the individual R files for
+recreating the dataset from the LISS core module files, recreating the
+analyses, and the robustness analyses. You can use the navigation bar to
+access these individual files.</p>
+<p><br></p>
+</div>
+<div id="data-availability" class="section level3">
+<h3>Data availability</h3>
+<p>We use the LISS core modules which are accessible after registration
+at <a
+href="https://www.dataarchive.lissdata.nl/">https://www.dataarchive.lissdata.nl/</a>.
+The confidant IDs that we used are not publicly available, please
+contact the corresponding author for data access.</p>
+<p><br></p>
+</div>
+<div id="contact-information" class="section level3">
+<h3>Contact information</h3>
+<p>If you have any questions about the article please contact the
+corresponding author. Email: <a href="mailto:t.m.g.jeroense@rug.nl"
+class="email">t.m.g.jeroense@rug.nl</a></p>
 </div>
 
 <style>

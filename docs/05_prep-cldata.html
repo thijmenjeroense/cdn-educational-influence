@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Thijmen Jeroense" />
+
+
+<title>Prepare CL dataset</title>
+
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/simplex.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.2.1/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.2.1/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Replication Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-info"></span>
+     
+    About
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="far fa-file-code"></span>
+     
+    Data preperation
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01_merging-liss.html">1 Merging LISS core module</a>
+    </li>
+    <li>
+      <a href="02_dataprep-liss.html">2 Data prep LISS core modules</a>
+    </li>
+    <li>
+      <a href="03_alter-relations.html">3 Confidant relations</a>
+    </li>
+    <li>
+      <a href="04_clean-alters.html">4 Clean confidant data</a>
+    </li>
+    <li>
+      <a href="05_prep-cldata.html">5 Prepare Cross Lagged data</a>
+    </li>
+    <li>
+      <a href="06_prep-riclpm-data.html">6 Prepare RI-CLPM data</a>
+    </li>
+    <li>
+      <a href="07_bias-corrected-means.html">7 Bias corrected means</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-bar-chart"></span>
+     
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="10_descriptive-statistics.html">1 Descriptive statistics</a>
+    </li>
+    <li>
+      <a href="08_analysis-riclpm.html">2 Main RICLPM results</a>
+    </li>
+    <li>
+      <a href="09_moderation-analysis-riclpm.html">3 Moderation analysis</a>
+    </li>
+    <li>
+      <a href="14_results-plots.html">4 Plots and Tables</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-shield"></span>
+     
+    Robustness
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="13_robustness-model-specifications.html">1 Sensitivity to model specifications</a>
+    </li>
+    <li>
+      <a href="11_robustness-nosibling-education.html">2 Sensitivity to sibling inclusion and education transformation</a>
+    </li>
+    <li>
+      <a href="12_robustness-confounders.html">3 Sensitivity to time varying confounders</a>
+    </li>
+    <li>
+      <a href="14_robustness-changes-cdn-education.html">4 Analysis of changes in mean CDN educational attainment</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/thijmenjeroense/cdn-educational-influence">
+    <span class="fab fa-github"></span>
+     
+    Github
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+<li role="separator" class="divider"></li>
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Prepare CL dataset</h1>
+<h4 class="author">Thijmen Jeroense</h4>
+<h4 class="date">Last compiled on 14 november, 2024</h4>
+
+</div>
+
+
+<div id="goal" class="section level1">
+<h1>Goal</h1>
+<p>Prepare Cross-Lagged data for the RICLPM.</p>
+</div>
+<div id="set-up" class="section level1">
+<h1>Set up</h1>
+<div id="packages-and-data-import" class="section level2">
+<h2>Packages and Data import</h2>
+<pre class="r"><code>#load packages
+library(tidyverse)
+
+#disable the scientific notation in R (else all the id&#39;s will be in scientific notation)
+options(scipen = 999)
+
+#data import
+load(&quot;data/data-processed/liss_merged/lisscdn_cleaned_V4_240624.Rdata&quot;)</code></pre>
+</div>
+</div>
+<div id="remove-non-participants" class="section level1">
+<h1>Remove non-participants</h1>
+<pre class="r"><code>#first we need to create a dataset in which we deleted observations that did not participate in a survey. 
+#count function. 
+nafinder &lt;- function(x) {
+  number_na &lt;- sum(is.na(x))
+  return(number_na)
+}
+#count na&#39;s per observation.
+liss_long$number_na &lt;- apply(liss_long, 1, nafinder)
+table(liss_long$number_na)</code></pre>
+<pre><code>0     1     2     3     4     5     6     7     8     9    10    11    12 </code></pre>
+<p>276 615 708 719 638 884 1228 1355 1333 1135 944 709 509 13 14 15 16
+17 18 19 20 21 22 23 24 25 364 226 153 254 343 436 327 296 449 607 667
+641 498 26 27 28 29 30 31 32 33 34 35 36 37 38 448 317 201 142 103 295
+406 400 417 308 699 1007 1096 39 40 41 42 43 44 45 46 47 48 49 50 51
+1017 862 736 513 340 246 305 285 262 192 151 587 851 52 53 54 55 56 57
+58 59 60 61 62 63 64 987 828 705 486 278 213 150 124 106 64 39 729 993
+65 66 67 68 69 70 71 72 73 74 75 76 77 930 970 649 380 220 178 179 144
+149 102 1635 1877 2032 78 79 80 81 82 83 84 85 86 87 88 89 90 1746 987
+723 373 256 163 152 159 129 96 64 42 18 91 92 93 94 95 96 97 98 99 100
+101 102 103 15 9 13 9 8 1 101 200 199 149 106 65 19 104 105 106 107 108
+109 110 111 112 113 114 115 116 18 3 17 13 23 225 3603 4483 2813 1562
+562 243 2 119 120 121 122 130 131 132 9 19 8 10 1 23 54031</p>
+<pre class="r"><code>#first let&#39;s delete observations that have 126 missings on the 128 variables.
+liss_long_na_selection &lt;- liss_long %&gt;% 
+  filter(number_na &lt; 132) %&gt;% 
+  mutate(survey_wave = as.numeric(survey_wave)) %&gt;% 
+  arrange(nomem_encr, survey_wave)
+
+data_long &lt;- liss_long_na_selection</code></pre>
+<div id="age-selection" class="section level2">
+<h2>Age selection</h2>
+<p>Age seleciton for ego’s. Selection = Older than 24 years old.</p>
+<pre class="r"><code>#from 10,647 to 8650. So we lose 2000 respondents in this way
+age_test &lt;- data_long %&gt;%
+  group_by(nomem_encr) %&gt;%
+  top_n(-1, survey_wave) %&gt;%
+  filter(leeftijd &gt; 24) %&gt;%
+  pull(nomem_encr)
+
+#select those respondents who are older than 25. 
+data_long &lt;- data_long %&gt;% 
+  filter(nomem_encr %in% age_test)
+
+#reset to tbl to df.
+data_long &lt;- data.frame(data_long)</code></pre>
+</div>
+</div>
+<div id="variable-and-data-selection" class="section level1">
+<h1>Variable and data selection</h1>
+<pre class="r"><code>#select variables
+#select the variables that I want for the analysis.
+data_long &lt;-
+  data_long[, c(
+    &quot;nomem_encr&quot;,
+    &quot;oplmet&quot;,
+    &quot;leeftijd&quot;,
+    &quot;nettoink&quot;,
+    &quot;geslacht&quot;,
+    &quot;origin&quot;,
+    &quot;sted&quot;,
+    &quot;burgstat&quot;,
+    &quot;belbezig&quot;,
+    &quot;origin_alter1&quot;,
+    &quot;origin_alter2&quot;,
+    &quot;origin_alter3&quot;,
+    &quot;origin_alter4&quot;,
+    &quot;origin_alter5&quot;,
+    &quot;rel_alter1&quot;,
+    &quot;rel_alter2&quot;,
+    &quot;rel_alter3&quot;,
+    &quot;rel_alter4&quot;,
+    &quot;rel_alter5&quot;,
+    &quot;educ_alter1&quot;,
+    &quot;educ_alter2&quot;,
+    &quot;educ_alter3&quot;,
+    &quot;educ_alter4&quot;,
+    &quot;educ_alter5&quot;,
+    &quot;poltalk_alter1&quot;,
+    &quot;poltalk_alter2&quot;,
+    &quot;poltalk_alter3&quot;,
+    &quot;poltalk_alter4&quot;,
+    &quot;poltalk_alter5&quot;,
+    &quot;talk_alter1&quot;,
+    &quot;talk_alter2&quot;,
+    &quot;talk_alter3&quot;,
+    &quot;talk_alter4&quot;,
+    &quot;talk_alter5&quot;,
+    &quot;gender_alter1&quot;,
+    &quot;gender_alter2&quot;,
+    &quot;gender_alter3&quot;,
+    &quot;gender_alter4&quot;,
+    &quot;gender_alter5&quot;,
+    &quot;rl_alter1&quot;,
+    &quot;rl_alter2&quot;,
+    &quot;rl_alter3&quot;,
+    &quot;rl_alter4&quot;,
+    &quot;rl_alter5&quot;,
+    &quot;age_alter1&quot;,
+    &quot;age_alter2&quot;,
+    &quot;age_alter3&quot;,
+    &quot;age_alter4&quot;,
+    &quot;age_alter5&quot;,
+    &quot;survey_wave&quot;,
+    &quot;alter_id_1&quot;,
+    &quot;alter_id_2&quot;,
+    &quot;alter_id_3&quot;,
+    &quot;alter_id_4&quot;,
+    &quot;alter_id_5&quot;,
+    &quot;immigrants&quot;,
+    &quot;eu_integration&quot;,
+    &quot;income_diff&quot;,
+    &quot;work_a1&quot;,
+    &quot;work_a2&quot;,
+    &quot;work_a3&quot;,
+    &quot;work_a4&quot;,
+    &quot;work_a5&quot;,
+    &quot;length_1&quot;,
+    &quot;length_2&quot;,
+    &quot;length_3&quot;,
+    &quot;length_4&quot;,
+    &quot;length_5&quot;
+  )]
+
+#rename the variables so they are not longer than 8 characters.(else I wont be able to distinguish them in Mplus)
+names(data_long) &lt;-
+  c(
+    &quot;nomem_encr&quot;,
+    &quot;educ&quot;,
+    &quot;age&quot;,
+    &quot;inc_ln&quot;,
+    &quot;gender&quot;,
+    &quot;origin&quot;,
+    &quot;urban&quot;,
+    &quot;burgstat&quot;,
+    &quot;belbezig&quot;,
+    &quot;orig_a.1&quot;,
+    &quot;orig_a.2&quot;,
+    &quot;orig_a.3&quot;,
+    &quot;orig_a.4&quot;,
+    &quot;orig_a.5&quot;,
+    &quot;rel_a.1&quot;,
+    &quot;rel_a.2&quot;,
+    &quot;rel_a.3&quot;,
+    &quot;rel_a.4&quot;,
+    &quot;rel_a.5&quot;,
+    &quot;educ_a.1&quot;,
+    &quot;educ_a.2&quot;,
+    &quot;educ_a.3&quot;,
+    &quot;educ_a.4&quot;,
+    &quot;educ_a.5&quot;,
+    &quot;poltalk_a.1&quot;,
+    &quot;poltalk_a.2&quot;,
+    &quot;poltalk_a.3&quot;,
+    &quot;poltalk_a.4&quot;,
+    &quot;poltalk_a.5&quot;,
+    &quot;talk_a.1&quot;,
+    &quot;talk_a.2&quot;,
+    &quot;talk_a.3&quot;,
+    &quot;talk_a.4&quot;,
+    &quot;talk_a.5&quot;,
+    &quot;g_a.1&quot;,
+    &quot;g_a.2&quot;,
+    &quot;g_a.3&quot;,
+    &quot;g_a.4&quot;,
+    &quot;g_a.5&quot;,
+    &quot;rl_a.1&quot;,
+    &quot;rl_a.2&quot;,
+    &quot;rl_a.3&quot;,
+    &quot;rl_a.4&quot;,
+    &quot;rl_a.5&quot;,
+    &quot;age_a.1&quot;,
+    &quot;age_a.2&quot;,
+    &quot;age_a.3&quot;,
+    &quot;age_a.4&quot;,
+    &quot;age_a.5&quot;,
+    &quot;wave&quot;,
+    &quot;alter_id.1&quot;,
+    &quot;alter_id.2&quot;,
+    &quot;alter_id.3&quot;,
+    &quot;alter_id.4&quot;,
+    &quot;alter_id.5&quot;,
+    &quot;cult_inc&quot;,
+    &quot;eu&quot;,
+    &quot;inc_diff&quot;,
+    &quot;work_a.1&quot;,
+    &quot;work_a.2&quot;,
+    &quot;work_a.3&quot;,
+    &quot;work_a.4&quot;,
+    &quot;work_a.5&quot;,
+    &quot;length_a.1&quot;,
+    &quot;length_a.2&quot;,
+    &quot;length_a.3&quot;,
+    &quot;length_a.4&quot;,
+    &quot;length_a.5&quot;
+  )
+
+
+#keep only the dfs that I need
+rm(list = ls()[!ls() %in% c(&quot;data_long&quot;,
+                            &quot;liss_long&quot;,
+                            &quot;liss_wide&quot;,
+                            &quot;sample&quot;,
+                            &quot;sample_notchosen&quot;)])</code></pre>
+</div>
+<div id="export-data" class="section level1">
+<h1>Export data</h1>
+<pre class="r"><code>#save data
+save.image(&quot;data/data-processed/lisscdn_cl-ready_240816.Rdata&quot;)</code></pre>
+</div>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlByZXBhcmUgQ0wgZGF0YXNldCINCmF1dGhvcjogIlRoaWptZW4gSmVyb2Vuc2UiDQpkYXRlOiAiTGFzdCBjb21waWxlZCBvbiBgciBmb3JtYXQoU3lzLnRpbWUoKSwgJyVkICVCLCAlWScpYCINCm91dHB1dDoNCiAgaHRtbF9kb2N1bWVudDoNCiAgICB0b2M6IFRSVUUNCiAgICB0b2NfZGVwdGg6IDMNCiAgICB0b2NfZmxvYXQ6IFRSVUUNCiAgICBjb2RlX2ZvbGRpbmc6IHNob3cNCiAgICBjb2RlX2Rvd25sb2FkOiBUUlVFDQotLS0NCg0KYGBge3Igc2V0dXAsIGluY2x1ZGU9RkFMU0V9DQprbml0cjo6b3B0c19jaHVuayRzZXQoDQogIGNhY2hlID0gVFJVRSwNCiAgbWVzc2FnZSA9IEZBTFNFLA0KICB3YXJuaW5nID0gRkFMU0UsDQogIHJlc3VsdHMgPSAiYXNpcyIsDQogIGZpZy5hbGlnbiA9ICJjZW50ZXIiDQopDQpgYGANCg0KIyBHb2FsDQoNClByZXBhcmUgQ3Jvc3MtTGFnZ2VkIGRhdGEgZm9yIHRoZSBSSUNMUE0uDQoNCiMgU2V0IHVwDQoNCiMjIFBhY2thZ2VzIGFuZCBEYXRhIGltcG9ydA0KDQpgYGB7ciBwYWNrYWdlc30NCiNsb2FkIHBhY2thZ2VzDQpsaWJyYXJ5KHRpZHl2ZXJzZSkNCg0KI2Rpc2FibGUgdGhlIHNjaWVudGlmaWMgbm90YXRpb24gaW4gUiAoZWxzZSBhbGwgdGhlIGlkJ3Mgd2lsbCBiZSBpbiBzY2llbnRpZmljIG5vdGF0aW9uKQ0Kb3B0aW9ucyhzY2lwZW4gPSA5OTkpDQoNCiNkYXRhIGltcG9ydA0KbG9hZCgiZGF0YS9kYXRhLXByb2Nlc3NlZC9saXNzX21lcmdlZC9saXNzY2RuX2NsZWFuZWRfVjRfMjQwNjI0LlJkYXRhIikNCmBgYA0KDQojIFJlbW92ZSBub24tcGFydGljaXBhbnRzDQoNCmBgYHtyIGZpbHRlciBuYX0NCiNmaXJzdCB3ZSBuZWVkIHRvIGNyZWF0ZSBhIGRhdGFzZXQgaW4gd2hpY2ggd2UgZGVsZXRlZCBvYnNlcnZhdGlvbnMgdGhhdCBkaWQgbm90IHBhcnRpY2lwYXRlIGluIGEgc3VydmV5LiANCiNjb3VudCBmdW5jdGlvbi4gDQpuYWZpbmRlciA8LSBmdW5jdGlvbih4KSB7DQogIG51bWJlcl9uYSA8LSBzdW0oaXMubmEoeCkpDQogIHJldHVybihudW1iZXJfbmEpDQp9DQojY291bnQgbmEncyBwZXIgb2JzZXJ2YXRpb24uDQpsaXNzX2xvbmckbnVtYmVyX25hIDwtIGFwcGx5KGxpc3NfbG9uZywgMSwgbmFmaW5kZXIpDQp0YWJsZShsaXNzX2xvbmckbnVtYmVyX25hKQ0KDQojZmlyc3QgbGV0J3MgZGVsZXRlIG9ic2VydmF0aW9ucyB0aGF0IGhhdmUgMTI2IG1pc3NpbmdzIG9uIHRoZSAxMjggdmFyaWFibGVzLg0KbGlzc19sb25nX25hX3NlbGVjdGlvbiA8LSBsaXNzX2xvbmcgJT4lIA0KICBmaWx0ZXIobnVtYmVyX25hIDwgMTMyKSAlPiUgDQogIG11dGF0ZShzdXJ2ZXlfd2F2ZSA9IGFzLm51bWVyaWMoc3VydmV5X3dhdmUpKSAlPiUgDQogIGFycmFuZ2Uobm9tZW1fZW5jciwgc3VydmV5X3dhdmUpDQoNCmRhdGFfbG9uZyA8LSBsaXNzX2xvbmdfbmFfc2VsZWN0aW9uDQoNCmBgYA0KDQojIyBBZ2Ugc2VsZWN0aW9uDQpBZ2Ugc2VsZWNpdG9uIGZvciBlZ28ncy4gU2VsZWN0aW9uID0gT2xkZXIgdGhhbiAyNCB5ZWFycyBvbGQuDQpgYGB7ciBhZ2Ugc2VsZWN0aW9ufQ0KI2Zyb20gMTAsNjQ3IHRvIDg2NTAuIFNvIHdlIGxvc2UgMjAwMCByZXNwb25kZW50cyBpbiB0aGlzIHdheQ0KYWdlX3Rlc3QgPC0gZGF0YV9sb25nICU+JQ0KICBncm91cF9ieShub21lbV9lbmNyKSAlPiUNCiAgdG9wX24oLTEsIHN1cnZleV93YXZlKSAlPiUNCiAgZmlsdGVyKGxlZWZ0aWpkID4gMjQpICU+JQ0KICBwdWxsKG5vbWVtX2VuY3IpDQoNCiNzZWxlY3QgdGhvc2UgcmVzcG9uZGVudHMgd2hvIGFyZSBvbGRlciB0aGFuIDI1LiANCmRhdGFfbG9uZyA8LSBkYXRhX2xvbmcgJT4lIA0KICBmaWx0ZXIobm9tZW1fZW5jciAlaW4lIGFnZV90ZXN0KQ0KDQojcmVzZXQgdG8gdGJsIHRvIGRmLg0KZGF0YV9sb25nIDwtIGRhdGEuZnJhbWUoZGF0YV9sb25nKQ0KYGBgDQoNCiMgVmFyaWFibGUgYW5kIGRhdGEgc2VsZWN0aW9uDQoNCmBgYHtyIHZhcmlhYmxlIHNlbGVjdGlvbn0NCiNzZWxlY3QgdmFyaWFibGVzDQojc2VsZWN0IHRoZSB2YXJpYWJsZXMgdGhhdCBJIHdhbnQgZm9yIHRoZSBhbmFseXNpcy4NCmRhdGFfbG9uZyA8LQ0KICBkYXRhX2xvbmdbLCBjKA0KICAgICJub21lbV9lbmNyIiwNCiAgICAib3BsbWV0IiwNCiAgICAibGVlZnRpamQiLA0KICAgICJuZXR0b2luayIsDQogICAgImdlc2xhY2h0IiwNCiAgICAib3JpZ2luIiwNCiAgICAic3RlZCIsDQogICAgImJ1cmdzdGF0IiwNCiAgICAiYmVsYmV6aWciLA0KICAgICJvcmlnaW5fYWx0ZXIxIiwNCiAgICAib3JpZ2luX2FsdGVyMiIsDQogICAgIm9yaWdpbl9hbHRlcjMiLA0KICAgICJvcmlnaW5fYWx0ZXI0IiwNCiAgICAib3JpZ2luX2FsdGVyNSIsDQogICAgInJlbF9hbHRlcjEiLA0KICAgICJyZWxfYWx0ZXIyIiwNCiAgICAicmVsX2FsdGVyMyIsDQogICAgInJlbF9hbHRlcjQiLA0KICAgICJyZWxfYWx0ZXI1IiwNCiAgICAiZWR1Y19hbHRlcjEiLA0KICAgICJlZHVjX2FsdGVyMiIsDQogICAgImVkdWNfYWx0ZXIzIiwNCiAgICAiZWR1Y19hbHRlcjQiLA0KICAgICJlZHVjX2FsdGVyNSIsDQogICAgInBvbHRhbGtfYWx0ZXIxIiwNCiAgICAicG9sdGFsa19hbHRlcjIiLA0KICAgICJwb2x0YWxrX2FsdGVyMyIsDQogICAgInBvbHRhbGtfYWx0ZXI0IiwNCiAgICAicG9sdGFsa19hbHRlcjUiLA0KICAgICJ0YWxrX2FsdGVyMSIsDQogICAgInRhbGtfYWx0ZXIyIiwNCiAgICAidGFsa19hbHRlcjMiLA0KICAgICJ0YWxrX2FsdGVyNCIsDQogICAgInRhbGtfYWx0ZXI1IiwNCiAgICAiZ2VuZGVyX2FsdGVyMSIsDQogICAgImdlbmRlcl9hbHRlcjIiLA0KICAgICJnZW5kZXJfYWx0ZXIzIiwNCiAgICAiZ2VuZGVyX2FsdGVyNCIsDQogICAgImdlbmRlcl9hbHRlcjUiLA0KICAgICJybF9hbHRlcjEiLA0KICAgICJybF9hbHRlcjIiLA0KICAgICJybF9hbHRlcjMiLA0KICAgICJybF9hbHRlcjQiLA0KICAgICJybF9hbHRlcjUiLA0KICAgICJhZ2VfYWx0ZXIxIiwNCiAgICAiYWdlX2FsdGVyMiIsDQogICAgImFnZV9hbHRlcjMiLA0KICAgICJhZ2VfYWx0ZXI0IiwNCiAgICAiYWdlX2FsdGVyNSIsDQogICAgInN1cnZleV93YXZlIiwNCiAgICAiYWx0ZXJfaWRfMSIsDQogICAgImFsdGVyX2lkXzIiLA0KICAgICJhbHRlcl9pZF8zIiwNCiAgICAiYWx0ZXJfaWRfNCIsDQogICAgImFsdGVyX2lkXzUiLA0KICAgICJpbW1pZ3JhbnRzIiwNCiAgICAiZXVfaW50ZWdyYXRpb24iLA0KICAgICJpbmNvbWVfZGlmZiIsDQogICAgIndvcmtfYTEiLA0KICAgICJ3b3JrX2EyIiwNCiAgICAid29ya19hMyIsDQogICAgIndvcmtfYTQiLA0KICAgICJ3b3JrX2E1IiwNCiAgICAibGVuZ3RoXzEiLA0KICAgICJsZW5ndGhfMiIsDQogICAgImxlbmd0aF8zIiwNCiAgICAibGVuZ3RoXzQiLA0KICAgICJsZW5ndGhfNSINCiAgKV0NCg0KI3JlbmFtZSB0aGUgdmFyaWFibGVzIHNvIHRoZXkgYXJlIG5vdCBsb25nZXIgdGhhbiA4IGNoYXJhY3RlcnMuKGVsc2UgSSB3b250IGJlIGFibGUgdG8gZGlzdGluZ3Vpc2ggdGhlbSBpbiBNcGx1cykNCm5hbWVzKGRhdGFfbG9uZykgPC0NCiAgYygNCiAgICAibm9tZW1fZW5jciIsDQogICAgImVkdWMiLA0KICAgICJhZ2UiLA0KICAgICJpbmNfbG4iLA0KICAgICJnZW5kZXIiLA0KICAgICJvcmlnaW4iLA0KICAgICJ1cmJhbiIsDQogICAgImJ1cmdzdGF0IiwNCiAgICAiYmVsYmV6aWciLA0KICAgICJvcmlnX2EuMSIsDQogICAgIm9yaWdfYS4yIiwNCiAgICAib3JpZ19hLjMiLA0KICAgICJvcmlnX2EuNCIsDQogICAgIm9yaWdfYS41IiwNCiAgICAicmVsX2EuMSIsDQogICAgInJlbF9hLjIiLA0KICAgICJyZWxfYS4zIiwNCiAgICAicmVsX2EuNCIsDQogICAgInJlbF9hLjUiLA0KICAgICJlZHVjX2EuMSIsDQogICAgImVkdWNfYS4yIiwNCiAgICAiZWR1Y19hLjMiLA0KICAgICJlZHVjX2EuNCIsDQogICAgImVkdWNfYS41IiwNCiAgICAicG9sdGFsa19hLjEiLA0KICAgICJwb2x0YWxrX2EuMiIsDQogICAgInBvbHRhbGtfYS4zIiwNCiAgICAicG9sdGFsa19hLjQiLA0KICAgICJwb2x0YWxrX2EuNSIsDQogICAgInRhbGtfYS4xIiwNCiAgICAidGFsa19hLjIiLA0KICAgICJ0YWxrX2EuMyIsDQogICAgInRhbGtfYS40IiwNCiAgICAidGFsa19hLjUiLA0KICAgICJnX2EuMSIsDQogICAgImdfYS4yIiwNCiAgICAiZ19hLjMiLA0KICAgICJnX2EuNCIsDQogICAgImdfYS41IiwNCiAgICAicmxfYS4xIiwNCiAgICAicmxfYS4yIiwNCiAgICAicmxfYS4zIiwNCiAgICAicmxfYS40IiwNCiAgICAicmxfYS41IiwNCiAgICAiYWdlX2EuMSIsDQogICAgImFnZV9hLjIiLA0KICAgICJhZ2VfYS4zIiwNCiAgICAiYWdlX2EuNCIsDQogICAgImFnZV9hLjUiLA0KICAgICJ3YXZlIiwNCiAgICAiYWx0ZXJfaWQuMSIsDQogICAgImFsdGVyX2lkLjIiLA0KICAgICJhbHRlcl9pZC4zIiwNCiAgICAiYWx0ZXJfaWQuNCIsDQogICAgImFsdGVyX2lkLjUiLA0KICAgICJjdWx0X2luYyIsDQogICAgImV1IiwNCiAgICAiaW5jX2RpZmYiLA0KICAgICJ3b3JrX2EuMSIsDQogICAgIndvcmtfYS4yIiwNCiAgICAid29ya19hLjMiLA0KICAgICJ3b3JrX2EuNCIsDQogICAgIndvcmtfYS41IiwNCiAgICAibGVuZ3RoX2EuMSIsDQogICAgImxlbmd0aF9hLjIiLA0KICAgICJsZW5ndGhfYS4zIiwNCiAgICAibGVuZ3RoX2EuNCIsDQogICAgImxlbmd0aF9hLjUiDQogICkNCg0KDQoja2VlcCBvbmx5IHRoZSBkZnMgdGhhdCBJIG5lZWQNCnJtKGxpc3QgPSBscygpWyFscygpICVpbiUgYygiZGF0YV9sb25nIiwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAibGlzc19sb25nIiwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAibGlzc193aWRlIiwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAic2FtcGxlIiwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAic2FtcGxlX25vdGNob3NlbiIpXSkNCmBgYA0KDQoNCiMgRXhwb3J0IGRhdGENCg0KYGBge3IgZXhwb3J0IGRhdGF9DQojc2F2ZSBkYXRhDQpzYXZlLmltYWdlKCJkYXRhL2RhdGEtcHJvY2Vzc2VkL2xpc3NjZG5fY2wtcmVhZHlfMjQwODE2LlJkYXRhIikNCmBgYA==</div>
+<style>
+.center {
+  text-align: center;
+  color: black;
+}
+</style>
+
+<hr>
+<br>
+<p class="center">Copyright &copy; 2024 Jeroense Thijmen</p>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("05_prep-cldata.Rmd");
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

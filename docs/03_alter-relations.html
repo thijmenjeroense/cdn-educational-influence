@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Thijmen Jeroense" />
+
+
+<title>LISS alter relations</title>
+
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/simplex.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.2.1/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.2.1/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Replication Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-info"></span>
+     
+    About
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="far fa-file-code"></span>
+     
+    Data preperation
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01_merging-liss.html">1 Merging LISS core module</a>
+    </li>
+    <li>
+      <a href="02_dataprep-liss.html">2 Data prep LISS core modules</a>
+    </li>
+    <li>
+      <a href="03_alter-relations.html">3 Confidant relations</a>
+    </li>
+    <li>
+      <a href="04_clean-alters.html">4 Clean confidant data</a>
+    </li>
+    <li>
+      <a href="05_prep-cldata.html">5 Prepare Cross Lagged data</a>
+    </li>
+    <li>
+      <a href="06_prep-riclpm-data.html">6 Prepare RI-CLPM data</a>
+    </li>
+    <li>
+      <a href="07_bias-corrected-means.html">7 Bias corrected means</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-bar-chart"></span>
+     
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="10_descriptive-statistics.html">1 Descriptive statistics</a>
+    </li>
+    <li>
+      <a href="08_analysis-riclpm.html">2 Main RICLPM results</a>
+    </li>
+    <li>
+      <a href="09_moderation-analysis-riclpm.html">3 Moderation analysis</a>
+    </li>
+    <li>
+      <a href="14_results-plots.html">4 Plots and Tables</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-shield"></span>
+     
+    Robustness
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="13_robustness-model-specifications.html">1 Sensitivity to model specifications</a>
+    </li>
+    <li>
+      <a href="11_robustness-nosibling-education.html">2 Sensitivity to sibling inclusion and education transformation</a>
+    </li>
+    <li>
+      <a href="12_robustness-confounders.html">3 Sensitivity to time varying confounders</a>
+    </li>
+    <li>
+      <a href="14_robustness-changes-cdn-education.html">4 Analysis of changes in mean CDN educational attainment</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/thijmenjeroense/cdn-educational-influence">
+    <span class="fab fa-github"></span>
+     
+    Github
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+<li role="separator" class="divider"></li>
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">LISS alter relations</h1>
+<h4 class="author">Thijmen Jeroense</h4>
+<h4 class="date">Last compiled on 14 november, 2024</h4>
+
+</div>
+
+
+<div id="goal" class="section level1">
+<h1>Goal</h1>
+<p>Create alter relationship variable based on LISS alter ids.</p>
+</div>
+<div id="set" class="section level1">
+<h1>Set</h1>
+<div id="packages-and-data-import" class="section level2">
+<h2>Packages and data import</h2>
+<pre class="r"><code>#package
+library(tidyverse)</code></pre>
+<pre class="r"><code>#disable the scientific notation in R (else all the id&#39;s will be in scientific notation)
+options(scipen = 999)
+
+load(&quot;data/data-processed/liss_merged/liss_core_merged_V3_240624.Rdata&quot;)</code></pre>
+</div>
+<div id="data-prep" class="section level2">
+<h2>Data prep</h2>
+<pre class="r"><code>#extract the alter id variable from the lisscdn long file. 
+liss_alters &lt;- liss_long %&gt;% 
+  select(nomem_encr,
+         survey_wave,
+         starts_with(&quot;alter_id&quot;)) %&gt;% 
+  rename(alter_id.1 = alter_id_1, #replace alter sep _ with ., so we can use it in pivot
+         alter_id.2 = alter_id_2,
+         alter_id.3 = alter_id_3,
+         alter_id.4 = alter_id_4,
+         alter_id.5 = alter_id_5)
+
+#reshape a long file with observations of alter in survey and egonet. 
+alters_long &lt;- liss_alters %&gt;%
+  pivot_longer(cols = starts_with(&quot;alter_id&quot;),
+               names_to = c(&quot;names&quot;, &quot;alter&quot;),
+               values_to = &quot;alter_id&quot;,
+               names_pattern = &quot;(.+)\\.(.+)&quot;)</code></pre>
+</div>
+</div>
+<div id="variable-creation" class="section level1">
+<h1>Variable creation</h1>
+<pre class="r"><code>#group by nomem_encr and alter id and count how many times an alter is member of network
+#also calculate how many waves a member is part of the network.
+alters_long &lt;- alters_long %&gt;% 
+  group_by(nomem_encr, alter_id) %&gt;% 
+  mutate(rl_alter = ifelse(is.na(alter_id), NA, 1:n())) %&gt;%
+  ungroup()</code></pre>
+<div id="cleaning-of-data" class="section level2">
+<h2>Cleaning of data</h2>
+<pre class="r"><code>#identify duplicate alters in a survey/ego combination. I will remove them from the analysis
+duplicates &lt;- alters_long %&gt;% 
+  group_by(nomem_encr, survey_wave) %&gt;% 
+  mutate(n_alter_wave = sum(!is.na(alter_id)),
+         n_unique_alter = sum(!is.na(unique(na.omit(alter_id))))) %&gt;% 
+  ungroup() %&gt;% 
+  mutate(selection = as.numeric(n_unique_alter == n_alter_wave)) %&gt;% 
+  filter(selection == 0) %&gt;% 
+  select(nomem_encr) %&gt;% 
+  distinct() %&gt;% 
+  pull(nomem_encr)
+
+#we remove 1597 ego&#39;s from the data
+alters_long &lt;- alters_long %&gt;% 
+  filter(!nomem_encr %in% duplicates)</code></pre>
+</div>
+</div>
+<div id="data-export" class="section level1">
+<h1>Data export</h1>
+<pre class="r"><code>#reshape into long file so we can can merge with LISS wide
+alters_wide &lt;- alters_long %&gt;% 
+  select(-names, -alter_id) %&gt;% 
+  pivot_wider(id_cols = c(&quot;nomem_encr&quot;, &quot;survey_wave&quot;), #first step of pivot
+              names_from = &quot;alter&quot;,
+              names_prefix = &quot;rl_alter&quot;,
+              values_from = c(&quot;rl_alter&quot;)) %&gt;% 
+  pivot_wider(id_cols = &quot;nomem_encr&quot;, #second step of pivot
+              names_from = &quot;survey_wave&quot;,
+              values_from = 3:7,
+              names_sep = &quot;.&quot;)
+
+#merge with liss wide (inner_join)
+liss_wide &lt;- liss_wide %&gt;% 
+  inner_join(alters_wide, 
+            by = &quot;nomem_encr&quot;)
+
+#reshape data into liss_long.
+liss_long &lt;- liss_wide %&gt;%
+  pivot_longer(cols = 2:ncol(liss_wide), 
+               names_to = c(&quot;measure&quot;, &quot;survey_wave&quot;),
+               names_pattern = &quot;(.+)\\.(.+)&quot;,
+               values_to = &quot;value&quot;) %&gt;%
+  pivot_wider(names_from = measure,
+              values_from = value) %&gt;% 
+  mutate(survey_wave = as.numeric(survey_wave))
+
+#clean global environment.
+#only keep the wide and long files. 
+rm(list=ls()[! ls() %in% c(&quot;liss_wide&quot;,&quot;liss_long&quot;)])
+
+#save.image
+save.image(file = &quot;data/data-processed/liss_merged/lisscdn_afterrel_V4_240624.Rdata&quot;)</code></pre>
+</div>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkxJU1MgYWx0ZXIgcmVsYXRpb25zIg0KYXV0aG9yOiAiVGhpam1lbiBKZXJvZW5zZSINCmRhdGU6ICJMYXN0IGNvbXBpbGVkIG9uIGByIGZvcm1hdChTeXMudGltZSgpLCAnJWQgJUIsICVZJylgIg0Kb3V0cHV0Og0KICBodG1sX2RvY3VtZW50Og0KICAgIHRvYzogVFJVRQ0KICAgIHRvY19kZXB0aDogMw0KICAgIHRvY19mbG9hdDogVFJVRQ0KICAgIGNvZGVfZm9sZGluZzogc2hvdw0KICAgIGNvZGVfZG93bmxvYWQ6IFRSVUUNCi0tLQ0KDQpgYGB7ciBzZXR1cCwgaW5jbHVkZT1GQUxTRX0NCmtuaXRyOjpvcHRzX2NodW5rJHNldCgNCiAgY2FjaGUgPSBUUlVFLA0KICBtZXNzYWdlID0gRkFMU0UsDQogIHdhcm5pbmcgPSBGQUxTRSwNCiAgcmVzdWx0cyA9ICJhc2lzIiwNCiAgZmlnLmFsaWduID0gImNlbnRlciINCikNCmBgYA0KDQojIEdvYWwNCg0KQ3JlYXRlIGFsdGVyIHJlbGF0aW9uc2hpcCB2YXJpYWJsZSBiYXNlZCBvbiBMSVNTIGFsdGVyIGlkcy4gDQoNCiMgU2V0DQojIyBQYWNrYWdlcyBhbmQgZGF0YSBpbXBvcnQNCg0KYGBge3IgcGFja2FnZXN9DQojcGFja2FnZQ0KbGlicmFyeSh0aWR5dmVyc2UpDQpgYGANCg0KYGBge3IgZGF0YSBpbXBvcnR9DQojZGlzYWJsZSB0aGUgc2NpZW50aWZpYyBub3RhdGlvbiBpbiBSIChlbHNlIGFsbCB0aGUgaWQncyB3aWxsIGJlIGluIHNjaWVudGlmaWMgbm90YXRpb24pDQpvcHRpb25zKHNjaXBlbiA9IDk5OSkNCg0KbG9hZCgiZGF0YS9kYXRhLXByb2Nlc3NlZC9saXNzX21lcmdlZC9saXNzX2NvcmVfbWVyZ2VkX1YzXzI0MDYyNC5SZGF0YSIpDQpgYGANCg0KIyMgRGF0YSBwcmVwDQoNCmBgYHtyIGV4dHJhY3QgdmFyaWFibGUgYW5kIGRhdGFwcmVwfQ0KI2V4dHJhY3QgdGhlIGFsdGVyIGlkIHZhcmlhYmxlIGZyb20gdGhlIGxpc3NjZG4gbG9uZyBmaWxlLiANCmxpc3NfYWx0ZXJzIDwtIGxpc3NfbG9uZyAlPiUgDQogIHNlbGVjdChub21lbV9lbmNyLA0KICAgICAgICAgc3VydmV5X3dhdmUsDQogICAgICAgICBzdGFydHNfd2l0aCgiYWx0ZXJfaWQiKSkgJT4lIA0KICByZW5hbWUoYWx0ZXJfaWQuMSA9IGFsdGVyX2lkXzEsICNyZXBsYWNlIGFsdGVyIHNlcCBfIHdpdGggLiwgc28gd2UgY2FuIHVzZSBpdCBpbiBwaXZvdA0KICAgICAgICAgYWx0ZXJfaWQuMiA9IGFsdGVyX2lkXzIsDQogICAgICAgICBhbHRlcl9pZC4zID0gYWx0ZXJfaWRfMywNCiAgICAgICAgIGFsdGVyX2lkLjQgPSBhbHRlcl9pZF80LA0KICAgICAgICAgYWx0ZXJfaWQuNSA9IGFsdGVyX2lkXzUpDQoNCiNyZXNoYXBlIGEgbG9uZyBmaWxlIHdpdGggb2JzZXJ2YXRpb25zIG9mIGFsdGVyIGluIHN1cnZleSBhbmQgZWdvbmV0LiANCmFsdGVyc19sb25nIDwtIGxpc3NfYWx0ZXJzICU+JQ0KICBwaXZvdF9sb25nZXIoY29scyA9IHN0YXJ0c193aXRoKCJhbHRlcl9pZCIpLA0KICAgICAgICAgICAgICAgbmFtZXNfdG8gPSBjKCJuYW1lcyIsICJhbHRlciIpLA0KICAgICAgICAgICAgICAgdmFsdWVzX3RvID0gImFsdGVyX2lkIiwNCiAgICAgICAgICAgICAgIG5hbWVzX3BhdHRlcm4gPSAiKC4rKVxcLiguKykiKQ0KDQpgYGANCg0KIyBWYXJpYWJsZSBjcmVhdGlvbg0KDQpgYGB7ciB2YXJpYWJsZSBjcmVhdGlvbn0NCiNncm91cCBieSBub21lbV9lbmNyIGFuZCBhbHRlciBpZCBhbmQgY291bnQgaG93IG1hbnkgdGltZXMgYW4gYWx0ZXIgaXMgbWVtYmVyIG9mIG5ldHdvcmsNCiNhbHNvIGNhbGN1bGF0ZSBob3cgbWFueSB3YXZlcyBhIG1lbWJlciBpcyBwYXJ0IG9mIHRoZSBuZXR3b3JrLg0KYWx0ZXJzX2xvbmcgPC0gYWx0ZXJzX2xvbmcgJT4lIA0KICBncm91cF9ieShub21lbV9lbmNyLCBhbHRlcl9pZCkgJT4lIA0KICBtdXRhdGUocmxfYWx0ZXIgPSBpZmVsc2UoaXMubmEoYWx0ZXJfaWQpLCBOQSwgMTpuKCkpKSAlPiUNCiAgdW5ncm91cCgpDQoNCg0KYGBgDQoNCiMjIENsZWFuaW5nIG9mIGRhdGEgDQoNCmBgYHtyIGNsZWFuIGRhdGF9DQojaWRlbnRpZnkgZHVwbGljYXRlIGFsdGVycyBpbiBhIHN1cnZleS9lZ28gY29tYmluYXRpb24uIEkgd2lsbCByZW1vdmUgdGhlbSBmcm9tIHRoZSBhbmFseXNpcw0KZHVwbGljYXRlcyA8LSBhbHRlcnNfbG9uZyAlPiUgDQogIGdyb3VwX2J5KG5vbWVtX2VuY3IsIHN1cnZleV93YXZlKSAlPiUgDQogIG11dGF0ZShuX2FsdGVyX3dhdmUgPSBzdW0oIWlzLm5hKGFsdGVyX2lkKSksDQogICAgICAgICBuX3VuaXF1ZV9hbHRlciA9IHN1bSghaXMubmEodW5pcXVlKG5hLm9taXQoYWx0ZXJfaWQpKSkpKSAlPiUgDQogIHVuZ3JvdXAoKSAlPiUgDQogIG11dGF0ZShzZWxlY3Rpb24gPSBhcy5udW1lcmljKG5fdW5pcXVlX2FsdGVyID09IG5fYWx0ZXJfd2F2ZSkpICU+JSANCiAgZmlsdGVyKHNlbGVjdGlvbiA9PSAwKSAlPiUgDQogIHNlbGVjdChub21lbV9lbmNyKSAlPiUgDQogIGRpc3RpbmN0KCkgJT4lIA0KICBwdWxsKG5vbWVtX2VuY3IpDQoNCiN3ZSByZW1vdmUgMTU5NyBlZ28ncyBmcm9tIHRoZSBkYXRhDQphbHRlcnNfbG9uZyA8LSBhbHRlcnNfbG9uZyAlPiUgDQogIGZpbHRlcighbm9tZW1fZW5jciAlaW4lIGR1cGxpY2F0ZXMpDQpgYGANCg0KIyBEYXRhIGV4cG9ydA0KDQpgYGB7ciBkYXRhIGV4cG9ydH0NCiNyZXNoYXBlIGludG8gbG9uZyBmaWxlIHNvIHdlIGNhbiBjYW4gbWVyZ2Ugd2l0aCBMSVNTIHdpZGUNCmFsdGVyc193aWRlIDwtIGFsdGVyc19sb25nICU+JSANCiAgc2VsZWN0KC1uYW1lcywgLWFsdGVyX2lkKSAlPiUgDQogIHBpdm90X3dpZGVyKGlkX2NvbHMgPSBjKCJub21lbV9lbmNyIiwgInN1cnZleV93YXZlIiksICNmaXJzdCBzdGVwIG9mIHBpdm90DQogICAgICAgICAgICAgIG5hbWVzX2Zyb20gPSAiYWx0ZXIiLA0KICAgICAgICAgICAgICBuYW1lc19wcmVmaXggPSAicmxfYWx0ZXIiLA0KICAgICAgICAgICAgICB2YWx1ZXNfZnJvbSA9IGMoInJsX2FsdGVyIikpICU+JSANCiAgcGl2b3Rfd2lkZXIoaWRfY29scyA9ICJub21lbV9lbmNyIiwgI3NlY29uZCBzdGVwIG9mIHBpdm90DQogICAgICAgICAgICAgIG5hbWVzX2Zyb20gPSAic3VydmV5X3dhdmUiLA0KICAgICAgICAgICAgICB2YWx1ZXNfZnJvbSA9IDM6NywNCiAgICAgICAgICAgICAgbmFtZXNfc2VwID0gIi4iKQ0KDQojbWVyZ2Ugd2l0aCBsaXNzIHdpZGUgKGlubmVyX2pvaW4pDQpsaXNzX3dpZGUgPC0gbGlzc193aWRlICU+JSANCiAgaW5uZXJfam9pbihhbHRlcnNfd2lkZSwgDQogICAgICAgICAgICBieSA9ICJub21lbV9lbmNyIikNCg0KI3Jlc2hhcGUgZGF0YSBpbnRvIGxpc3NfbG9uZy4NCmxpc3NfbG9uZyA8LSBsaXNzX3dpZGUgJT4lDQogIHBpdm90X2xvbmdlcihjb2xzID0gMjpuY29sKGxpc3Nfd2lkZSksIA0KICAgICAgICAgICAgICAgbmFtZXNfdG8gPSBjKCJtZWFzdXJlIiwgInN1cnZleV93YXZlIiksDQogICAgICAgICAgICAgICBuYW1lc19wYXR0ZXJuID0gIiguKylcXC4oLispIiwNCiAgICAgICAgICAgICAgIHZhbHVlc190byA9ICJ2YWx1ZSIpICU+JQ0KICBwaXZvdF93aWRlcihuYW1lc19mcm9tID0gbWVhc3VyZSwNCiAgICAgICAgICAgICAgdmFsdWVzX2Zyb20gPSB2YWx1ZSkgJT4lIA0KICBtdXRhdGUoc3VydmV5X3dhdmUgPSBhcy5udW1lcmljKHN1cnZleV93YXZlKSkNCg0KI2NsZWFuIGdsb2JhbCBlbnZpcm9ubWVudC4NCiNvbmx5IGtlZXAgdGhlIHdpZGUgYW5kIGxvbmcgZmlsZXMuIA0Kcm0obGlzdD1scygpWyEgbHMoKSAlaW4lIGMoImxpc3Nfd2lkZSIsImxpc3NfbG9uZyIpXSkNCg0KI3NhdmUuaW1hZ2UNCnNhdmUuaW1hZ2UoZmlsZSA9ICJkYXRhL2RhdGEtcHJvY2Vzc2VkL2xpc3NfbWVyZ2VkL2xpc3NjZG5fYWZ0ZXJyZWxfVjRfMjQwNjI0LlJkYXRhIikNCg0KYGBgDQoNCg0KDQoNCg==</div>
+<style>
+.center {
+  text-align: center;
+  color: black;
+}
+</style>
+
+<hr>
+<br>
+<p class="center">Copyright &copy; 2024 Jeroense Thijmen</p>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("03_alter-relations.Rmd");
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,3297 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Thijmen Jeroense" />
+
+
+<title>Preperation of LISS data</title>
+
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/simplex.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.2.1/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.2.1/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Replication Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-info"></span>
+     
+    About
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="far fa-file-code"></span>
+     
+    Data preperation
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01_merging-liss.html">1 Merging LISS core module</a>
+    </li>
+    <li>
+      <a href="02_dataprep-liss.html">2 Data prep LISS core modules</a>
+    </li>
+    <li>
+      <a href="03_alter-relations.html">3 Confidant relations</a>
+    </li>
+    <li>
+      <a href="04_clean-alters.html">4 Clean confidant data</a>
+    </li>
+    <li>
+      <a href="05_prep-cldata.html">5 Prepare Cross Lagged data</a>
+    </li>
+    <li>
+      <a href="06_prep-riclpm-data.html">6 Prepare RI-CLPM data</a>
+    </li>
+    <li>
+      <a href="07_bias-corrected-means.html">7 Bias corrected means</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-bar-chart"></span>
+     
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="10_descriptive-statistics.html">1 Descriptive statistics</a>
+    </li>
+    <li>
+      <a href="08_analysis-riclpm.html">2 Main RICLPM results</a>
+    </li>
+    <li>
+      <a href="09_moderation-analysis-riclpm.html">3 Moderation analysis</a>
+    </li>
+    <li>
+      <a href="14_results-plots.html">4 Plots and Tables</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-shield"></span>
+     
+    Robustness
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="13_robustness-model-specifications.html">1 Sensitivity to model specifications</a>
+    </li>
+    <li>
+      <a href="11_robustness-nosibling-education.html">2 Sensitivity to sibling inclusion and education transformation</a>
+    </li>
+    <li>
+      <a href="12_robustness-confounders.html">3 Sensitivity to time varying confounders</a>
+    </li>
+    <li>
+      <a href="14_robustness-changes-cdn-education.html">4 Analysis of changes in mean CDN educational attainment</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/thijmenjeroense/cdn-educational-influence">
+    <span class="fab fa-github"></span>
+     
+    Github
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+<li role="separator" class="divider"></li>
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Preperation of LISS data</h1>
+<h4 class="author">Thijmen Jeroense</h4>
+<h4 class="date">Last compiled on 14 november, 2024</h4>
+
+</div>
+
+
+<div id="goal" class="section level1">
+<h1>Goal</h1>
+</div>
+<div id="set-up" class="section level1">
+<h1>Set up</h1>
+<pre class="r"><code>#load packages
+library(dplyr)
+library(purrr)
+library(tidyr)
+library(tidyselect)
+library(haven)
+library(magrittr)</code></pre>
+<p>Import the merged datafiles</p>
+<pre class="r"><code>load(file = file.path(&quot;data&quot;,
+          &quot;data-processed&quot;,
+          &quot;liss_merged&quot;,
+       &quot;liss_merged_raw.Rdata&quot;))</code></pre>
+</div>
+<div id="filter-participated-in-liss-module" class="section level1">
+<h1>Filter (participated in LISS module)</h1>
+<p>We can use the month of datacollection to see whether someone has
+participated in a specific year/module combination if someone has an an
+NA they did not participate in it. To surmise, we want people who
+participated in the CDN module and also in the politics and values
+waves.</p>
+<pre class="r"><code># Let&#39;s create a filter of people who participated in at least one of these.
+
+#first create a leisure and integration NA variable.
+#first create a subset of the data, so we can use rowwise to create a selection id.
+subset1 &lt;- liss %&gt;%
+  rowwise() %&gt;%
+  #create filter variable
+  mutate(na_lei_int = sum(is.na(
+    c(
+      cs08a_m,
+      cs09b_m,
+      cs10c_m,
+      cs11d_m,
+      cs12e_m,
+      cs13f_m,
+      cs14g_m,
+      cs15h_m,
+      cs16i_m,
+      cs17j_m,
+      cs18k_m
+    )
+  ))) %&gt;%
+  #use only the observations that have participated in at least one wave of the leisure and integration data. We can of course change this later on.
+  filter(na_lei_int &lt; 11) %&gt;%
+  ungroup()
+
+#we go from 25306 cases to 14473 cases.
+
+#second create a pol val NA variable.
+#filter out respondents who did not participate in any of the 11 waves.
+liss_subset &lt;- subset1 %&gt;%
+  rowwise() %&gt;%
+  mutate(na_pol_val = sum(is.na(
+    c(
+      cv08a_m,
+      cv09b_m,
+      cv10c_m,
+      cv11d_m,
+      cv12e_m,
+      cv13f_m,
+      cv14g_m,
+      cv17i_m,
+      cv18j_m1,
+      cv18j_m2,
+      cv18j_m3,
+      cv19k_m1,
+      cv19k_m2,
+      cv19k_m3
+    )
+  ))) %&gt;%
+  filter(na_pol_val &lt; 14) %&gt;% #now it is 14, due the weird coding in 18/19.
+  ungroup()
+
+#we go from 14473 cases to 13273 cases. We will work with this liss_subset dataframe. </code></pre>
+</div>
+<div id="variable-selection" class="section level1">
+<h1>Variable selection</h1>
+<p>Goal: create subset of all the data that I want for every wave. Then
+we can make a new file where we only have the selected variables that we
+need for our analyses.</p>
+<div id="politics-and-values" class="section level2">
+<h2>Politics and Values</h2>
+<pre class="r"><code>#liss politics variables that I need
+liss_pol &lt;- liss_subset %&gt;%
+  select(
+    nomem_encr,
+    cv08a012,
+    cv08a047,
+    cv08a048,
+    cv08a049,
+    cv08a050,
+    cv08a051,
+    cv08a052,
+    cv08a058,
+    cv08a101,
+    cv08a102,
+    cv08a103,
+    cv08a104,
+    cv08a105,
+    cv08a001,
+    cv08a044,
+    cv08a014,
+    cv08a106,
+    cv08a107,
+    cv08a108,
+    cv08a109,
+    cv08a110,
+    cv08a111,
+    cv08a112,
+    cv08a113,
+    cv08a114,
+    cv08a115,
+    cv08a116,
+    cv08a117,
+    cv08a118,
+    cv08a119,
+    cv08a120,
+    cv08a121,
+    cv08a122,
+    cv08a123,
+    cv09b012,
+    cv09b047,
+    cv09b048,
+    cv09b049,
+    cv09b050,
+    cv09b051,
+    cv09b052,
+    cv09b058,
+    cv09b101,
+    cv09b102,
+    cv09b103,
+    cv09b104,
+    cv09b105,
+    cv09b001,
+    cv09b044,
+    cv09b014,
+    cv09b106,
+    cv09b107,
+    cv09b108,
+    cv09b109,
+    cv09b110,
+    cv09b111,
+    cv09b112,
+    cv09b113,
+    cv09b114,
+    cv09b115,
+    cv09b116,
+    cv09b117,
+    cv09b118,
+    cv09b119,
+    cv09b120,
+    cv09b121,
+    cv09b122,
+    cv09b123,
+    cv10c012,
+    cv10c047,
+    cv10c048,
+    cv10c049,
+    cv10c050,
+    cv10c051,
+    cv10c052,
+    cv10c058,
+    cv10c101,
+    cv10c102,
+    cv10c103,
+    cv10c104,
+    cv10c105,
+    cv10c001,
+    cv10c044,
+    cv10c014,
+    cv10c106,
+    cv10c107,
+    cv10c108,
+    cv10c109,
+    cv10c110,
+    cv10c111,
+    cv10c112,
+    cv10c113,
+    cv10c114,
+    cv10c115,
+    cv10c116,
+    cv10c117,
+    cv10c118,
+    cv10c119,
+    cv10c120,
+    cv10c121,
+    cv10c122,
+    cv10c123,
+    cv11d012,
+    cv11d047,
+    cv11d048,
+    cv11d049,
+    cv11d050,
+    cv11d051,
+    cv11d052,
+    cv11d171,
+    cv11d101,
+    cv11d102,
+    cv11d103,
+    cv11d104,
+    cv11d105,
+    cv11d001,
+    cv11d044,
+    cv11d014,
+    cv11d106,
+    cv11d107,
+    cv11d108,
+    cv11d109,
+    cv11d110,
+    cv11d111,
+    cv11d112,
+    cv11d113,
+    cv11d114,
+    cv11d115,
+    cv11d116,
+    cv11d117,
+    cv11d118,
+    cv11d119,
+    cv11d120,
+    cv11d121,
+    cv11d122,
+    cv11d123,
+    cv12e012,
+    cv12e047,
+    cv12e048,
+    cv12e049,
+    cv12e050,
+    cv12e051,
+    cv12e052,
+    cv12e171,
+    cv12e101,
+    cv12e102,
+    cv12e103,
+    cv12e104,
+    cv12e105,
+    cv12e001,
+    cv12e044,
+    cv12e014,
+    cv12e106,
+    cv12e107,
+    cv12e108,
+    cv12e109,
+    cv12e110,
+    cv12e111,
+    cv12e112,
+    cv12e113,
+    cv12e114,
+    cv12e115,
+    cv12e116,
+    cv12e117,
+    cv12e118,
+    cv12e119,
+    cv12e120,
+    cv12e121,
+    cv12e122,
+    cv12e123,
+    cv13f012,
+    cv13f047,
+    cv13f048,
+    cv13f049,
+    cv13f050,
+    cv13f051,
+    cv13f052,
+    cv13f209,
+    cv13f101,
+    cv13f102,
+    cv13f103,
+    cv13f104,
+    cv13f105,
+    cv13f001,
+    cv13f044,
+    cv13f014,
+    cv13f106,
+    cv13f107,
+    cv13f108,
+    cv13f109,
+    cv13f110,
+    cv13f111,
+    cv13f112,
+    cv13f113,
+    cv13f114,
+    cv13f115,
+    cv13f116,
+    cv13f117,
+    cv13f118,
+    cv13f119,
+    cv13f120,
+    cv13f121,
+    cv13f122,
+    cv13f123,
+    cv14g012,
+    cv14g047,
+    cv14g048,
+    cv14g049,
+    cv14g050,
+    cv14g051,
+    cv14g052,
+    cv14g209,
+    cv14g101,
+    cv14g102,
+    cv14g103,
+    cv14g104,
+    cv14g105,
+    cv14g001,
+    cv14g044,
+    cv14g014,
+    cv14g106,
+    cv14g107,
+    cv14g108,
+    cv14g109,
+    cv14g110,
+    cv14g111,
+    cv14g112,
+    cv14g113,
+    cv14g114,
+    cv14g115,
+    cv14g116,
+    cv14g117,
+    cv14g118,
+    cv14g119,
+    cv14g120,
+    cv14g121,
+    cv14g122,
+    cv14g123,
+    cv16h012,
+    cv16h047,
+    cv16h048,
+    cv16h049,
+    cv16h050,
+    cv16h051,
+    cv16h052,
+    cv16h209,
+    cv16h101,
+    cv16h102,
+    cv16h103,
+    cv16h104,
+    cv16h105,
+    cv16h001,
+    cv16h044,
+    cv16h014,
+    cv16h106,
+    cv16h107,
+    cv16h108,
+    cv16h109,
+    cv16h110,
+    cv16h111,
+    cv16h112,
+    cv16h113,
+    cv16h114,
+    cv16h115,
+    cv16h116,
+    cv16h117,
+    cv16h118,
+    cv16h119,
+    cv16h120,
+    cv16h121,
+    cv16h122,
+    cv16h123,
+    cv17i012,
+    cv17i047,
+    cv17i048,
+    cv17i049,
+    cv17i050,
+    cv17i051,
+    cv17i052,
+    cv17i244,
+    cv17i101,
+    cv17i102,
+    cv17i103,
+    cv17i104,
+    cv17i105,
+    cv17i001,
+    cv17i044,
+    cv17i014,
+    cv17i106,
+    cv17i107,
+    cv17i108,
+    cv17i109,
+    cv17i110,
+    cv17i111,
+    cv17i112,
+    cv17i113,
+    cv17i114,
+    cv17i115,
+    cv17i116,
+    cv17i117,
+    cv17i118,
+    cv17i119,
+    cv17i120,
+    cv17i121,
+    cv17i122,
+    cv17i123,
+    cv18j012,
+    cv18j047,
+    cv18j048,
+    cv18j049,
+    cv18j050,
+    cv18j051,
+    cv18j052,
+    cv18j243,
+    cv18j101,
+    cv18j102,
+    cv18j103,
+    cv18j104,
+    cv18j105,
+    cv18j001,
+    cv18j044,
+    cv18j014,
+    cv18j106,
+    cv18j107,
+    cv18j108,
+    cv18j109,
+    cv18j110,
+    cv18j111,
+    cv18j112,
+    cv18j113,
+    cv18j114,
+    cv18j115,
+    cv18j116,
+    cv18j117,
+    cv18j118,
+    cv18j119,
+    cv18j120,
+    cv18j121,
+    cv18j122,
+    cv18j123,
+    cv19k012,
+    cv19k047,
+    cv19k048,
+    cv19k049,
+    cv19k050,
+    cv19k051,
+    cv19k052,
+    cv19k243,
+    cv19k101,
+    cv19k102,
+    cv19k103,
+    cv19k104,
+    cv19k105,
+    cv19k001,
+    cv19k044,
+    cv19k014,
+    cv19k106,
+    cv19k107,
+    cv19k108,
+    cv19k109,
+    cv19k110,
+    cv19k111,
+    cv19k112,
+    cv19k113,
+    cv19k114,
+    cv19k115,
+    cv19k116,
+    cv19k117,
+    cv19k118,
+    cv19k119,
+    cv19k120,
+    cv19k121,
+    cv19k122,
+    cv19k123
+  )
+
+
+#change names.
+names(liss_pol) &lt;-
+  c(
+    &quot;nomem_encr&quot;,
+    &quot;pol_int.1&quot; ,
+    &quot;parl_donot_care.1&quot; ,
+    &quot;pol_part_int.1&quot;    ,
+    &quot;no_influece.1&quot; ,
+    &quot;cap_act_pol.1&quot; ,
+    &quot;clear_picture.1&quot;   ,
+    &quot;pol_compl.1&quot;   ,
+    &quot;vote_int.1&quot;    ,
+    &quot;lr_scale.1&quot;    ,
+    &quot;euthanasia.1&quot;  ,
+    &quot;income_diff.1&quot; ,
+    &quot;immigrants.1&quot;,
+    &quot;eu_integration.1&quot;  ,
+    &quot;gov_sat.1&quot;,
+    &quot;satdem.1&quot;,
+    &quot;poltrust.1&quot;,
+    &quot;postmatfirst.1&quot;,
+    &quot;postmatsecond.1&quot;,
+    &quot;postmatthird.1&quot;,
+    &quot;workingmother.1&quot;,
+    &quot;childjobmother.1&quot;,
+    &quot;fulltimemother.1&quot;,
+    &quot;equalcontribution.1&quot;,
+    &quot;fatherworks.1&quot;,
+    &quot;fatherhousehold.1&quot;,
+    &quot;fatherschildcare.1&quot;,
+    &quot;differentculture.1&quot;,
+    &quot;foreignerculture.1&quot;,
+    &quot;asylum.1&quot;,
+    &quot;foreignsocsec.1&quot;,
+    &quot;toomanyforeigners.1&quot;,
+    &quot;foreignnotaccepted.1&quot;,
+    &quot;foreigneconomy.1&quot;,
+    &quot;neighborhood.1&quot;,
+    &quot;pol_int.2&quot; ,
+    &quot;parl_donot_care.2&quot; ,
+    &quot;pol_part_int.2&quot;    ,
+    &quot;no_influece.2&quot; ,
+    &quot;cap_act_pol.2&quot; ,
+    &quot;clear_picture.2&quot;   ,
+    &quot;pol_compl.2&quot;   ,
+    &quot;vote_int.2&quot;    ,
+    &quot;lr_scale.2&quot;    ,
+    &quot;euthanasia.2&quot;  ,
+    &quot;income_diff.2&quot; ,
+    &quot;immigrants.2&quot;  ,
+    &quot;eu_integration.2&quot;  ,
+    &quot;gov_sat.2&quot;,
+    &quot;satdem.2&quot;,
+    &quot;poltrust.2&quot;,
+    &quot;postmatfirst.2&quot;,
+    &quot;postmatsecond.2&quot;,
+    &quot;postmatthird.2&quot;,
+    &quot;workingmother.2&quot;,
+    &quot;childjobmother.2&quot;,
+    &quot;fulltimemother.2&quot;,
+    &quot;equalcontribution.2&quot;,
+    &quot;fatherworks.2&quot;,
+    &quot;fatherhousehold.2&quot;,
+    &quot;fatherschildcare.2&quot;,
+    &quot;differentculture.2&quot;,
+    &quot;foreignerculture.2&quot;,
+    &quot;asylum.2&quot;,
+    &quot;foreignsocsec.2&quot;,
+    &quot;toomanyforeigners.2&quot;,
+    &quot;foreignnotaccepted.2&quot;,
+    &quot;foreigneconomy.2&quot;,
+    &quot;neighborhood.2&quot;,
+    &quot;pol_int.3&quot; ,
+    &quot;parl_donot_care.3&quot; ,
+    &quot;pol_part_int.3&quot;    ,
+    &quot;no_influece.3&quot; ,
+    &quot;cap_act_pol.3&quot; ,
+    &quot;clear_picture.3&quot;   ,
+    &quot;pol_compl.3&quot;   ,
+    &quot;vote_int.3&quot;    ,
+    &quot;lr_scale.3&quot;    ,
+    &quot;euthanasia.3&quot;  ,
+    &quot;income_diff.3&quot; ,
+    &quot;immigrants.3&quot;  ,
+    &quot;eu_integration.3&quot;  ,
+    &quot;gov_sat.3&quot;,
+    &quot;satdem.3&quot;,
+    &quot;poltrust.3&quot;,
+    &quot;postmatfirst.3&quot;,
+    &quot;postmatsecond.3&quot;,
+    &quot;postmatthird.3&quot;,
+    &quot;workingmother.3&quot;,
+    &quot;childjobmother.3&quot;,
+    &quot;fulltimemother.3&quot;,
+    &quot;equalcontribution.3&quot;,
+    &quot;fatherworks.3&quot;,
+    &quot;fatherhousehold.3&quot;,
+    &quot;fatherschildcare.3&quot;,
+    &quot;differentculture.3&quot;,
+    &quot;foreignerculture.3&quot;,
+    &quot;asylum.3&quot;,
+    &quot;foreignsocsec.3&quot;,
+    &quot;toomanyforeigners.3&quot;,
+    &quot;foreignnotaccepted.3&quot;,
+    &quot;foreigneconomy.3&quot;,
+    &quot;neighborhood.3&quot;,
+    &quot;pol_int.4&quot; ,
+    &quot;parl_donot_care.4&quot; ,
+    &quot;pol_part_int.4&quot;    ,
+    &quot;no_influece.4&quot; ,
+    &quot;cap_act_pol.4&quot; ,
+    &quot;clear_picture.4&quot;   ,
+    &quot;pol_compl.4&quot;   ,
+    &quot;vote_int.4&quot;    ,
+    &quot;lr_scale.4&quot;    ,
+    &quot;euthanasia.4&quot;  ,
+    &quot;income_diff.4&quot; ,
+    &quot;immigrants.4&quot;  ,
+    &quot;eu_integration.4&quot;  ,
+    &quot;gov_sat.4&quot;,
+    &quot;satdem.4&quot;,
+    &quot;poltrust.4&quot;,
+    &quot;postmatfirst.4&quot;,
+    &quot;postmatsecond.4&quot;,
+    &quot;postmatthird.4&quot;,
+    &quot;workingmother.4&quot;,
+    &quot;childjobmother.4&quot;,
+    &quot;fulltimemother.4&quot;,
+    &quot;equalcontribution.4&quot;,
+    &quot;fatherworks.4&quot;,
+    &quot;fatherhousehold.4&quot;,
+    &quot;fatherschildcare.4&quot;,
+    &quot;differentculture.4&quot;,
+    &quot;foreignerculture.4&quot;,
+    &quot;asylum.4&quot;,
+    &quot;foreignsocsec.4&quot;,
+    &quot;toomanyforeigners.4&quot;,
+    &quot;foreignnotaccepted.4&quot;,
+    &quot;foreigneconomy.4&quot;,
+    &quot;neighborhood.4&quot;,
+    &quot;pol_int.5&quot; ,
+    &quot;parl_donot_care.5&quot; ,
+    &quot;pol_part_int.5&quot;    ,
+    &quot;no_influece.5&quot; ,
+    &quot;cap_act_pol.5&quot; ,
+    &quot;clear_picture.5&quot;   ,
+    &quot;pol_compl.5&quot;   ,
+    &quot;vote_int.5&quot;    ,
+    &quot;lr_scale.5&quot;    ,
+    &quot;euthanasia.5&quot;  ,
+    &quot;income_diff.5&quot; ,
+    &quot;immigrants.5&quot;  ,
+    &quot;eu_integration.5&quot;  ,
+    &quot;gov_sat.5&quot;,
+    &quot;satdem.5&quot;,
+    &quot;poltrust.5&quot;,
+    &quot;postmatfirst.5&quot;,
+    &quot;postmatsecond.5&quot;,
+    &quot;postmatthird.5&quot;,
+    &quot;workingmother.5&quot;,
+    &quot;childjobmother.5&quot;,
+    &quot;fulltimemother.5&quot;,
+    &quot;equalcontribution.5&quot;,
+    &quot;fatherworks.5&quot;,
+    &quot;fatherhousehold.5&quot;,
+    &quot;fatherschildcare.5&quot;,
+    &quot;differentculture.5&quot;,
+    &quot;foreignerculture.5&quot;,
+    &quot;asylum.5&quot;,
+    &quot;foreignsocsec.5&quot;,
+    &quot;toomanyforeigners.5&quot;,
+    &quot;foreignnotaccepted.5&quot;,
+    &quot;foreigneconomy.5&quot;,
+    &quot;neighborhood.5&quot;,
+    &quot;pol_int.6&quot; ,
+    &quot;parl_donot_care.6&quot; ,
+    &quot;pol_part_int.6&quot;    ,
+    &quot;no_influece.6&quot; ,
+    &quot;cap_act_pol.6&quot; ,
+    &quot;clear_picture.6&quot;   ,
+    &quot;pol_compl.6&quot;   ,
+    &quot;vote_int.6&quot;    ,
+    &quot;lr_scale.6&quot;    ,
+    &quot;euthanasia.6&quot;  ,
+    &quot;income_diff.6&quot; ,
+    &quot;immigrants.6&quot;  ,
+    &quot;eu_integration.6&quot;  ,
+    &quot;gov_sat.6&quot;,
+    &quot;satdem.6&quot;,
+    &quot;poltrust.6&quot;,
+    &quot;postmatfirst.6&quot;,
+    &quot;postmatsecond.6&quot;,
+    &quot;postmatthird.6&quot;,
+    &quot;workingmother.6&quot;,
+    &quot;childjobmother.6&quot;,
+    &quot;fulltimemother.6&quot;,
+    &quot;equalcontribution.6&quot;,
+    &quot;fatherworks.6&quot;,
+    &quot;fatherhousehold.6&quot;,
+    &quot;fatherschildcare.6&quot;,
+    &quot;differentculture.6&quot;,
+    &quot;foreignerculture.6&quot;,
+    &quot;asylum.6&quot;,
+    &quot;foreignsocsec.6&quot;,
+    &quot;toomanyforeigners.6&quot;,
+    &quot;foreignnotaccepted.6&quot;,
+    &quot;foreigneconomy.6&quot;,
+    &quot;neighborhood.6&quot;,
+    &quot;pol_int.7&quot; ,
+    &quot;parl_donot_care.7&quot; ,
+    &quot;pol_part_int.7&quot;    ,
+    &quot;no_influece.7&quot; ,
+    &quot;cap_act_pol.7&quot; ,
+    &quot;clear_picture.7&quot;   ,
+    &quot;pol_compl.7&quot;   ,
+    &quot;vote_int.7&quot;    ,
+    &quot;lr_scale.7&quot;    ,
+    &quot;euthanasia.7&quot;  ,
+    &quot;income_diff.7&quot; ,
+    &quot;immigrants.7&quot;  ,
+    &quot;eu_integration.7&quot;  ,
+    &quot;gov_sat.7&quot;,
+    &quot;satdem.7&quot;,
+    &quot;poltrust.7&quot;,
+    &quot;postmatfirst.7&quot;,
+    &quot;postmatsecond.7&quot;,
+    &quot;postmatthird.7&quot;,
+    &quot;workingmother.7&quot;,
+    &quot;childjobmother.7&quot;,
+    &quot;fulltimemother.7&quot;,
+    &quot;equalcontribution.7&quot;,
+    &quot;fatherworks.7&quot;,
+    &quot;fatherhousehold.7&quot;,
+    &quot;fatherschildcare.7&quot;,
+    &quot;differentculture.7&quot;,
+    &quot;foreignerculture.7&quot;,
+    &quot;asylum.7&quot;,
+    &quot;foreignsocsec.7&quot;,
+    &quot;toomanyforeigners.7&quot;,
+    &quot;foreignnotaccepted.7&quot;,
+    &quot;foreigneconomy.7&quot;,
+    &quot;neighborhood.7&quot;,
+    &quot;pol_int.8&quot; ,
+    &quot;parl_donot_care.8&quot; ,
+    &quot;pol_part_int.8&quot;    ,
+    &quot;no_influece.8&quot; ,
+    &quot;cap_act_pol.8&quot; ,
+    &quot;clear_picture.8&quot;   ,
+    &quot;pol_compl.8&quot;   ,
+    &quot;vote_int.8&quot;    ,
+    &quot;lr_scale.8&quot;    ,
+    &quot;euthanasia.8&quot;  ,
+    &quot;income_diff.8&quot; ,
+    &quot;immigrants.8&quot;  ,
+    &quot;eu_integration.8&quot;  ,
+    &quot;gov_sat.8&quot;,
+    &quot;satdem.8&quot;,
+    &quot;poltrust.8&quot;,
+    &quot;postmatfirst.8&quot;,
+    &quot;postmatsecond.8&quot;,
+    &quot;postmatthird.8&quot;,
+    &quot;workingmother.8&quot;,
+    &quot;childjobmother.8&quot;,
+    &quot;fulltimemother.8&quot;,
+    &quot;equalcontribution.8&quot;,
+    &quot;fatherworks.8&quot;,
+    &quot;fatherhousehold.8&quot;,
+    &quot;fatherschildcare.8&quot;,
+    &quot;differentculture.8&quot;,
+    &quot;foreignerculture.8&quot;,
+    &quot;asylum.8&quot;,
+    &quot;foreignsocsec.8&quot;,
+    &quot;toomanyforeigners.8&quot;,
+    &quot;foreignnotaccepted.8&quot;,
+    &quot;foreigneconomy.8&quot;,
+    &quot;neighborhood.8&quot;,
+    &quot;pol_int.9&quot; ,
+    &quot;parl_donot_care.9&quot; ,
+    &quot;pol_part_int.9&quot;    ,
+    &quot;no_influece.9&quot; ,
+    &quot;cap_act_pol.9&quot; ,
+    &quot;clear_picture.9&quot;   ,
+    &quot;pol_compl.9&quot;   ,
+    &quot;vote_int.9&quot;    ,
+    &quot;lr_scale.9&quot;    ,
+    &quot;euthanasia.9&quot;  ,
+    &quot;income_diff.9&quot; ,
+    &quot;immigrants.9&quot;  ,
+    &quot;eu_integration.9&quot;,
+    &quot;gov_sat.9&quot;,
+    &quot;satdem.9&quot;,
+    &quot;poltrust.9&quot;,
+    &quot;postmatfirst.9&quot;,
+    &quot;postmatsecond.9&quot;,
+    &quot;postmatthird.9&quot;,
+    &quot;workingmother.9&quot;,
+    &quot;childjobmother.9&quot;,
+    &quot;fulltimemother.9&quot;,
+    &quot;equalcontribution.9&quot;,
+    &quot;fatherworks.9&quot;,
+    &quot;fatherhousehold.9&quot;,
+    &quot;fatherschildcare.9&quot;,
+    &quot;differentculture.9&quot;,
+    &quot;foreignerculture.9&quot;,
+    &quot;asylum.9&quot;,
+    &quot;foreignsocsec.9&quot;,
+    &quot;toomanyforeigners.9&quot;,
+    &quot;foreignnotaccepted.9&quot;,
+    &quot;foreigneconomy.9&quot;,
+    &quot;neighborhood.9&quot;,
+    &quot;pol_int.10&quot;    ,
+    &quot;parl_donot_care.10&quot;    ,
+    &quot;pol_part_int.10&quot;   ,
+    &quot;no_influece.10&quot;    ,
+    &quot;cap_act_pol.10&quot;    ,
+    &quot;clear_picture.10&quot;  ,
+    &quot;pol_compl.10&quot;  ,
+    &quot;vote_int.10&quot;   ,
+    &quot;lr_scale.10&quot;   ,
+    &quot;euthanasia.10&quot; ,
+    &quot;income_diff.10&quot;    ,
+    &quot;immigrants.10&quot; ,
+    &quot;eu_integration.10&quot;,
+    &quot;gov_sat.10&quot;,
+    &quot;satdem.10&quot;,
+    &quot;poltrust.10&quot;,
+    &quot;postmatfirst.10&quot;,
+    &quot;postmatsecond.10&quot;,
+    &quot;postmatthird.10&quot;,
+    &quot;workingmother.10&quot;,
+    &quot;childjobmother.10&quot;,
+    &quot;fulltimemother.10&quot;,
+    &quot;equalcontribution.10&quot;,
+    &quot;fatherworks.10&quot;,
+    &quot;fatherhousehold.10&quot;,
+    &quot;fatherschildcare.10&quot;,
+    &quot;differentculture.10&quot;,
+    &quot;foreignerculture.10&quot;,
+    &quot;asylum.10&quot;,
+    &quot;foreignsocsec.10&quot;,
+    &quot;toomanyforeigners.10&quot;,
+    &quot;foreignnotaccepted.10&quot;,
+    &quot;foreigneconomy.10&quot;,
+    &quot;neighborhood.10&quot;,
+    &quot;pol_int.11&quot;    ,
+    &quot;parl_donot_care.11&quot;    ,
+    &quot;pol_part_int.11&quot;   ,
+    &quot;no_influece.11&quot;    ,
+    &quot;cap_act_pol.11&quot;    ,
+    &quot;clear_picture.11&quot;  ,
+    &quot;pol_compl.11&quot;  ,
+    &quot;vote_int.11&quot;   ,
+    &quot;lr_scale.11&quot;   ,
+    &quot;euthanasia.11&quot; ,
+    &quot;income_diff.11&quot;    ,
+    &quot;immigrants.11&quot; ,
+    &quot;eu_integration.11&quot;,
+    &quot;gov_sat.11&quot;,
+    &quot;satdem.11&quot;,
+    &quot;poltrust.11&quot;,
+    &quot;postmatfirst.11&quot;,
+    &quot;postmatsecond.11&quot;,
+    &quot;postmatthird.11&quot;,
+    &quot;workingmother.11&quot;,
+    &quot;childjobmother.11&quot;,
+    &quot;fulltimemother.11&quot;,
+    &quot;equalcontribution.11&quot;,
+    &quot;fatherworks.11&quot;,
+    &quot;fatherhousehold.11&quot;,
+    &quot;fatherschildcare.11&quot;,
+    &quot;differentculture.11&quot;,
+    &quot;foreignerculture.11&quot;,
+    &quot;asylum.11&quot;,
+    &quot;foreignsocsec.11&quot;,
+    &quot;toomanyforeigners.11&quot;,
+    &quot;foreignnotaccepted.11&quot;,
+    &quot;foreigneconomy.11&quot;,
+    &quot;neighborhood.11&quot;
+  )</code></pre>
+</div>
+<div id="background-data" class="section level2">
+<h2>Background data</h2>
+<pre class="r"><code>#get the background data and rename the columns.
+liss_avars &lt;- liss_subset %&gt;%
+  select(
+    nomem_encr,
+    geslacht.1,
+    positie.1,
+    gebjaar.1,
+    leeftijd.1,
+    lftdcat.1,
+    aantalhh.1,
+    aantalki.1,
+    partner.1,
+    burgstat.1,
+    woonvorm.1,
+    woning.1,
+    sted.1,
+    belbezig.1,
+    brutoink.1,
+    nettoink.1,
+    brutocat.1,
+    nettocat.1,
+    oplzon.1,
+    oplmet.1,
+    oplcat.1,
+    nohouse_encr.1,
+    geslacht.2,
+    positie.2,
+    gebjaar.2,
+    leeftijd.2,
+    lftdcat.2,
+    aantalhh.2,
+    aantalki.2,
+    partner.2,
+    burgstat.2,
+    woonvorm.2,
+    woning.2,
+    sted.2,
+    belbezig.2,
+    brutoink.2,
+    nettoink.2,
+    brutocat.2,
+    nettocat.2,
+    oplzon.2,
+    oplmet.2,
+    oplcat.2,
+    nohouse_encr.2,
+    geslacht.3,
+    positie.3,
+    gebjaar.3,
+    leeftijd.3,
+    lftdcat.3,
+    aantalhh.3,
+    aantalki.3,
+    partner.3,
+    burgstat.3,
+    woonvorm.3,
+    woning.3,
+    sted.3,
+    belbezig.3,
+    brutoink.3,
+    nettoink.3,
+    brutocat.3,
+    nettocat.3,
+    oplzon.3,
+    oplmet.3,
+    oplcat.3,
+    nohouse_encr.3,
+    geslacht.4,
+    positie.4,
+    gebjaar.4,
+    leeftijd.4,
+    lftdcat.4,
+    aantalhh.4,
+    aantalki.4,
+    partner.4,
+    burgstat.4,
+    woonvorm.4,
+    woning.4,
+    sted.4,
+    belbezig.4,
+    brutoink.4,
+    nettoink.4,
+    brutocat.4,
+    nettocat.4,
+    oplzon.4,
+    oplmet.4,
+    oplcat.4,
+    nohouse_encr.4,
+    geslacht.5,
+    positie.5,
+    gebjaar.5,
+    leeftijd.5,
+    lftdcat.5,
+    aantalhh.5,
+    aantalki.5,
+    partner.5,
+    burgstat.5,
+    woonvorm.5,
+    woning.5,
+    sted.5,
+    belbezig.5,
+    brutoink.5,
+    nettoink.5,
+    brutocat.5,
+    nettocat.5,
+    oplzon.5,
+    oplmet.5,
+    oplcat.5,
+    nohouse_encr.5,
+    geslacht.6,
+    positie.6,
+    gebjaar.6,
+    leeftijd.6,
+    lftdcat.6,
+    aantalhh.6,
+    aantalki.6,
+    partner.6,
+    burgstat.6,
+    woonvorm.6,
+    woning.6,
+    sted.6,
+    belbezig.6,
+    brutoink.6,
+    nettoink.6,
+    brutocat.6,
+    nettocat.6,
+    oplzon.6,
+    oplmet.6,
+    oplcat.6,
+    nohouse_encr.6,
+    geslacht.7,
+    positie.7,
+    gebjaar.7,
+    leeftijd.7,
+    lftdcat.7,
+    aantalhh.7,
+    aantalki.7,
+    partner.7,
+    burgstat.7,
+    woonvorm.7,
+    woning.7,
+    sted.7,
+    belbezig.7,
+    brutoink.7,
+    nettoink.7,
+    brutocat.7,
+    nettocat.7,
+    oplzon.7,
+    oplmet.7,
+    oplcat.7,
+    nohouse_encr.7,
+    geslacht.8,
+    positie.8,
+    gebjaar.8,
+    leeftijd.8,
+    lftdcat.8,
+    aantalhh.8,
+    aantalki.8,
+    partner.8,
+    burgstat.8,
+    woonvorm.8,
+    woning.8,
+    sted.8,
+    belbezig.8,
+    brutoink.8,
+    nettoink.8,
+    brutocat.8,
+    nettocat.8,
+    oplzon.8,
+    oplmet.8,
+    oplcat.8,
+    nohouse_encr.8,
+    geslacht.9,
+    positie.9,
+    gebjaar.9,
+    leeftijd.9,
+    lftdcat.9,
+    aantalhh.9,
+    aantalki.9,
+    partner.9,
+    burgstat.9,
+    woonvorm.9,
+    woning.9,
+    sted.9,
+    belbezig.9,
+    brutoink.9,
+    nettoink.9,
+    brutocat.9,
+    nettocat.9,
+    oplzon.9,
+    oplmet.9,
+    oplcat.9,
+    nohouse_encr.9,
+    geslacht.10,
+    positie.10,
+    gebjaar.10,
+    leeftijd.10,
+    lftdcat.10,
+    aantalhh.10,
+    aantalki.10,
+    partner.10,
+    burgstat.10,
+    woonvorm.10,
+    woning.10,
+    sted.10,
+    belbezig.10,
+    brutoink.10,
+    nettoink.10,
+    brutocat.10,
+    nettocat.10,
+    oplzon.10,
+    oplmet.10,
+    oplcat.10,
+    nohouse_encr.10,
+    geslacht.11,
+    positie.11,
+    gebjaar.11,
+    leeftijd.11,
+    lftdcat.11,
+    aantalhh.11,
+    aantalki.11,
+    partner.11,
+    burgstat.11,
+    woonvorm.11,
+    woning.11,
+    sted.11,
+    belbezig.11,
+    brutoink.11,
+    nettoink.11,
+    brutocat.11,
+    nettocat.11,
+    oplzon.11,
+    oplmet.11,
+    oplcat.11,
+    nohouse_encr.11
+  )
+
+#get the background data and rename the columns.
+#For the first three waves there are is no data on this variable
+liss_origin &lt;- liss_subset %&gt;%
+  select(
+    nomem_encr,
+    herkomstgroep.4,
+    herkomstgroep.5,
+    herkomstgroep.6,
+    herkomstgroep.7,
+    herkomstgroep.8,
+    herkomstgroep.9,
+    herkomstgroep.10,
+    herkomstgroep.11
+  )
+names(liss_origin) &lt;-
+  c(
+    &quot;nomem_encr&quot;,
+    &quot;origin.4&quot;,
+    &quot;origin.5&quot;,
+    &quot;origin.6&quot;,
+    &quot;origin.7&quot;,
+    &quot;origin.8&quot;,
+    &quot;origin.9&quot;,
+    &quot;origin.10&quot;,
+    &quot;origin.11&quot;
+  )
+
+#create ego origin 1-3 with NA&#39;s so we can later merge them into a long file.
+liss_origin$origin.1 &lt;- NA
+liss_origin$origin.2 &lt;- NA
+liss_origin$origin.3 &lt;- NA
+
+#For some reason the reshape command bugs when the ordering is not correct.
+liss_origin &lt;- liss_origin[, c(1, 10:12, 2:9)]</code></pre>
+</div>
+<div id="alter-ids" class="section level2">
+<h2>Alter ids</h2>
+<pre class="r"><code>#alter ids
+liss_alter_id &lt;- liss_subset %&gt;%
+  select(
+    nomem_encr,
+    name1_rec.1,
+    name2_rec.1,
+    name3_rec.1,
+    name4_rec.1,
+    name5_rec.1,
+    name1_rec.2,
+    name2_rec.2,
+    name3_rec.2,
+    name4_rec.2,
+    name5_rec.2,
+    name1_rec.3,
+    name2_rec.3,
+    name3_rec.3,
+    name4_rec.3,
+    name5_rec.3,
+    name1_rec.4,
+    name2_rec.4,
+    name3_rec.4,
+    name4_rec.4,
+    name5_rec.4,
+    name1_rec.5,
+    name2_rec.5,
+    name3_rec.5,
+    name4_rec.5,
+    name5_rec.5,
+    name1_rec.6,
+    name2_rec.6,
+    name3_rec.6,
+    name4_rec.6,
+    name5_rec.6,
+    name1_rec.7,
+    name2_rec.7,
+    name3_rec.7,
+    name4_rec.7,
+    name5_rec.7,
+    name1_rec.8,
+    name2_rec.8,
+    name3_rec.8,
+    name4_rec.8,
+    name5_rec.8,
+    name1_rec.9,
+    name2_rec.9,
+    name3_rec.9,
+    name4_rec.9,
+    name5_rec.9,
+    name1_rec.10,
+    name2_rec.10,
+    name3_rec.10,
+    name4_rec.10,
+    name5_rec.10,
+    name1_rec.11,
+    name2_rec.11,
+    name3_rec.11,
+    name4_rec.11,
+    name5_rec.11
+  )
+
+#rename the alter id&#39;s
+names(liss_alter_id) &lt;-
+  c(
+    &quot;nomem_encr&quot;,
+    &quot;alter_id_1.1&quot;,
+    &quot;alter_id_2.1&quot;,
+    &quot;alter_id_3.1&quot;,
+    &quot;alter_id_4.1&quot;,
+    &quot;alter_id_5.1&quot;,
+    &quot;alter_id_1.2&quot;,
+    &quot;alter_id_2.2&quot;,
+    &quot;alter_id_3.2&quot;,
+    &quot;alter_id_4.2&quot;,
+    &quot;alter_id_5.2&quot;,
+    &quot;alter_id_1.3&quot;,
+    &quot;alter_id_2.3&quot;,
+    &quot;alter_id_3.3&quot;,
+    &quot;alter_id_4.3&quot;,
+    &quot;alter_id_5.3&quot;,
+    &quot;alter_id_1.4&quot;,
+    &quot;alter_id_2.4&quot;,
+    &quot;alter_id_3.4&quot;,
+    &quot;alter_id_4.4&quot;,
+    &quot;alter_id_5.4&quot;,
+    &quot;alter_id_1.5&quot;,
+    &quot;alter_id_2.5&quot;,
+    &quot;alter_id_3.5&quot;,
+    &quot;alter_id_4.5&quot;,
+    &quot;alter_id_5.5&quot;,
+    &quot;alter_id_1.6&quot;,
+    &quot;alter_id_2.6&quot;,
+    &quot;alter_id_3.6&quot;,
+    &quot;alter_id_4.6&quot;,
+    &quot;alter_id_5.6&quot;,
+    &quot;alter_id_1.7&quot;,
+    &quot;alter_id_2.7&quot;,
+    &quot;alter_id_3.7&quot;,
+    &quot;alter_id_4.7&quot;,
+    &quot;alter_id_5.7&quot;,
+    &quot;alter_id_1.8&quot;,
+    &quot;alter_id_2.8&quot;,
+    &quot;alter_id_3.8&quot;,
+    &quot;alter_id_4.8&quot;,
+    &quot;alter_id_5.8&quot;,
+    &quot;alter_id_1.9&quot;,
+    &quot;alter_id_2.9&quot;,
+    &quot;alter_id_3.9&quot;,
+    &quot;alter_id_4.9&quot;,
+    &quot;alter_id_5.9&quot;,
+    &quot;alter_id_1.10&quot;,
+    &quot;alter_id_2.10&quot;,
+    &quot;alter_id_3.10&quot;,
+    &quot;alter_id_4.10&quot;,
+    &quot;alter_id_5.10&quot;,
+    &quot;alter_id_1.11&quot;,
+    &quot;alter_id_2.11&quot;,
+    &quot;alter_id_3.11&quot;,
+    &quot;alter_id_4.11&quot;,
+    &quot;alter_id_5.11&quot;
+  )</code></pre>
+</div>
+<div id="alter-information" class="section level2">
+<h2>Alter information</h2>
+<pre class="r"><code>#extract the alter variables and rename them.
+#renaming the alter variables.
+#selecting the alter data.
+liss_alters &lt;-  liss %&gt;%
+  select(
+    nomem_encr,
+    cs08a326,
+    cs08a315,
+    cs08a320,
+    cs08a328,
+    cs08a329,
+    cs08a324,
+    cs08a323,
+    cs08a321,
+    cs08a300,
+    cs08a327,
+    cs08a337,
+    cs08a316,
+    cs08a331,
+    cs08a339,
+    cs08a340,
+    cs08a335,
+    cs08a334,
+    cs08a332,
+    cs08a301,
+    cs08a338,
+    cs08a348,
+    cs08a317,
+    cs08a342,
+    cs08a350,
+    cs08a351,
+    cs08a346,
+    cs08a345,
+    cs08a343,
+    cs08a302,
+    cs08a349,
+    cs08a359,
+    cs08a318,
+    cs08a353,
+    cs08a361,
+    cs08a362,
+    cs08a357,
+    cs08a356,
+    cs08a354,
+    cs08a303,
+    cs08a360,
+    cs08a370,
+    cs08a319,
+    cs08a364,
+    cs08a372,
+    cs08a373,
+    cs08a368,
+    cs08a367,
+    cs08a365,
+    cs08a304,
+    cs08a371,
+    cs09b326,
+    cs09b315,
+    cs09b320,
+    cs09b328,
+    cs09b329,
+    cs09b324,
+    cs09b323,
+    cs09b321,
+    cs09b300,
+    cs09b327,
+    cs09b337,
+    cs09b316,
+    cs09b331,
+    cs09b339,
+    cs09b340,
+    cs09b335,
+    cs09b334,
+    cs09b332,
+    cs09b301,
+    cs09b338,
+    cs09b348,
+    cs09b317,
+    cs09b342,
+    cs09b350,
+    cs09b351,
+    cs09b346,
+    cs09b345,
+    cs09b343,
+    cs09b302,
+    cs09b349,
+    cs09b359,
+    cs09b318,
+    cs09b353,
+    cs09b361,
+    cs09b362,
+    cs09b357,
+    cs09b356,
+    cs09b354,
+    cs09b303,
+    cs09b360,
+    cs09b370,
+    cs09b319,
+    cs09b364,
+    cs09b372,
+    cs09b373,
+    cs09b368,
+    cs09b367,
+    cs09b365,
+    cs09b304,
+    cs09b371,
+    cs10c326,
+    cs10c315,
+    cs10c320,
+    cs10c328,
+    cs10c329,
+    cs10c324,
+    cs10c323,
+    cs10c321,
+    cs10c300,
+    cs10c327,
+    cs10c337,
+    cs10c316,
+    cs10c331,
+    cs10c339,
+    cs10c340,
+    cs10c335,
+    cs10c334,
+    cs10c332,
+    cs10c301,
+    cs10c338,
+    cs10c348,
+    cs10c317,
+    cs10c342,
+    cs10c350,
+    cs10c351,
+    cs10c346,
+    cs10c345,
+    cs10c343,
+    cs10c302,
+    cs10c349,
+    cs10c359,
+    cs10c318,
+    cs10c353,
+    cs10c361,
+    cs10c362,
+    cs10c357,
+    cs10c356,
+    cs10c354,
+    cs10c303,
+    cs10c360,
+    cs10c370,
+    cs10c319,
+    cs10c364,
+    cs10c372,
+    cs10c373,
+    cs10c368,
+    cs10c367,
+    cs10c365,
+    cs10c304,
+    cs10c371,
+    cs11d326,
+    cs11d315,
+    cs11d320,
+    cs11d328,
+    cs11d329,
+    cs11d324,
+    cs11d323,
+    cs11d321,
+    cs11d300,
+    cs11d327,
+    cs11d337,
+    cs11d316,
+    cs11d331,
+    cs11d339,
+    cs11d340,
+    cs11d335,
+    cs11d334,
+    cs11d332,
+    cs11d301,
+    cs11d338,
+    cs11d348,
+    cs11d317,
+    cs11d342,
+    cs11d350,
+    cs11d351,
+    cs11d346,
+    cs11d345,
+    cs11d343,
+    cs11d302,
+    cs11d349,
+    cs11d359,
+    cs11d318,
+    cs11d353,
+    cs11d361,
+    cs11d362,
+    cs11d357,
+    cs11d356,
+    cs11d354,
+    cs11d303,
+    cs11d360,
+    cs11d370,
+    cs11d319,
+    cs11d364,
+    cs11d372,
+    cs11d373,
+    cs11d368,
+    cs11d367,
+    cs11d365,
+    cs11d304,
+    cs11d371,
+    cs12e326,
+    cs12e315,
+    cs12e320,
+    cs12e328,
+    cs12e329,
+    cs12e324,
+    cs12e323,
+    cs12e321,
+    cs12e300,
+    cs12e327,
+    cs12e337,
+    cs12e316,
+    cs12e331,
+    cs12e339,
+    cs12e340,
+    cs12e335,
+    cs12e334,
+    cs12e332,
+    cs12e301,
+    cs12e338,
+    cs12e348,
+    cs12e317,
+    cs12e342,
+    cs12e350,
+    cs12e351,
+    cs12e346,
+    cs12e345,
+    cs12e343,
+    cs12e302,
+    cs12e349,
+    cs12e359,
+    cs12e318,
+    cs12e353,
+    cs12e361,
+    cs12e362,
+    cs12e357,
+    cs12e356,
+    cs12e354,
+    cs12e303,
+    cs12e360,
+    cs12e370,
+    cs12e319,
+    cs12e364,
+    cs12e372,
+    cs12e373,
+    cs12e368,
+    cs12e367,
+    cs12e365,
+    cs12e304,
+    cs12e371,
+    cs13f326,
+    cs13f315,
+    cs13f320,
+    cs13f328,
+    cs13f329,
+    cs13f324,
+    cs13f323,
+    cs13f321,
+    cs13f300,
+    cs13f327,
+    cs13f337,
+    cs13f316,
+    cs13f331,
+    cs13f339,
+    cs13f340,
+    cs13f335,
+    cs13f334,
+    cs13f332,
+    cs13f301,
+    cs13f338,
+    cs13f348,
+    cs13f317,
+    cs13f342,
+    cs13f350,
+    cs13f351,
+    cs13f346,
+    cs13f345,
+    cs13f343,
+    cs13f302,
+    cs13f349,
+    cs13f359,
+    cs13f318,
+    cs13f353,
+    cs13f361,
+    cs13f362,
+    cs13f357,
+    cs13f356,
+    cs13f354,
+    cs13f303,
+    cs13f360,
+    cs13f370,
+    cs13f319,
+    cs13f364,
+    cs13f372,
+    cs13f373,
+    cs13f368,
+    cs13f367,
+    cs13f365,
+    cs13f304,
+    cs13f371,
+    cs14g326,
+    cs14g315,
+    cs14g320,
+    cs14g328,
+    cs14g329,
+    cs14g324,
+    cs14g323,
+    cs14g321,
+    cs14g300,
+    cs14g327,
+    cs14g337,
+    cs14g316,
+    cs14g331,
+    cs14g339,
+    cs14g340,
+    cs14g335,
+    cs14g334,
+    cs14g332,
+    cs14g301,
+    cs14g338,
+    cs14g348,
+    cs14g317,
+    cs14g342,
+    cs14g350,
+    cs14g351,
+    cs14g346,
+    cs14g345,
+    cs14g343,
+    cs14g302,
+    cs14g349,
+    cs14g359,
+    cs14g318,
+    cs14g353,
+    cs14g361,
+    cs14g362,
+    cs14g357,
+    cs14g356,
+    cs14g354,
+    cs14g303,
+    cs14g360,
+    cs14g370,
+    cs14g319,
+    cs14g364,
+    cs14g372,
+    cs14g373,
+    cs14g368,
+    cs14g367,
+    cs14g365,
+    cs14g304,
+    cs14g371,
+    cs15h326,
+    cs15h315,
+    cs15h320,
+    cs15h328,
+    cs15h329,
+    cs15h324,
+    cs15h323,
+    cs15h321,
+    cs15h300,
+    cs15h327,
+    cs15h337,
+    cs15h316,
+    cs15h331,
+    cs15h339,
+    cs15h340,
+    cs15h335,
+    cs15h334,
+    cs15h332,
+    cs15h301,
+    cs15h338,
+    cs15h348,
+    cs15h317,
+    cs15h342,
+    cs15h350,
+    cs15h351,
+    cs15h346,
+    cs15h345,
+    cs15h343,
+    cs15h302,
+    cs15h349,
+    cs15h359,
+    cs15h318,
+    cs15h353,
+    cs15h361,
+    cs15h362,
+    cs15h357,
+    cs15h356,
+    cs15h354,
+    cs15h303,
+    cs15h360,
+    cs15h370,
+    cs15h319,
+    cs15h364,
+    cs15h372,
+    cs15h373,
+    cs15h368,
+    cs15h367,
+    cs15h365,
+    cs15h304,
+    cs15h371,
+    cs16i326,
+    cs16i315,
+    cs16i320,
+    cs16i328,
+    cs16i329,
+    cs16i324,
+    cs16i323,
+    cs16i321,
+    cs16i300,
+    cs16i327,
+    cs16i337,
+    cs16i316,
+    cs16i331,
+    cs16i339,
+    cs16i340,
+    cs16i335,
+    cs16i334,
+    cs16i332,
+    cs16i301,
+    cs16i338,
+    cs16i348,
+    cs16i317,
+    cs16i342,
+    cs16i350,
+    cs16i351,
+    cs16i346,
+    cs16i345,
+    cs16i343,
+    cs16i302,
+    cs16i349,
+    cs16i359,
+    cs16i318,
+    cs16i353,
+    cs16i361,
+    cs16i362,
+    cs16i357,
+    cs16i356,
+    cs16i354,
+    cs16i303,
+    cs16i360,
+    cs16i370,
+    cs16i319,
+    cs16i364,
+    cs16i372,
+    cs16i373,
+    cs16i368,
+    cs16i367,
+    cs16i365,
+    cs16i304,
+    cs16i371,
+    cs17j326,
+    cs17j315,
+    cs17j320,
+    cs17j328,
+    cs17j329,
+    cs17j324,
+    cs17j323,
+    cs17j321,
+    cs17j300,
+    cs17j327,
+    cs17j337,
+    cs17j316,
+    cs17j331,
+    cs17j339,
+    cs17j340,
+    cs17j335,
+    cs17j334,
+    cs17j332,
+    cs17j301,
+    cs17j338,
+    cs17j348,
+    cs17j317,
+    cs17j342,
+    cs17j350,
+    cs17j351,
+    cs17j346,
+    cs17j345,
+    cs17j343,
+    cs17j302,
+    cs17j349,
+    cs17j359,
+    cs17j318,
+    cs17j353,
+    cs17j361,
+    cs17j362,
+    cs17j357,
+    cs17j356,
+    cs17j354,
+    cs17j303,
+    cs17j360,
+    cs17j370,
+    cs17j319,
+    cs17j364,
+    cs17j372,
+    cs17j373,
+    cs17j368,
+    cs17j367,
+    cs17j365,
+    cs17j304,
+    cs17j371,
+    cs18k326,
+    cs18k315,
+    cs18k320,
+    cs18k328,
+    cs18k329,
+    cs18k324,
+    cs18k323,
+    cs18k321,
+    cs18k300,
+    cs18k327,
+    cs18k337,
+    cs18k316,
+    cs18k331,
+    cs18k339,
+    cs18k340,
+    cs18k335,
+    cs18k334,
+    cs18k332,
+    cs18k301,
+    cs18k338,
+    cs18k348,
+    cs18k317,
+    cs18k342,
+    cs18k350,
+    cs18k351,
+    cs18k346,
+    cs18k345,
+    cs18k343,
+    cs18k302,
+    cs18k349,
+    cs18k359,
+    cs18k318,
+    cs18k353,
+    cs18k361,
+    cs18k362,
+    cs18k357,
+    cs18k356,
+    cs18k354,
+    cs18k303,
+    cs18k360,
+    cs18k370,
+    cs18k319,
+    cs18k364,
+    cs18k372,
+    cs18k373,
+    cs18k368,
+    cs18k367,
+    cs18k365,
+    cs18k304,
+    cs18k371,
+    cs08a305,
+    cs08a306,
+    cs08a307,
+    cs08a308,
+    cs08a309,
+    cs08a310,
+    cs08a311,
+    cs08a312,
+    cs08a313,
+    cs08a314,
+    cs09b305,
+    cs09b306,
+    cs09b307,
+    cs09b308,
+    cs09b309,
+    cs09b310,
+    cs09b311,
+    cs09b312,
+    cs09b313,
+    cs09b314,
+    cs10c305,
+    cs10c306,
+    cs10c307,
+    cs10c308,
+    cs10c309,
+    cs10c310,
+    cs10c311,
+    cs10c312,
+    cs10c313,
+    cs10c314,
+    cs11d305,
+    cs11d306,
+    cs11d307,
+    cs11d308,
+    cs11d309,
+    cs11d310,
+    cs11d311,
+    cs11d312,
+    cs11d313,
+    cs11d314,
+    cs12e305,
+    cs12e306,
+    cs12e307,
+    cs12e308,
+    cs12e309,
+    cs12e310,
+    cs12e311,
+    cs12e312,
+    cs12e313,
+    cs12e314,
+    cs13f305,
+    cs13f306,
+    cs13f307,
+    cs13f308,
+    cs13f309,
+    cs13f310,
+    cs13f311,
+    cs13f312,
+    cs13f313,
+    cs13f314,
+    cs14g305,
+    cs14g306,
+    cs14g307,
+    cs14g308,
+    cs14g309,
+    cs14g310,
+    cs14g311,
+    cs14g312,
+    cs14g313,
+    cs14g314,
+    cs15h305,
+    cs15h306,
+    cs15h307,
+    cs15h308,
+    cs15h309,
+    cs15h310,
+    cs15h311,
+    cs15h312,
+    cs15h313,
+    cs15h314,
+    cs16i305,
+    cs16i306,
+    cs16i307,
+    cs16i308,
+    cs16i309,
+    cs16i310,
+    cs16i311,
+    cs16i312,
+    cs16i313,
+    cs16i314,
+    cs17j305,
+    cs17j306,
+    cs17j307,
+    cs17j308,
+    cs17j309,
+    cs17j310,
+    cs17j311,
+    cs17j312,
+    cs17j313,
+    cs17j314,
+    cs18k305,
+    cs18k306,
+    cs18k307,
+    cs18k308,
+    cs18k309,
+    cs18k310,
+    cs18k311,
+    cs18k312,
+    cs18k313,
+    cs18k314,
+    cs08a325,
+    cs08a336,
+    cs08a347,
+    cs08a358,
+    cs08a369,
+    cs09b325,
+    cs09b336,
+    cs09b347,
+    cs09b358,
+    cs09b369,
+    cs10c325,
+    cs10c336,
+    cs10c347,
+    cs10c358,
+    cs10c369,
+    cs11d325,
+    cs11d336,
+    cs11d347,
+    cs11d358,
+    cs11d369,
+    cs12e325,
+    cs12e336,
+    cs12e347,
+    cs12e358,
+    cs12e369,
+    cs13f325,
+    cs13f336,
+    cs13f347,
+    cs13f358,
+    cs13f369,
+    cs14g325,
+    cs14g336,
+    cs14g347,
+    cs14g358,
+    cs14g369,
+    cs15h325,
+    cs15h336,
+    cs15h347,
+    cs15h358,
+    cs15h369,
+    cs16i325,
+    cs16i336,
+    cs16i347,
+    cs16i358,
+    cs16i369,
+    cs17j325,
+    cs17j336,
+    cs17j347,
+    cs17j358,
+    cs17j369,
+    cs18k325,
+    cs18k336,
+    cs18k347,
+    cs18k358,
+    cs18k369,
+    cs08a_m,
+    cs09b_m,
+    cs10c_m,
+    cs11d_m,
+    cs12e_m,
+    cs13f_m,
+    cs14g_m,
+    cs15h_m,
+    cs16i_m,
+    cs17j_m,
+    cs18k_m
+  )
+
+#Rename the alter variables.
+names(liss_alters) &lt;-
+  c(
+    &quot;nomem_encr&quot;,
+    &quot;educ_alter1.1&quot;,
+    &quot;gender_alter1.1&quot;,
+    &quot;origin_alter1.1&quot;,
+    &quot;prof_alter1.1&quot;,
+    &quot;age_alter1.1&quot;,
+    &quot;poltalk_alter1.1&quot;,
+    &quot;talk_alter1.1&quot;,
+    &quot;rel_alter1.1&quot;,
+    &quot;dear_alter1.1&quot;,
+    &quot;work_a1.1&quot;,
+    &quot;educ_alter2.1&quot;,
+    &quot;gender_alter2.1&quot;,
+    &quot;origin_alter2.1&quot;,
+    &quot;prof_alter2.1&quot;,
+    &quot;age_alter2.1&quot;,
+    &quot;poltalk_alter2.1&quot;,
+    &quot;talk_alter2.1&quot;,
+    &quot;rel_alter2.1&quot;,
+    &quot;dear_alter2.1&quot;,
+    &quot;work_a2.1&quot;,
+    &quot;educ_alter3.1&quot;,
+    &quot;gender_alter3.1&quot;,
+    &quot;origin_alter3.1&quot;,
+    &quot;prof_alter3.1&quot;,
+    &quot;age_alter3.1&quot;,
+    &quot;poltalk_alter3.1&quot;,
+    &quot;talk_alter3.1&quot;,
+    &quot;rel_alter3.1&quot;,
+    &quot;dear_alter3.1&quot;,
+    &quot;work_a3.1&quot;,
+    &quot;educ_alter4.1&quot;,
+    &quot;gender_alter4.1&quot;,
+    &quot;origin_alter4.1&quot;,
+    &quot;prof_alter4.1&quot;,
+    &quot;age_alter4.1&quot;,
+    &quot;poltalk_alter4.1&quot;,
+    &quot;talk_alter4.1&quot;,
+    &quot;rel_alter4.1&quot;,
+    &quot;dear_alter4.1&quot;,
+    &quot;work_a4.1&quot;,
+    &quot;educ_alter5.1&quot;,
+    &quot;gender_alter5.1&quot;,
+    &quot;origin_alter5.1&quot;,
+    &quot;prof_alter5.1&quot;,
+    &quot;age_alter5.1&quot;,
+    &quot;poltalk_alter5.1&quot;,
+    &quot;talk_alter5.1&quot;,
+    &quot;rel_alter5.1&quot;,
+    &quot;dear_alter5.1&quot;,
+    &quot;work_a5.1&quot;,
+    &quot;educ_alter1.2&quot;,
+    &quot;gender_alter1.2&quot;,
+    &quot;origin_alter1.2&quot;,
+    &quot;prof_alter1.2&quot;,
+    &quot;age_alter1.2&quot;,
+    &quot;poltalk_alter1.2&quot;,
+    &quot;talk_alter1.2&quot;,
+    &quot;rel_alter1.2&quot;,
+    &quot;dear_alter1.2&quot;,
+    &quot;work_a1.2&quot;,
+    &quot;educ_alter2.2&quot;,
+    &quot;gender_alter2.2&quot;,
+    &quot;origin_alter2.2&quot;,
+    &quot;prof_alter2.2&quot;,
+    &quot;age_alter2.2&quot;,
+    &quot;poltalk_alter2.2&quot;,
+    &quot;talk_alter2.2&quot;,
+    &quot;rel_alter2.2&quot;,
+    &quot;dear_alter2.2&quot;,
+    &quot;work_a2.2&quot;,
+    &quot;educ_alter3.2&quot;,
+    &quot;gender_alter3.2&quot;,
+    &quot;origin_alter3.2&quot;,
+    &quot;prof_alter3.2&quot;,
+    &quot;age_alter3.2&quot;,
+    &quot;poltalk_alter3.2&quot;,
+    &quot;talk_alter3.2&quot;,
+    &quot;rel_alter3.2&quot;,
+    &quot;dear_alter3.2&quot;,
+    &quot;work_a3.2&quot;,
+    &quot;educ_alter4.2&quot;,
+    &quot;gender_alter4.2&quot;,
+    &quot;origin_alter4.2&quot;,
+    &quot;prof_alter4.2&quot;,
+    &quot;age_alter4.2&quot;,
+    &quot;poltalk_alter4.2&quot;,
+    &quot;talk_alter4.2&quot;,
+    &quot;rel_alter4.2&quot;,
+    &quot;dear_alter4.2&quot;,
+    &quot;work_a4.2&quot;,
+    &quot;educ_alter5.2&quot;,
+    &quot;gender_alter5.2&quot;,
+    &quot;origin_alter5.2&quot;,
+    &quot;prof_alter5.2&quot;,
+    &quot;age_alter5.2&quot;,
+    &quot;poltalk_alter5.2&quot;,
+    &quot;talk_alter5.2&quot;,
+    &quot;rel_alter5.2&quot;,
+    &quot;dear_alter5.2&quot;,
+    &quot;work_a5.2&quot;,
+    &quot;educ_alter1.3&quot;,
+    &quot;gender_alter1.3&quot;,
+    &quot;origin_alter1.3&quot;,
+    &quot;prof_alter1.3&quot;,
+    &quot;age_alter1.3&quot;,
+    &quot;poltalk_alter1.3&quot;,
+    &quot;talk_alter1.3&quot;,
+    &quot;rel_alter1.3&quot;,
+    &quot;dear_alter1.3&quot;,
+    &quot;work_a1.3&quot;,
+    &quot;educ_alter2.3&quot;,
+    &quot;gender_alter2.3&quot;,
+    &quot;origin_alter2.3&quot;,
+    &quot;prof_alter2.3&quot;,
+    &quot;age_alter2.3&quot;,
+    &quot;poltalk_alter2.3&quot;,
+    &quot;talk_alter2.3&quot;,
+    &quot;rel_alter2.3&quot;,
+    &quot;dear_alter2.3&quot;,
+    &quot;work_a2.3&quot;,
+    &quot;educ_alter3.3&quot;,
+    &quot;gender_alter3.3&quot;,
+    &quot;origin_alter3.3&quot;,
+    &quot;prof_alter3.3&quot;,
+    &quot;age_alter3.3&quot;,
+    &quot;poltalk_alter3.3&quot;,
+    &quot;talk_alter3.3&quot;,
+    &quot;rel_alter3.3&quot;,
+    &quot;dear_alter3.3&quot;,
+    &quot;work_a3.3&quot;,
+    &quot;educ_alter4.3&quot;,
+    &quot;gender_alter4.3&quot;,
+    &quot;origin_alter4.3&quot;,
+    &quot;prof_alter4.3&quot;,
+    &quot;age_alter4.3&quot;,
+    &quot;poltalk_alter4.3&quot;,
+    &quot;talk_alter4.3&quot;,
+    &quot;rel_alter4.3&quot;,
+    &quot;dear_alter4.3&quot;,
+    &quot;work_a4.3&quot;,
+    &quot;educ_alter5.3&quot;,
+    &quot;gender_alter5.3&quot;,
+    &quot;origin_alter5.3&quot;,
+    &quot;prof_alter5.3&quot;,
+    &quot;age_alter5.3&quot;,
+    &quot;poltalk_alter5.3&quot;,
+    &quot;talk_alter5.3&quot;,
+    &quot;rel_alter5.3&quot;,
+    &quot;dear_alter5.3&quot;,
+    &quot;work_a5.3&quot;,
+    &quot;educ_alter1.4&quot;,
+    &quot;gender_alter1.4&quot;,
+    &quot;origin_alter1.4&quot;,
+    &quot;prof_alter1.4&quot;,
+    &quot;age_alter1.4&quot;,
+    &quot;poltalk_alter1.4&quot;,
+    &quot;talk_alter1.4&quot;,
+    &quot;rel_alter1.4&quot;,
+    &quot;dear_alter1.4&quot;,
+    &quot;work_a1.4&quot;,
+    &quot;educ_alter2.4&quot;,
+    &quot;gender_alter2.4&quot;,
+    &quot;origin_alter2.4&quot;,
+    &quot;prof_alter2.4&quot;,
+    &quot;age_alter2.4&quot;,
+    &quot;poltalk_alter2.4&quot;,
+    &quot;talk_alter2.4&quot;,
+    &quot;rel_alter2.4&quot;,
+    &quot;dear_alter2.4&quot;,
+    &quot;work_a2.4&quot;,
+    &quot;educ_alter3.4&quot;,
+    &quot;gender_alter3.4&quot;,
+    &quot;origin_alter3.4&quot;,
+    &quot;prof_alter3.4&quot;,
+    &quot;age_alter3.4&quot;,
+    &quot;poltalk_alter3.4&quot;,
+    &quot;talk_alter3.4&quot;,
+    &quot;rel_alter3.4&quot;,
+    &quot;dear_alter3.4&quot;,
+    &quot;work_a3.4&quot;,
+    &quot;educ_alter4.4&quot;,
+    &quot;gender_alter4.4&quot;,
+    &quot;origin_alter4.4&quot;,
+    &quot;prof_alter4.4&quot;,
+    &quot;age_alter4.4&quot;,
+    &quot;poltalk_alter4.4&quot;,
+    &quot;talk_alter4.4&quot;,
+    &quot;rel_alter4.4&quot;,
+    &quot;dear_alter4.4&quot;,
+    &quot;work_a4.4&quot;,
+    &quot;educ_alter5.4&quot;,
+    &quot;gender_alter5.4&quot;,
+    &quot;origin_alter5.4&quot;,
+    &quot;prof_alter5.4&quot;,
+    &quot;age_alter5.4&quot;,
+    &quot;poltalk_alter5.4&quot;,
+    &quot;talk_alter5.4&quot;,
+    &quot;rel_alter5.4&quot;,
+    &quot;dear_alter5.4&quot;,
+    &quot;work_a5.4&quot;,
+    &quot;educ_alter1.5&quot;,
+    &quot;gender_alter1.5&quot;,
+    &quot;origin_alter1.5&quot;,
+    &quot;prof_alter1.5&quot;,
+    &quot;age_alter1.5&quot;,
+    &quot;poltalk_alter1.5&quot;,
+    &quot;talk_alter1.5&quot;,
+    &quot;rel_alter1.5&quot;,
+    &quot;dear_alter1.5&quot;,
+    &quot;work_a1.5&quot;,
+    &quot;educ_alter2.5&quot;,
+    &quot;gender_alter2.5&quot;,
+    &quot;origin_alter2.5&quot;,
+    &quot;prof_alter2.5&quot;,
+    &quot;age_alter2.5&quot;,
+    &quot;poltalk_alter2.5&quot;,
+    &quot;talk_alter2.5&quot;,
+    &quot;rel_alter2.5&quot;,
+    &quot;dear_alter2.5&quot;,
+    &quot;work_a2.5&quot;,
+    &quot;educ_alter3.5&quot;,
+    &quot;gender_alter3.5&quot;,
+    &quot;origin_alter3.5&quot;,
+    &quot;prof_alter3.5&quot;,
+    &quot;age_alter3.5&quot;,
+    &quot;poltalk_alter3.5&quot;,
+    &quot;talk_alter3.5&quot;,
+    &quot;rel_alter3.5&quot;,
+    &quot;dear_alter3.5&quot;,
+    &quot;work_a3.5&quot;,
+    &quot;educ_alter4.5&quot;,
+    &quot;gender_alter4.5&quot;,
+    &quot;origin_alter4.5&quot;,
+    &quot;prof_alter4.5&quot;,
+    &quot;age_alter4.5&quot;,
+    &quot;poltalk_alter4.5&quot;,
+    &quot;talk_alter4.5&quot;,
+    &quot;rel_alter4.5&quot;,
+    &quot;dear_alter4.5&quot;,
+    &quot;work_a4.5&quot;,
+    &quot;educ_alter5.5&quot;,
+    &quot;gender_alter5.5&quot;,
+    &quot;origin_alter5.5&quot;,
+    &quot;prof_alter5.5&quot;,
+    &quot;age_alter5.5&quot;,
+    &quot;poltalk_alter5.5&quot;,
+    &quot;talk_alter5.5&quot;,
+    &quot;rel_alter5.5&quot;,
+    &quot;dear_alter5.5&quot;,
+    &quot;work_a5.5&quot;,
+    &quot;educ_alter1.6&quot;,
+    &quot;gender_alter1.6&quot;,
+    &quot;origin_alter1.6&quot;,
+    &quot;prof_alter1.6&quot;,
+    &quot;age_alter1.6&quot;,
+    &quot;poltalk_alter1.6&quot;,
+    &quot;talk_alter1.6&quot;,
+    &quot;rel_alter1.6&quot;,
+    &quot;dear_alter1.6&quot;,
+    &quot;work_a1.6&quot;,
+    &quot;educ_alter2.6&quot;,
+    &quot;gender_alter2.6&quot;,
+    &quot;origin_alter2.6&quot;,
+    &quot;prof_alter2.6&quot;,
+    &quot;age_alter2.6&quot;,
+    &quot;poltalk_alter2.6&quot;,
+    &quot;talk_alter2.6&quot;,
+    &quot;rel_alter2.6&quot;,
+    &quot;dear_alter2.6&quot;,
+    &quot;work_a2.6&quot;,
+    &quot;educ_alter3.6&quot;,
+    &quot;gender_alter3.6&quot;,
+    &quot;origin_alter3.6&quot;,
+    &quot;prof_alter3.6&quot;,
+    &quot;age_alter3.6&quot;,
+    &quot;poltalk_alter3.6&quot;,
+    &quot;talk_alter3.6&quot;,
+    &quot;rel_alter3.6&quot;,
+    &quot;dear_alter3.6&quot;,
+    &quot;work_a3.6&quot;,
+    &quot;educ_alter4.6&quot;,
+    &quot;gender_alter4.6&quot;,
+    &quot;origin_alter4.6&quot;,
+    &quot;prof_alter4.6&quot;,
+    &quot;age_alter4.6&quot;,
+    &quot;poltalk_alter4.6&quot;,
+    &quot;talk_alter4.6&quot;,
+    &quot;rel_alter4.6&quot;,
+    &quot;dear_alter4.6&quot;,
+    &quot;work_a4.6&quot;,
+    &quot;educ_alter5.6&quot;,
+    &quot;gender_alter5.6&quot;,
+    &quot;origin_alter5.6&quot;,
+    &quot;prof_alter5.6&quot;,
+    &quot;age_alter5.6&quot;,
+    &quot;poltalk_alter5.6&quot;,
+    &quot;talk_alter5.6&quot;,
+    &quot;rel_alter5.6&quot;,
+    &quot;dear_alter5.6&quot;,
+    &quot;work_a5.6&quot;,
+    &quot;educ_alter1.7&quot;,
+    &quot;gender_alter1.7&quot;,
+    &quot;origin_alter1.7&quot;,
+    &quot;prof_alter1.7&quot;,
+    &quot;age_alter1.7&quot;,
+    &quot;poltalk_alter1.7&quot;,
+    &quot;talk_alter1.7&quot;,
+    &quot;rel_alter1.7&quot;,
+    &quot;dear_alter1.7&quot;,
+    &quot;work_a1.7&quot;,
+    &quot;educ_alter2.7&quot;,
+    &quot;gender_alter2.7&quot;,
+    &quot;origin_alter2.7&quot;,
+    &quot;prof_alter2.7&quot;,
+    &quot;age_alter2.7&quot;,
+    &quot;poltalk_alter2.7&quot;,
+    &quot;talk_alter2.7&quot;,
+    &quot;rel_alter2.7&quot;,
+    &quot;dear_alter2.7&quot;,
+    &quot;work_a2.7&quot;,
+    &quot;educ_alter3.7&quot;,
+    &quot;gender_alter3.7&quot;,
+    &quot;origin_alter3.7&quot;,
+    &quot;prof_alter3.7&quot;,
+    &quot;age_alter3.7&quot;,
+    &quot;poltalk_alter3.7&quot;,
+    &quot;talk_alter3.7&quot;,
+    &quot;rel_alter3.7&quot;,
+    &quot;dear_alter3.7&quot;,
+    &quot;work_a3.7&quot;,
+    &quot;educ_alter4.7&quot;,
+    &quot;gender_alter4.7&quot;,
+    &quot;origin_alter4.7&quot;,
+    &quot;prof_alter4.7&quot;,
+    &quot;age_alter4.7&quot;,
+    &quot;poltalk_alter4.7&quot;,
+    &quot;talk_alter4.7&quot;,
+    &quot;rel_alter4.7&quot;,
+    &quot;dear_alter4.7&quot;,
+    &quot;work_a4.7&quot;,
+    &quot;educ_alter5.7&quot;,
+    &quot;gender_alter5.7&quot;,
+    &quot;origin_alter5.7&quot;,
+    &quot;prof_alter5.7&quot;,
+    &quot;age_alter5.7&quot;,
+    &quot;poltalk_alter5.7&quot;,
+    &quot;talk_alter5.7&quot;,
+    &quot;rel_alter5.7&quot;,
+    &quot;dear_alter5.7&quot;,
+    &quot;work_a5.7&quot;,
+    &quot;educ_alter1.8&quot;,
+    &quot;gender_alter1.8&quot;,
+    &quot;origin_alter1.8&quot;,
+    &quot;prof_alter1.8&quot;,
+    &quot;age_alter1.8&quot;,
+    &quot;poltalk_alter1.8&quot;,
+    &quot;talk_alter1.8&quot;,
+    &quot;rel_alter1.8&quot;,
+    &quot;dear_alter1.8&quot;,
+    &quot;work_a1.8&quot;,
+    &quot;educ_alter2.8&quot;,
+    &quot;gender_alter2.8&quot;,
+    &quot;origin_alter2.8&quot;,
+    &quot;prof_alter2.8&quot;,
+    &quot;age_alter2.8&quot;,
+    &quot;poltalk_alter2.8&quot;,
+    &quot;talk_alter2.8&quot;,
+    &quot;rel_alter2.8&quot;,
+    &quot;dear_alter2.8&quot;,
+    &quot;work_a2.8&quot;,
+    &quot;educ_alter3.8&quot;,
+    &quot;gender_alter3.8&quot;,
+    &quot;origin_alter3.8&quot;,
+    &quot;prof_alter3.8&quot;,
+    &quot;age_alter3.8&quot;,
+    &quot;poltalk_alter3.8&quot;,
+    &quot;talk_alter3.8&quot;,
+    &quot;rel_alter3.8&quot;,
+    &quot;dear_alter3.8&quot;,
+    &quot;work_a3.8&quot;,
+    &quot;educ_alter4.8&quot;,
+    &quot;gender_alter4.8&quot;,
+    &quot;origin_alter4.8&quot;,
+    &quot;prof_alter4.8&quot;,
+    &quot;age_alter4.8&quot;,
+    &quot;poltalk_alter4.8&quot;,
+    &quot;talk_alter4.8&quot;,
+    &quot;rel_alter4.8&quot;,
+    &quot;dear_alter4.8&quot;,
+    &quot;work_a4.8&quot;,
+    &quot;educ_alter5.8&quot;,
+    &quot;gender_alter5.8&quot;,
+    &quot;origin_alter5.8&quot;,
+    &quot;prof_alter5.8&quot;,
+    &quot;age_alter5.8&quot;,
+    &quot;poltalk_alter5.8&quot;,
+    &quot;talk_alter5.8&quot;,
+    &quot;rel_alter5.8&quot;,
+    &quot;dear_alter5.8&quot;,
+    &quot;work_a5.8&quot;,
+    &quot;educ_alter1.9&quot;,
+    &quot;gender_alter1.9&quot;,
+    &quot;origin_alter1.9&quot;,
+    &quot;prof_alter1.9&quot;,
+    &quot;age_alter1.9&quot;,
+    &quot;poltalk_alter1.9&quot;,
+    &quot;talk_alter1.9&quot;,
+    &quot;rel_alter1.9&quot;,
+    &quot;dear_alter1.9&quot;,
+    &quot;work_a1.9&quot;,
+    &quot;educ_alter2.9&quot;,
+    &quot;gender_alter2.9&quot;,
+    &quot;origin_alter2.9&quot;,
+    &quot;prof_alter2.9&quot;,
+    &quot;age_alter2.9&quot;,
+    &quot;poltalk_alter2.9&quot;,
+    &quot;talk_alter2.9&quot;,
+    &quot;rel_alter2.9&quot;,
+    &quot;dear_alter2.9&quot;,
+    &quot;work_a2.9&quot;,
+    &quot;educ_alter3.9&quot;,
+    &quot;gender_alter3.9&quot;,
+    &quot;origin_alter3.9&quot;,
+    &quot;prof_alter3.9&quot;,
+    &quot;age_alter3.9&quot;,
+    &quot;poltalk_alter3.9&quot;,
+    &quot;talk_alter3.9&quot;,
+    &quot;rel_alter3.9&quot;,
+    &quot;dear_alter3.9&quot;,
+    &quot;work_a3.9&quot;,
+    &quot;educ_alter4.9&quot;,
+    &quot;gender_alter4.9&quot;,
+    &quot;origin_alter4.9&quot;,
+    &quot;prof_alter4.9&quot;,
+    &quot;age_alter4.9&quot;,
+    &quot;poltalk_alter4.9&quot;,
+    &quot;talk_alter4.9&quot;,
+    &quot;rel_alter4.9&quot;,
+    &quot;dear_alter4.9&quot;,
+    &quot;work_a4.9&quot;,
+    &quot;educ_alter5.9&quot;,
+    &quot;gender_alter5.9&quot;,
+    &quot;origin_alter5.9&quot;,
+    &quot;prof_alter5.9&quot;,
+    &quot;age_alter5.9&quot;,
+    &quot;poltalk_alter5.9&quot;,
+    &quot;talk_alter5.9&quot;,
+    &quot;rel_alter5.9&quot;,
+    &quot;dear_alter5.9&quot;,
+    &quot;work_a5.9&quot;,
+    &quot;educ_alter1.10&quot;,
+    &quot;gender_alter1.10&quot;,
+    &quot;origin_alter1.10&quot;,
+    &quot;prof_alter1.10&quot;,
+    &quot;age_alter1.10&quot;,
+    &quot;poltalk_alter1.10&quot;,
+    &quot;talk_alter1.10&quot;,
+    &quot;rel_alter1.10&quot;,
+    &quot;dear_alter1.10&quot;,
+    &quot;work_a1.10&quot;,
+    &quot;educ_alter2.10&quot;,
+    &quot;gender_alter2.10&quot;,
+    &quot;origin_alter2.10&quot;,
+    &quot;prof_alter2.10&quot;,
+    &quot;age_alter2.10&quot;,
+    &quot;poltalk_alter2.10&quot;,
+    &quot;talk_alter2.10&quot;,
+    &quot;rel_alter2.10&quot;,
+    &quot;dear_alter2.10&quot;,
+    &quot;work_a2.10&quot;,
+    &quot;educ_alter3.10&quot;,
+    &quot;gender_alter3.10&quot;,
+    &quot;origin_alter3.10&quot;,
+    &quot;prof_alter3.10&quot;,
+    &quot;age_alter3.10&quot;,
+    &quot;poltalk_alter3.10&quot;,
+    &quot;talk_alter3.10&quot;,
+    &quot;rel_alter3.10&quot;,
+    &quot;dear_alter3.10&quot;,
+    &quot;work_a3.10&quot;,
+    &quot;educ_alter4.10&quot;,
+    &quot;gender_alter4.10&quot;,
+    &quot;origin_alter4.10&quot;,
+    &quot;prof_alter4.10&quot;,
+    &quot;age_alter4.10&quot;,
+    &quot;poltalk_alter4.10&quot;,
+    &quot;talk_alter4.10&quot;,
+    &quot;rel_alter4.10&quot;,
+    &quot;dear_alter4.10&quot;,
+    &quot;work_a4.10&quot;,
+    &quot;educ_alter5.10&quot;,
+    &quot;gender_alter5.10&quot;,
+    &quot;origin_alter5.10&quot;,
+    &quot;prof_alter5.10&quot;,
+    &quot;age_alter5.10&quot;,
+    &quot;poltalk_alter5.10&quot;,
+    &quot;talk_alter5.10&quot;,
+    &quot;rel_alter5.10&quot;,
+    &quot;dear_alter5.10&quot;,
+    &quot;work_a5.10&quot;,
+    &quot;educ_alter1.11&quot;,
+    &quot;gender_alter1.11&quot;,
+    &quot;origin_alter1.11&quot;,
+    &quot;prof_alter1.11&quot;,
+    &quot;age_alter1.11&quot;,
+    &quot;poltalk_alter1.11&quot;,
+    &quot;talk_alter1.11&quot;,
+    &quot;rel_alter1.11&quot;,
+    &quot;dear_alter1.11&quot;,
+    &quot;work_a1.11&quot;,
+    &quot;educ_alter2.11&quot;,
+    &quot;gender_alter2.11&quot;,
+    &quot;origin_alter2.11&quot;,
+    &quot;prof_alter2.11&quot;,
+    &quot;age_alter2.11&quot;,
+    &quot;poltalk_alter2.11&quot;,
+    &quot;talk_alter2.11&quot;,
+    &quot;rel_alter2.11&quot;,
+    &quot;dear_alter2.11&quot;,
+    &quot;work_a2.11&quot;,
+    &quot;educ_alter3.11&quot;,
+    &quot;gender_alter3.11&quot;,
+    &quot;origin_alter3.11&quot;,
+    &quot;prof_alter3.11&quot;,
+    &quot;age_alter3.11&quot;,
+    &quot;poltalk_alter3.11&quot;,
+    &quot;talk_alter3.11&quot;,
+    &quot;rel_alter3.11&quot;,
+    &quot;dear_alter3.11&quot;,
+    &quot;work_a3.11&quot;,
+    &quot;educ_alter4.11&quot;,
+    &quot;gender_alter4.11&quot;,
+    &quot;origin_alter4.11&quot;,
+    &quot;prof_alter4.11&quot;,
+    &quot;age_alter4.11&quot;,
+    &quot;poltalk_alter4.11&quot;,
+    &quot;talk_alter4.11&quot;,
+    &quot;rel_alter4.11&quot;,
+    &quot;dear_alter4.11&quot;,
+    &quot;work_a4.11&quot;,
+    &quot;educ_alter5.11&quot;,
+    &quot;gender_alter5.11&quot;,
+    &quot;origin_alter5.11&quot;,
+    &quot;prof_alter5.11&quot;,
+    &quot;age_alter5.11&quot;,
+    &quot;poltalk_alter5.11&quot;,
+    &quot;talk_alter5.11&quot;,
+    &quot;rel_alter5.11&quot;,
+    &quot;dear_alter5.11&quot;,
+    &quot;work_a5.11&quot;,
+    &quot;close_12.1&quot;,
+    &quot;close_13.1&quot;,
+    &quot;close_14.1&quot;,
+    &quot;close_15.1&quot;,
+    &quot;close_23.1&quot;,
+    &quot;close_24.1&quot;,
+    &quot;close_25.1&quot;,
+    &quot;close_34.1&quot;,
+    &quot;close_35.1&quot;,
+    &quot;close_45.1&quot;,
+    &quot;close_12.2&quot;,
+    &quot;close_13.2&quot;,
+    &quot;close_14.2&quot;,
+    &quot;close_15.2&quot;,
+    &quot;close_23.2&quot;,
+    &quot;close_24.2&quot;,
+    &quot;close_25.2&quot;,
+    &quot;close_34.2&quot;,
+    &quot;close_35.2&quot;,
+    &quot;close_45.2&quot;,
+    &quot;close_12.3&quot;,
+    &quot;close_13.3&quot;,
+    &quot;close_14.3&quot;,
+    &quot;close_15.3&quot;,
+    &quot;close_23.3&quot;,
+    &quot;close_24.3&quot;,
+    &quot;close_25.3&quot;,
+    &quot;close_34.3&quot;,
+    &quot;close_35.3&quot;,
+    &quot;close_45.3&quot;,
+    &quot;close_12.4&quot;,
+    &quot;close_13.4&quot;,
+    &quot;close_14.4&quot;,
+    &quot;close_15.4&quot;,
+    &quot;close_23.4&quot;,
+    &quot;close_24.4&quot;,
+    &quot;close_25.4&quot;,
+    &quot;close_34.4&quot;,
+    &quot;close_35.4&quot;,
+    &quot;close_45.4&quot;,
+    &quot;close_12.5&quot;,
+    &quot;close_13.5&quot;,
+    &quot;close_14.5&quot;,
+    &quot;close_15.5&quot;,
+    &quot;close_23.5&quot;,
+    &quot;close_24.5&quot;,
+    &quot;close_25.5&quot;,
+    &quot;close_34.5&quot;,
+    &quot;close_35.5&quot;,
+    &quot;close_45.5&quot;,
+    &quot;close_12.6&quot;,
+    &quot;close_13.6&quot;,
+    &quot;close_14.6&quot;,
+    &quot;close_15.6&quot;,
+    &quot;close_23.6&quot;,
+    &quot;close_24.6&quot;,
+    &quot;close_25.6&quot;,
+    &quot;close_34.6&quot;,
+    &quot;close_35.6&quot;,
+    &quot;close_45.6&quot;,
+    &quot;close_12.7&quot;,
+    &quot;close_13.7&quot;,
+    &quot;close_14.7&quot;,
+    &quot;close_15.7&quot;,
+    &quot;close_23.7&quot;,
+    &quot;close_24.7&quot;,
+    &quot;close_25.7&quot;,
+    &quot;close_34.7&quot;,
+    &quot;close_35.7&quot;,
+    &quot;close_45.7&quot;,
+    &quot;close_12.8&quot;,
+    &quot;close_13.8&quot;,
+    &quot;close_14.8&quot;,
+    &quot;close_15.8&quot;,
+    &quot;close_23.8&quot;,
+    &quot;close_24.8&quot;,
+    &quot;close_25.8&quot;,
+    &quot;close_34.8&quot;,
+    &quot;close_35.8&quot;,
+    &quot;close_45.8&quot;,
+    &quot;close_12.9&quot;,
+    &quot;close_13.9&quot;,
+    &quot;close_14.9&quot;,
+    &quot;close_15.9&quot;,
+    &quot;close_23.9&quot;,
+    &quot;close_24.9&quot;,
+    &quot;close_25.9&quot;,
+    &quot;close_34.9&quot;,
+    &quot;close_35.9&quot;,
+    &quot;close_45.9&quot;,
+    &quot;close_12.10&quot;,
+    &quot;close_13.10&quot;,
+    &quot;close_14.10&quot;,
+    &quot;close_15.10&quot;,
+    &quot;close_23.10&quot;,
+    &quot;close_24.10&quot;,
+    &quot;close_25.10&quot;,
+    &quot;close_34.10&quot;,
+    &quot;close_35.10&quot;,
+    &quot;close_45.10&quot;,
+    &quot;close_12.11&quot;,
+    &quot;close_13.11&quot;,
+    &quot;close_14.11&quot;,
+    &quot;close_15.11&quot;,
+    &quot;close_23.11&quot;,
+    &quot;close_24.11&quot;,
+    &quot;close_25.11&quot;,
+    &quot;close_34.11&quot;,
+    &quot;close_35.11&quot;,
+    &quot;close_45.11&quot;,
+    &quot;length_1.1&quot;,
+    &quot;length_2.1&quot;,
+    &quot;length_3.1&quot;,
+    &quot;length_4.1&quot;,
+    &quot;length_5.1&quot;,
+    &quot;length_1.2&quot;,
+    &quot;length_2.2&quot;,
+    &quot;length_3.2&quot;,
+    &quot;length_4.2&quot;,
+    &quot;length_5.2&quot;,
+    &quot;length_1.3&quot;,
+    &quot;length_2.3&quot;,
+    &quot;length_3.3&quot;,
+    &quot;length_4.3&quot;,
+    &quot;length_5.3&quot;,
+    &quot;length_1.4&quot;,
+    &quot;length_2.4&quot;,
+    &quot;length_3.4&quot;,
+    &quot;length_4.4&quot;,
+    &quot;length_5.4&quot;,
+    &quot;length_1.5&quot;,
+    &quot;length_2.5&quot;,
+    &quot;length_3.5&quot;,
+    &quot;length_4.5&quot;,
+    &quot;length_5.5&quot;,
+    &quot;length_1.6&quot;,
+    &quot;length_2.6&quot;,
+    &quot;length_3.6&quot;,
+    &quot;length_4.6&quot;,
+    &quot;length_5.6&quot;,
+    &quot;length_1.7&quot;,
+    &quot;length_2.7&quot;,
+    &quot;length_3.7&quot;,
+    &quot;length_4.7&quot;,
+    &quot;length_5.7&quot;,
+    &quot;length_1.8&quot;,
+    &quot;length_2.8&quot;,
+    &quot;length_3.8&quot;,
+    &quot;length_4.8&quot;,
+    &quot;length_5.8&quot;,
+    &quot;length_1.9&quot;,
+    &quot;length_2.9&quot;,
+    &quot;length_3.9&quot;,
+    &quot;length_4.9&quot;,
+    &quot;length_5.9&quot;,
+    &quot;length_1.10&quot;,
+    &quot;length_2.10&quot;,
+    &quot;length_3.10&quot;,
+    &quot;length_4.10&quot;,
+    &quot;length_5.10&quot;,
+    &quot;length_1.11&quot;,
+    &quot;length_2.11&quot;,
+    &quot;length_3.11&quot;,
+    &quot;length_4.11&quot;,
+    &quot;length_5.11&quot;,
+    &quot;leisure_part.1&quot;,
+    &quot;leisure_part.2&quot;,
+    &quot;leisure_part.3&quot;,
+    &quot;leisure_part.4&quot;,
+    &quot;leisure_part.5&quot;,
+    &quot;leisure_part.6&quot;,
+    &quot;leisure_part.7&quot;,
+    &quot;leisure_part.8&quot;,
+    &quot;leisure_part.9&quot;,
+    &quot;leisure_part.10&quot;,
+    &quot;leisure_part.11&quot;
+  )</code></pre>
+</div>
+</div>
+<div id="combine-dataframes" class="section level1">
+<h1>Combine dataframes</h1>
+<p>Combine all modules into one datafile.</p>
+<pre class="r"><code>#combine the different data sources into one wide data file. 
+liss_wide &lt;- liss_pol %&gt;% 
+  left_join(liss_alters, by = &quot;nomem_encr&quot;) %&gt;% 
+  left_join(liss_alter_id, by = &quot;nomem_encr&quot;) %&gt;% 
+  left_join(liss_origin, by = &quot;nomem_encr&quot;) %&gt;% 
+  left_join(liss_avars, by = &quot;nomem_encr&quot;)
+
+#remove all labels
+liss_wide &lt;- sjlabelled::remove_all_labels(liss_wide)</code></pre>
+</div>
+<div id="export" class="section level1">
+<h1>Export</h1>
+<p>Pivot data in long format and export data.</p>
+<pre class="r"><code>#--------------------------- Reshape to long file. -------------------------#
+#create a long file.
+liss_long &lt;- liss_wide %&gt;% 
+  pivot_longer(cols = 2:1398, 
+               names_to = c(&quot;measure&quot;, &quot;survey_wave&quot;),
+               names_pattern = &quot;(.+)\\.(.+)&quot;,
+               values_to = &quot;value&quot;) %&gt;%
+  pivot_wider(names_from = measure,
+              values_from = value) %&gt;% 
+  mutate(survey_wave = as.numeric(survey_wave))
+
+#clean the environment. 
+rm(list=ls()[! ls() %in% c(&quot;liss_wide&quot;, &quot;liss_long&quot;)])
+
+#save RData.
+save.image(&quot;data/data-processed/liss_merged/liss_core_merged_V3_240624.Rdata&quot;)</code></pre>
+</div>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlByZXBlcmF0aW9uIG9mIExJU1MgZGF0YSINCmF1dGhvcjogIlRoaWptZW4gSmVyb2Vuc2UiDQpkYXRlOiAiTGFzdCBjb21waWxlZCBvbiBgciBmb3JtYXQoU3lzLnRpbWUoKSwgJyVkICVCLCAlWScpYCINCm91dHB1dDoNCiAgaHRtbF9kb2N1bWVudDoNCiAgICB0b2M6IFRSVUUNCiAgICB0b2NfZGVwdGg6IDMNCiAgICB0b2NfZmxvYXQ6IFRSVUUNCiAgICBjb2RlX2ZvbGRpbmc6IHNob3cNCiAgICBjb2RlX2Rvd25sb2FkOiBUUlVFDQotLS0NCg0KYGBge3Igc2V0dXAsIGluY2x1ZGU9RkFMU0V9DQprbml0cjo6b3B0c19jaHVuayRzZXQoDQogIGNhY2hlID0gVFJVRSwNCiAgbWVzc2FnZSA9IEZBTFNFLA0KICB3YXJuaW5nID0gRkFMU0UsDQogIHJlc3VsdHMgPSAiYXNpcyIsDQogIGZpZy5hbGlnbiA9ICJjZW50ZXIiDQopDQpgYGANCg0KIyBHb2FsDQoNCiMgU2V0IHVwDQpgYGB7ciBwYWNrYWdlc30NCiNsb2FkIHBhY2thZ2VzDQpsaWJyYXJ5KGRwbHlyKQ0KbGlicmFyeShwdXJycikNCmxpYnJhcnkodGlkeXIpDQpsaWJyYXJ5KHRpZHlzZWxlY3QpDQpsaWJyYXJ5KGhhdmVuKQ0KbGlicmFyeShtYWdyaXR0cikNCmBgYA0KDQpJbXBvcnQgdGhlIG1lcmdlZCBkYXRhZmlsZXMNCmBgYHtyIGRhdGEgaW1wb3J0fQ0KbG9hZChmaWxlID0gZmlsZS5wYXRoKCJkYXRhIiwNCiAgICAgICAgICAiZGF0YS1wcm9jZXNzZWQiLA0KICAgICAgICAgICJsaXNzX21lcmdlZCIsDQogICAgICAgImxpc3NfbWVyZ2VkX3Jhdy5SZGF0YSIpKQ0KYGBgDQoNCiMgRmlsdGVyIChwYXJ0aWNpcGF0ZWQgaW4gTElTUyBtb2R1bGUpDQogDQpXZSBjYW4gdXNlIHRoZSBtb250aCBvZiBkYXRhY29sbGVjdGlvbiB0byBzZWUgd2hldGhlciBzb21lb25lIGhhcyBwYXJ0aWNpcGF0ZWQgaW4gYSBzcGVjaWZpYyB5ZWFyL21vZHVsZSBjb21iaW5hdGlvbiBpZiBzb21lb25lIGhhcyBhbiBhbiBOQSB0aGV5IGRpZCBub3QgcGFydGljaXBhdGUgaW4gaXQuIFRvIHN1cm1pc2UsIHdlIHdhbnQgcGVvcGxlIHdobyBwYXJ0aWNpcGF0ZWQgaW4gdGhlIENETiBtb2R1bGUgYW5kIGFsc28gaW4gdGhlIHBvbGl0aWNzIGFuZCB2YWx1ZXMgd2F2ZXMuIA0KDQoNCmBgYHtyIGZpbHRlcn0NCiMgTGV0J3MgY3JlYXRlIGEgZmlsdGVyIG9mIHBlb3BsZSB3aG8gcGFydGljaXBhdGVkIGluIGF0IGxlYXN0IG9uZSBvZiB0aGVzZS4NCg0KI2ZpcnN0IGNyZWF0ZSBhIGxlaXN1cmUgYW5kIGludGVncmF0aW9uIE5BIHZhcmlhYmxlLg0KI2ZpcnN0IGNyZWF0ZSBhIHN1YnNldCBvZiB0aGUgZGF0YSwgc28gd2UgY2FuIHVzZSByb3d3aXNlIHRvIGNyZWF0ZSBhIHNlbGVjdGlvbiBpZC4NCnN1YnNldDEgPC0gbGlzcyAlPiUNCiAgcm93d2lzZSgpICU+JQ0KICAjY3JlYXRlIGZpbHRlciB2YXJpYWJsZQ0KICBtdXRhdGUobmFfbGVpX2ludCA9IHN1bShpcy5uYSgNCiAgICBjKA0KICAgICAgY3MwOGFfbSwNCiAgICAgIGNzMDliX20sDQogICAgICBjczEwY19tLA0KICAgICAgY3MxMWRfbSwNCiAgICAgIGNzMTJlX20sDQogICAgICBjczEzZl9tLA0KICAgICAgY3MxNGdfbSwNCiAgICAgIGNzMTVoX20sDQogICAgICBjczE2aV9tLA0KICAgICAgY3MxN2pfbSwNCiAgICAgIGNzMThrX20NCiAgICApDQogICkpKSAlPiUNCiAgI3VzZSBvbmx5IHRoZSBvYnNlcnZhdGlvbnMgdGhhdCBoYXZlIHBhcnRpY2lwYXRlZCBpbiBhdCBsZWFzdCBvbmUgd2F2ZSBvZiB0aGUgbGVpc3VyZSBhbmQgaW50ZWdyYXRpb24gZGF0YS4gV2UgY2FuIG9mIGNvdXJzZSBjaGFuZ2UgdGhpcyBsYXRlciBvbi4NCiAgZmlsdGVyKG5hX2xlaV9pbnQgPCAxMSkgJT4lDQogIHVuZ3JvdXAoKQ0KDQojd2UgZ28gZnJvbSAyNTMwNiBjYXNlcyB0byAxNDQ3MyBjYXNlcy4NCg0KI3NlY29uZCBjcmVhdGUgYSBwb2wgdmFsIE5BIHZhcmlhYmxlLg0KI2ZpbHRlciBvdXQgcmVzcG9uZGVudHMgd2hvIGRpZCBub3QgcGFydGljaXBhdGUgaW4gYW55IG9mIHRoZSAxMSB3YXZlcy4NCmxpc3Nfc3Vic2V0IDwtIHN1YnNldDEgJT4lDQogIHJvd3dpc2UoKSAlPiUNCiAgbXV0YXRlKG5hX3BvbF92YWwgPSBzdW0oaXMubmEoDQogICAgYygNCiAgICAgIGN2MDhhX20sDQogICAgICBjdjA5Yl9tLA0KICAgICAgY3YxMGNfbSwNCiAgICAgIGN2MTFkX20sDQogICAgICBjdjEyZV9tLA0KICAgICAgY3YxM2ZfbSwNCiAgICAgIGN2MTRnX20sDQogICAgICBjdjE3aV9tLA0KICAgICAgY3YxOGpfbTEsDQogICAgICBjdjE4al9tMiwNCiAgICAgIGN2MThqX20zLA0KICAgICAgY3YxOWtfbTEsDQogICAgICBjdjE5a19tMiwNCiAgICAgIGN2MTlrX20zDQogICAgKQ0KICApKSkgJT4lDQogIGZpbHRlcihuYV9wb2xfdmFsIDwgMTQpICU+JSAjbm93IGl0IGlzIDE0LCBkdWUgdGhlIHdlaXJkIGNvZGluZyBpbiAxOC8xOS4NCiAgdW5ncm91cCgpDQoNCiN3ZSBnbyBmcm9tIDE0NDczIGNhc2VzIHRvIDEzMjczIGNhc2VzLiBXZSB3aWxsIHdvcmsgd2l0aCB0aGlzIGxpc3Nfc3Vic2V0IGRhdGFmcmFtZS4gDQpgYGANCg0KIyBWYXJpYWJsZSBzZWxlY3Rpb24NCkdvYWw6IGNyZWF0ZSBzdWJzZXQgb2YgYWxsIHRoZSBkYXRhIHRoYXQgSSB3YW50IGZvciBldmVyeSB3YXZlLiBUaGVuIHdlIGNhbiBtYWtlIGEgbmV3IGZpbGUgd2hlcmUgd2Ugb25seSBoYXZlIHRoZSBzZWxlY3RlZCB2YXJpYWJsZXMgdGhhdCB3ZSBuZWVkIGZvciBvdXIgYW5hbHlzZXMuDQoNCiMjIFBvbGl0aWNzIGFuZCBWYWx1ZXMNCg0KYGBge3IgcG9sIHZhbCBzZWxlY3Rpb24gfQ0KI2xpc3MgcG9saXRpY3MgdmFyaWFibGVzIHRoYXQgSSBuZWVkDQpsaXNzX3BvbCA8LSBsaXNzX3N1YnNldCAlPiUNCiAgc2VsZWN0KA0KICAgIG5vbWVtX2VuY3IsDQogICAgY3YwOGEwMTIsDQogICAgY3YwOGEwNDcsDQogICAgY3YwOGEwNDgsDQogICAgY3YwOGEwNDksDQogICAgY3YwOGEwNTAsDQogICAgY3YwOGEwNTEsDQogICAgY3YwOGEwNTIsDQogICAgY3YwOGEwNTgsDQogICAgY3YwOGExMDEsDQogICAgY3YwOGExMDIsDQogICAgY3YwOGExMDMsDQogICAgY3YwOGExMDQsDQogICAgY3YwOGExMDUsDQogICAgY3YwOGEwMDEsDQogICAgY3YwOGEwNDQsDQogICAgY3YwOGEwMTQsDQogICAgY3YwOGExMDYsDQogICAgY3YwOGExMDcsDQogICAgY3YwOGExMDgsDQogICAgY3YwOGExMDksDQogICAgY3YwOGExMTAsDQogICAgY3YwOGExMTEsDQogICAgY3YwOGExMTIsDQogICAgY3YwOGExMTMsDQogICAgY3YwOGExMTQsDQogICAgY3YwOGExMTUsDQogICAgY3YwOGExMTYsDQogICAgY3YwOGExMTcsDQogICAgY3YwOGExMTgsDQogICAgY3YwOGExMTksDQogICAgY3YwOGExMjAsDQogICAgY3YwOGExMjEsDQogICAgY3YwOGExMjIsDQogICAgY3YwOGExMjMsDQogICAgY3YwOWIwMTIsDQogICAgY3YwOWIwNDcsDQogICAgY3YwOWIwNDgsDQogICAgY3YwOWIwNDksDQogICAgY3YwOWIwNTAsDQogICAgY3YwOWIwNTEsDQogICAgY3YwOWIwNTIsDQogICAgY3YwOWIwNTgsDQogICAgY3YwOWIxMDEsDQogICAgY3YwOWIxMDIsDQogICAgY3YwOWIxMDMsDQogICAgY3YwOWIxMDQsDQogICAgY3YwOWIxMDUsDQogICAgY3YwOWIwMDEsDQogICAgY3YwOWIwNDQsDQogICAgY3YwOWIwMTQsDQogICAgY3YwOWIxMDYsDQogICAgY3YwOWIxMDcsDQogICAgY3YwOWIxMDgsDQogICAgY3YwOWIxMDksDQogICAgY3YwOWIxMTAsDQogICAgY3YwOWIxMTEsDQogICAgY3YwOWIxMTIsDQogICAgY3YwOWIxMTMsDQogICAgY3YwOWIxMTQsDQogICAgY3YwOWIxMTUsDQogICAgY3YwOWIxMTYsDQogICAgY3YwOWIxMTcsDQogICAgY3YwOWIxMTgsDQogICAgY3YwOWIxMTksDQogICAgY3YwOWIxMjAsDQogICAgY3YwOWIxMjEsDQogICAgY3YwOWIxMjIsDQogICAgY3YwOWIxMjMsDQogICAgY3YxMGMwMTIsDQogICAgY3YxMGMwNDcsDQogICAgY3YxMGMwNDgsDQogICAgY3YxMGMwNDksDQogICAgY3YxMGMwNTAsDQogICAgY3YxMGMwNTEsDQogICAgY3YxMGMwNTIsDQogICAgY3YxMGMwNTgsDQogICAgY3YxMGMxMDEsDQogICAgY3YxMGMxMDIsDQogICAgY3YxMGMxMDMsDQogICAgY3YxMGMxMDQsDQogICAgY3YxMGMxMDUsDQogICAgY3YxMGMwMDEsDQogICAgY3YxMGMwNDQsDQogICAgY3YxMGMwMTQsDQogICAgY3YxMGMxMDYsDQogICAgY3YxMGMxMDcsDQogICAgY3YxMGMxMDgsDQogICAgY3YxMGMxMDksDQogICAgY3YxMGMxMTAsDQogICAgY3YxMGMxMTEsDQogICAgY3YxMGMxMTIsDQogICAgY3YxMGMxMTMsDQogICAgY3YxMGMxMTQsDQogICAgY3YxMGMxMTUsDQogICAgY3YxMGMxMTYsDQogICAgY3YxMGMxMTcsDQogICAgY3YxMGMxMTgsDQogICAgY3YxMGMxMTksDQogICAgY3YxMGMxMjAsDQogICAgY3YxMGMxMjEsDQogICAgY3YxMGMxMjIsDQogICAgY3YxMGMxMjMsDQogICAgY3YxMWQwMTIsDQogICAgY3YxMWQwNDcsDQogICAgY3YxMWQwNDgsDQogICAgY3YxMWQwNDksDQogICAgY3YxMWQwNTAsDQogICAgY3YxMWQwNTEsDQogICAgY3YxMWQwNTIsDQogICAgY3YxMWQxNzEsDQogICAgY3YxMWQxMDEsDQogICAgY3YxMWQxMDIsDQogICAgY3YxMWQxMDMsDQogICAgY3YxMWQxMDQsDQogICAgY3YxMWQxMDUsDQogICAgY3YxMWQwMDEsDQogICAgY3YxMWQwNDQsDQogICAgY3YxMWQwMTQsDQogICAgY3YxMWQxMDYsDQogICAgY3YxMWQxMDcsDQogICAgY3YxMWQxMDgsDQogICAgY3YxMWQxMDksDQogICAgY3YxMWQxMTAsDQogICAgY3YxMWQxMTEsDQogICAgY3YxMWQxMTIsDQogICAgY3YxMWQxMTMsDQogICAgY3YxMWQxMTQsDQogICAgY3YxMWQxMTUsDQogICAgY3YxMWQxMTYsDQogICAgY3YxMWQxMTcsDQogICAgY3YxMWQxMTgsDQogICAgY3YxMWQxMTksDQogICAgY3YxMWQxMjAsDQogICAgY3YxMWQxMjEsDQogICAgY3YxMWQxMjIsDQogICAgY3YxMWQxMjMsDQogICAgY3YxMmUwMTIsDQogICAgY3YxMmUwNDcsDQogICAgY3YxMmUwNDgsDQogICAgY3YxMmUwNDksDQogICAgY3YxMmUwNTAsDQogICAgY3YxMmUwNTEsDQogICAgY3YxMmUwNTIsDQogICAgY3YxMmUxNzEsDQogICAgY3YxMmUxMDEsDQogICAgY3YxMmUxMDIsDQogICAgY3YxMmUxMDMsDQogICAgY3YxMmUxMDQsDQogICAgY3YxMmUxMDUsDQogICAgY3YxMmUwMDEsDQogICAgY3YxMmUwNDQsDQogICAgY3YxMmUwMTQsDQogICAgY3YxMmUxMDYsDQogICAgY3YxMmUxMDcsDQogICAgY3YxMmUxMDgsDQogICAgY3YxMmUxMDksDQogICAgY3YxMmUxMTAsDQogICAgY3YxMmUxMTEsDQogICAgY3YxMmUxMTIsDQogICAgY3YxMmUxMTMsDQogICAgY3YxMmUxMTQsDQogICAgY3YxMmUxMTUsDQogICAgY3YxMmUxMTYsDQogICAgY3YxMmUxMTcsDQogICAgY3YxMmUxMTgsDQogICAgY3YxMmUxMTksDQogICAgY3YxMmUxMjAsDQogICAgY3YxMmUxMjEsDQogICAgY3YxMmUxMjIsDQogICAgY3YxMmUxMjMsDQogICAgY3YxM2YwMTIsDQogICAgY3YxM2YwNDcsDQogICAgY3YxM2YwNDgsDQogICAgY3YxM2YwNDksDQogICAgY3YxM2YwNTAsDQogICAgY3YxM2YwNTEsDQogICAgY3YxM2YwNTIsDQogICAgY3YxM2YyMDksDQogICAgY3YxM2YxMDEsDQogICAgY3YxM2YxMDIsDQogICAgY3YxM2YxMDMsDQogICAgY3YxM2YxMDQsDQogICAgY3YxM2YxMDUsDQogICAgY3YxM2YwMDEsDQogICAgY3YxM2YwNDQsDQogICAgY3YxM2YwMTQsDQogICAgY3YxM2YxMDYsDQogICAgY3YxM2YxMDcsDQogICAgY3YxM2YxMDgsDQogICAgY3YxM2YxMDksDQogICAgY3YxM2YxMTAsDQogICAgY3YxM2YxMTEsDQogICAgY3YxM2YxMTIsDQogICAgY3YxM2YxMTMsDQogICAgY3YxM2YxMTQsDQogICAgY3YxM2YxMTUsDQogICAgY3YxM2YxMTYsDQogICAgY3YxM2YxMTcsDQogICAgY3YxM2YxMTgsDQogICAgY3YxM2YxMTksDQogICAgY3YxM2YxMjAsDQogICAgY3YxM2YxMjEsDQogICAgY3YxM2YxMjIsDQogICAgY3YxM2YxMjMsDQogICAgY3YxNGcwMTIsDQogICAgY3YxNGcwNDcsDQogICAgY3YxNGcwNDgsDQogICAgY3YxNGcwNDksDQogICAgY3YxNGcwNTAsDQogICAgY3YxNGcwNTEsDQogICAgY3YxNGcwNTIsDQogICAgY3YxNGcyMDksDQogICAgY3YxNGcxMDEsDQogICAgY3YxNGcxMDIsDQogICAgY3YxNGcxMDMsDQogICAgY3YxNGcxMDQsDQogICAgY3YxNGcxMDUsDQogICAgY3YxNGcwMDEsDQogICAgY3YxNGcwNDQsDQogICAgY3YxNGcwMTQsDQogICAgY3YxNGcxMDYsDQogICAgY3YxNGcxMDcsDQogICAgY3YxNGcxMDgsDQogICAgY3YxNGcxMDksDQogICAgY3YxNGcxMTAsDQogICAgY3YxNGcxMTEsDQogICAgY3YxNGcxMTIsDQogICAgY3YxNGcxMTMsDQogICAgY3YxNGcxMTQsDQogICAgY3YxNGcxMTUsDQogICAgY3YxNGcxMTYsDQogICAgY3YxNGcxMTcsDQogICAgY3YxNGcxMTgsDQogICAgY3YxNGcxMTksDQogICAgY3YxNGcxMjAsDQogICAgY3YxNGcxMjEsDQogICAgY3YxNGcxMjIsDQogICAgY3YxNGcxMjMsDQogICAgY3YxNmgwMTIsDQogICAgY3YxNmgwNDcsDQogICAgY3YxNmgwNDgsDQogICAgY3YxNmgwNDksDQogICAgY3YxNmgwNTAsDQogICAgY3YxNmgwNTEsDQogICAgY3YxNmgwNTIsDQogICAgY3YxNmgyMDksDQogICAgY3YxNmgxMDEsDQogICAgY3YxNmgxMDIsDQogICAgY3YxNmgxMDMsDQogICAgY3YxNmgxMDQsDQogICAgY3YxNmgxMDUsDQogICAgY3YxNmgwMDEsDQogICAgY3YxNmgwNDQsDQogICAgY3YxNmgwMTQsDQogICAgY3YxNmgxMDYsDQogICAgY3YxNmgxMDcsDQogICAgY3YxNmgxMDgsDQogICAgY3YxNmgxMDksDQogICAgY3YxNmgxMTAsDQogICAgY3YxNmgxMTEsDQogICAgY3YxNmgxMTIsDQogICAgY3YxNmgxMTMsDQogICAgY3YxNmgxMTQsDQogICAgY3YxNmgxMTUsDQogICAgY3YxNmgxMTYsDQogICAgY3YxNmgxMTcsDQogICAgY3YxNmgxMTgsDQogICAgY3YxNmgxMTksDQogICAgY3YxNmgxMjAsDQogICAgY3YxNmgxMjEsDQogICAgY3YxNmgxMjIsDQogICAgY3YxNmgxMjMsDQogICAgY3YxN2kwMTIsDQogICAgY3YxN2kwNDcsDQogICAgY3YxN2kwNDgsDQogICAgY3YxN2kwNDksDQogICAgY3YxN2kwNTAsDQogICAgY3YxN2kwNTEsDQogICAgY3YxN2kwNTIsDQogICAgY3YxN2kyNDQsDQogICAgY3YxN2kxMDEsDQogICAgY3YxN2kxMDIsDQogICAgY3YxN2kxMDMsDQogICAgY3YxN2kxMDQsDQogICAgY3YxN2kxMDUsDQogICAgY3YxN2kwMDEsDQogICAgY3YxN2kwNDQsDQogICAgY3YxN2kwMTQsDQogICAgY3YxN2kxMDYsDQogICAgY3YxN2kxMDcsDQogICAgY3YxN2kxMDgsDQogICAgY3YxN2kxMDksDQogICAgY3YxN2kxMTAsDQogICAgY3YxN2kxMTEsDQogICAgY3YxN2kxMTIsDQogICAgY3YxN2kxMTMsDQogICAgY3YxN2kxMTQsDQogICAgY3YxN2kxMTUsDQogICAgY3YxN2kxMTYsDQogICAgY3YxN2kxMTcsDQogICAgY3YxN2kxMTgsDQogICAgY3YxN2kxMTksDQogICAgY3YxN2kxMjAsDQogICAgY3YxN2kxMjEsDQogICAgY3YxN2kxMjIsDQogICAgY3YxN2kxMjMsDQogICAgY3YxOGowMTIsDQogICAgY3YxOGowNDcsDQogICAgY3YxOGowNDgsDQogICAgY3YxOGowNDksDQogICAgY3YxOGowNTAsDQogICAgY3YxOGowNTEsDQogICAgY3YxOGowNTIsDQogICAgY3YxOGoyNDMsDQogICAgY3YxOGoxMDEsDQogICAgY3YxOGoxMDIsDQogICAgY3YxOGoxMDMsDQogICAgY3YxOGoxMDQsDQogICAgY3YxOGoxMDUsDQogICAgY3YxOGowMDEsDQogICAgY3YxOGowNDQsDQogICAgY3YxOGowMTQsDQogICAgY3YxOGoxMDYsDQogICAgY3YxOGoxMDcsDQogICAgY3YxOGoxMDgsDQogICAgY3YxOGoxMDksDQogICAgY3YxOGoxMTAsDQogICAgY3YxOGoxMTEsDQogICAgY3YxOGoxMTIsDQogICAgY3YxOGoxMTMsDQogICAgY3YxOGoxMTQsDQogICAgY3YxOGoxMTUsDQogICAgY3YxOGoxMTYsDQogICAgY3YxOGoxMTcsDQogICAgY3YxOGoxMTgsDQogICAgY3YxOGoxMTksDQogICAgY3YxOGoxMjAsDQogICAgY3YxOGoxMjEsDQogICAgY3YxOGoxMjIsDQogICAgY3YxOGoxMjMsDQogICAgY3YxOWswMTIsDQogICAgY3YxOWswNDcsDQogICAgY3YxOWswNDgsDQogICAgY3YxOWswNDksDQogICAgY3YxOWswNTAsDQogICAgY3YxOWswNTEsDQogICAgY3YxOWswNTIsDQogICAgY3YxOWsyNDMsDQogICAgY3YxOWsxMDEsDQogICAgY3YxOWsxMDIsDQogICAgY3YxOWsxMDMsDQogICAgY3YxOWsxMDQsDQogICAgY3YxOWsxMDUsDQogICAgY3YxOWswMDEsDQogICAgY3YxOWswNDQsDQogICAgY3YxOWswMTQsDQogICAgY3YxOWsxMDYsDQogICAgY3YxOWsxMDcsDQogICAgY3YxOWsxMDgsDQogICAgY3YxOWsxMDksDQogICAgY3YxOWsxMTAsDQogICAgY3YxOWsxMTEsDQogICAgY3YxOWsxMTIsDQogICAgY3YxOWsxMTMsDQogICAgY3YxOWsxMTQsDQogICAgY3YxOWsxMTUsDQogICAgY3YxOWsxMTYsDQogICAgY3YxOWsxMTcsDQogICAgY3YxOWsxMTgsDQogICAgY3YxOWsxMTksDQogICAgY3YxOWsxMjAsDQogICAgY3YxOWsxMjEsDQogICAgY3YxOWsxMjIsDQogICAgY3YxOWsxMjMNCiAgKQ0KDQoNCiNjaGFuZ2UgbmFtZXMuDQpuYW1lcyhsaXNzX3BvbCkgPC0NCiAgYygNCiAgICAibm9tZW1fZW5jciIsDQogICAgInBvbF9pbnQuMSIJLA0KICAgICJwYXJsX2Rvbm90X2NhcmUuMSIJLA0KICAgICJwb2xfcGFydF9pbnQuMSIJLA0KICAgICJub19pbmZsdWVjZS4xIgksDQogICAgImNhcF9hY3RfcG9sLjEiCSwNCiAgICAiY2xlYXJfcGljdHVyZS4xIgksDQogICAgInBvbF9jb21wbC4xIgksDQogICAgInZvdGVfaW50LjEiCSwNCiAgICAibHJfc2NhbGUuMSIJLA0KICAgICJldXRoYW5hc2lhLjEiCSwNCiAgICAiaW5jb21lX2RpZmYuMSIJLA0KICAgICJpbW1pZ3JhbnRzLjEiLA0KICAgICJldV9pbnRlZ3JhdGlvbi4xIgksDQogICAgImdvdl9zYXQuMSIsDQogICAgInNhdGRlbS4xIiwNCiAgICAicG9sdHJ1c3QuMSIsDQogICAgInBvc3RtYXRmaXJzdC4xIiwNCiAgICAicG9zdG1hdHNlY29uZC4xIiwNCiAgICAicG9zdG1hdHRoaXJkLjEiLA0KICAgICJ3b3JraW5nbW90aGVyLjEiLA0KICAgICJjaGlsZGpvYm1vdGhlci4xIiwNCiAgICAiZnVsbHRpbWVtb3RoZXIuMSIsDQogICAgImVxdWFsY29udHJpYnV0aW9uLjEiLA0KICAgICJmYXRoZXJ3b3Jrcy4xIiwNCiAgICAiZmF0aGVyaG91c2Vob2xkLjEiLA0KICAgICJmYXRoZXJzY2hpbGRjYXJlLjEiLA0KICAgICJkaWZmZXJlbnRjdWx0dXJlLjEiLA0KICAgICJmb3JlaWduZXJjdWx0dXJlLjEiLA0KICAgICJhc3lsdW0uMSIsDQogICAgImZvcmVpZ25zb2NzZWMuMSIsDQogICAgInRvb21hbnlmb3JlaWduZXJzLjEiLA0KICAgICJmb3JlaWdubm90YWNjZXB0ZWQuMSIsDQogICAgImZvcmVpZ25lY29ub215LjEiLA0KICAgICJuZWlnaGJvcmhvb2QuMSIsDQogICAgInBvbF9pbnQuMiIJLA0KICAgICJwYXJsX2Rvbm90X2NhcmUuMiIJLA0KICAgICJwb2xfcGFydF9pbnQuMiIJLA0KICAgICJub19pbmZsdWVjZS4yIgksDQogICAgImNhcF9hY3RfcG9sLjIiCSwNCiAgICAiY2xlYXJfcGljdHVyZS4yIgksDQogICAgInBvbF9jb21wbC4yIgksDQogICAgInZvdGVfaW50LjIiCSwNCiAgICAibHJfc2NhbGUuMiIJLA0KICAgICJldXRoYW5hc2lhLjIiCSwNCiAgICAiaW5jb21lX2RpZmYuMiIJLA0KICAgICJpbW1pZ3JhbnRzLjIiCSwNCiAgICAiZXVfaW50ZWdyYXRpb24uMiIJLA0KICAgICJnb3Zfc2F0LjIiLA0KICAgICJzYXRkZW0uMiIsDQogICAgInBvbHRydXN0LjIiLA0KICAgICJwb3N0bWF0Zmlyc3QuMiIsDQogICAgInBvc3RtYXRzZWNvbmQuMiIsDQogICAgInBvc3RtYXR0aGlyZC4yIiwNCiAgICAid29ya2luZ21vdGhlci4yIiwNCiAgICAiY2hpbGRqb2Jtb3RoZXIuMiIsDQogICAgImZ1bGx0aW1lbW90aGVyLjIiLA0KICAgICJlcXVhbGNvbnRyaWJ1dGlvbi4yIiwNCiAgICAiZmF0aGVyd29ya3MuMiIsDQogICAgImZhdGhlcmhvdXNlaG9sZC4yIiwNCiAgICAiZmF0aGVyc2NoaWxkY2FyZS4yIiwNCiAgICAiZGlmZmVyZW50Y3VsdHVyZS4yIiwNCiAgICAiZm9yZWlnbmVyY3VsdHVyZS4yIiwNCiAgICAiYXN5bHVtLjIiLA0KICAgICJmb3JlaWduc29jc2VjLjIiLA0KICAgICJ0b29tYW55Zm9yZWlnbmVycy4yIiwNCiAgICAiZm9yZWlnbm5vdGFjY2VwdGVkLjIiLA0KICAgICJmb3JlaWduZWNvbm9teS4yIiwNCiAgICAibmVpZ2hib3Job29kLjIiLA0KICAgICJwb2xfaW50LjMiCSwNCiAgICAicGFybF9kb25vdF9jYXJlLjMiCSwNCiAgICAicG9sX3BhcnRfaW50LjMiCSwNCiAgICAibm9faW5mbHVlY2UuMyIJLA0KICAgICJjYXBfYWN0X3BvbC4zIgksDQogICAgImNsZWFyX3BpY3R1cmUuMyIJLA0KICAgICJwb2xfY29tcGwuMyIJLA0KICAgICJ2b3RlX2ludC4zIgksDQogICAgImxyX3NjYWxlLjMiCSwNCiAgICAiZXV0aGFuYXNpYS4zIgksDQogICAgImluY29tZV9kaWZmLjMiCSwNCiAgICAiaW1taWdyYW50cy4zIgksDQogICAgImV1X2ludGVncmF0aW9uLjMiCSwNCiAgICAiZ292X3NhdC4zIiwNCiAgICAic2F0ZGVtLjMiLA0KICAgICJwb2x0cnVzdC4zIiwNCiAgICAicG9zdG1hdGZpcnN0LjMiLA0KICAgICJwb3N0bWF0c2Vjb25kLjMiLA0KICAgICJwb3N0bWF0dGhpcmQuMyIsDQogICAgIndvcmtpbmdtb3RoZXIuMyIsDQogICAgImNoaWxkam9ibW90aGVyLjMiLA0KICAgICJmdWxsdGltZW1vdGhlci4zIiwNCiAgICAiZXF1YWxjb250cmlidXRpb24uMyIsDQogICAgImZhdGhlcndvcmtzLjMiLA0KICAgICJmYXRoZXJob3VzZWhvbGQuMyIsDQogICAgImZhdGhlcnNjaGlsZGNhcmUuMyIsDQogICAgImRpZmZlcmVudGN1bHR1cmUuMyIsDQogICAgImZvcmVpZ25lcmN1bHR1cmUuMyIsDQogICAgImFzeWx1bS4zIiwNCiAgICAiZm9yZWlnbnNvY3NlYy4zIiwNCiAgICAidG9vbWFueWZvcmVpZ25lcnMuMyIsDQogICAgImZvcmVpZ25ub3RhY2NlcHRlZC4zIiwNCiAgICAiZm9yZWlnbmVjb25vbXkuMyIsDQogICAgIm5laWdoYm9yaG9vZC4zIiwNCiAgICAicG9sX2ludC40IgksDQogICAgInBhcmxfZG9ub3RfY2FyZS40IgksDQogICAgInBvbF9wYXJ0X2ludC40IgksDQogICAgIm5vX2luZmx1ZWNlLjQiCSwNCiAgICAiY2FwX2FjdF9wb2wuNCIJLA0KICAgICJjbGVhcl9waWN0dXJlLjQiCSwNCiAgICAicG9sX2NvbXBsLjQiCSwNCiAgICAidm90ZV9pbnQuNCIJLA0KICAgICJscl9zY2FsZS40IgksDQogICAgImV1dGhhbmFzaWEuNCIJLA0KICAgICJpbmNvbWVfZGlmZi40IgksDQogICAgImltbWlncmFudHMuNCIJLA0KICAgICJldV9pbnRlZ3JhdGlvbi40IgksDQogICAgImdvdl9zYXQuNCIsDQogICAgInNhdGRlbS40IiwNCiAgICAicG9sdHJ1c3QuNCIsDQogICAgInBvc3RtYXRmaXJzdC40IiwNCiAgICAicG9zdG1hdHNlY29uZC40IiwNCiAgICAicG9zdG1hdHRoaXJkLjQiLA0KICAgICJ3b3JraW5nbW90aGVyLjQiLA0KICAgICJjaGlsZGpvYm1vdGhlci40IiwNCiAgICAiZnVsbHRpbWVtb3RoZXIuNCIsDQogICAgImVxdWFsY29udHJpYnV0aW9uLjQiLA0KICAgICJmYXRoZXJ3b3Jrcy40IiwNCiAgICAiZmF0aGVyaG91c2Vob2xkLjQiLA0KICAgICJmYXRoZXJzY2hpbGRjYXJlLjQiLA0KICAgICJkaWZmZXJlbnRjdWx0dXJlLjQiLA0KICAgICJmb3JlaWduZXJjdWx0dXJlLjQiLA0KICAgICJhc3lsdW0uNCIsDQogICAgImZvcmVpZ25zb2NzZWMuNCIsDQogICAgInRvb21hbnlmb3JlaWduZXJzLjQiLA0KICAgICJmb3JlaWdubm90YWNjZXB0ZWQuNCIsDQogICAgImZvcmVpZ25lY29ub215LjQiLA0KICAgICJuZWlnaGJvcmhvb2QuNCIsDQogICAgInBvbF9pbnQuNSIJLA0KICAgICJwYXJsX2Rvbm90X2NhcmUuNSIJLA0KICAgICJwb2xfcGFydF9pbnQuNSIJLA0KICAgICJub19pbmZsdWVjZS41IgksDQogICAgImNhcF9hY3RfcG9sLjUiCSwNCiAgICAiY2xlYXJfcGljdHVyZS41IgksDQogICAgInBvbF9jb21wbC41IgksDQogICAgInZvdGVfaW50LjUiCSwNCiAgICAibHJfc2NhbGUuNSIJLA0KICAgICJldXRoYW5hc2lhLjUiCSwNCiAgICAiaW5jb21lX2RpZmYuNSIJLA0KICAgICJpbW1pZ3JhbnRzLjUiCSwNCiAgICAiZXVfaW50ZWdyYXRpb24uNSIJLA0KICAgICJnb3Zfc2F0LjUiLA0KICAgICJzYXRkZW0uNSIsDQogICAgInBvbHRydXN0LjUiLA0KICAgICJwb3N0bWF0Zmlyc3QuNSIsDQogICAgInBvc3RtYXRzZWNvbmQuNSIsDQogICAgInBvc3RtYXR0aGlyZC41IiwNCiAgICAid29ya2luZ21vdGhlci41IiwNCiAgICAiY2hpbGRqb2Jtb3RoZXIuNSIsDQogICAgImZ1bGx0aW1lbW90aGVyLjUiLA0KICAgICJlcXVhbGNvbnRyaWJ1dGlvbi41IiwNCiAgICAiZmF0aGVyd29ya3MuNSIsDQogICAgImZhdGhlcmhvdXNlaG9sZC41IiwNCiAgICAiZmF0aGVyc2NoaWxkY2FyZS41IiwNCiAgICAiZGlmZmVyZW50Y3VsdHVyZS41IiwNCiAgICAiZm9yZWlnbmVyY3VsdHVyZS41IiwNCiAgICAiYXN5bHVtLjUiLA0KICAgICJmb3JlaWduc29jc2VjLjUiLA0KICAgICJ0b29tYW55Zm9yZWlnbmVycy41IiwNCiAgICAiZm9yZWlnbm5vdGFjY2VwdGVkLjUiLA0KICAgICJmb3JlaWduZWNvbm9teS41IiwNCiAgICAibmVpZ2hib3Job29kLjUiLA0KICAgICJwb2xfaW50LjYiCSwNCiAgICAicGFybF9kb25vdF9jYXJlLjYiCSwNCiAgICAicG9sX3BhcnRfaW50LjYiCSwNCiAgICAibm9faW5mbHVlY2UuNiIJLA0KICAgICJjYXBfYWN0X3BvbC42IgksDQogICAgImNsZWFyX3BpY3R1cmUuNiIJLA0KICAgICJwb2xfY29tcGwuNiIJLA0KICAgICJ2b3RlX2ludC42IgksDQogICAgImxyX3NjYWxlLjYiCSwNCiAgICAiZXV0aGFuYXNpYS42IgksDQogICAgImluY29tZV9kaWZmLjYiCSwNCiAgICAiaW1taWdyYW50cy42IgksDQogICAgImV1X2ludGVncmF0aW9uLjYiCSwNCiAgICAiZ292X3NhdC42IiwNCiAgICAic2F0ZGVtLjYiLA0KICAgICJwb2x0cnVzdC42IiwNCiAgICAicG9zdG1hdGZpcnN0LjYiLA0KICAgICJwb3N0bWF0c2Vjb25kLjYiLA0KICAgICJwb3N0bWF0dGhpcmQuNiIsDQogICAgIndvcmtpbmdtb3RoZXIuNiIsDQogICAgImNoaWxkam9ibW90aGVyLjYiLA0KICAgICJmdWxsdGltZW1vdGhlci42IiwNCiAgICAiZXF1YWxjb250cmlidXRpb24uNiIsDQogICAgImZhdGhlcndvcmtzLjYiLA0KICAgICJmYXRoZXJob3VzZWhvbGQuNiIsDQogICAgImZhdGhlcnNjaGlsZGNhcmUuNiIsDQogICAgImRpZmZlcmVudGN1bHR1cmUuNiIsDQogICAgImZvcmVpZ25lcmN1bHR1cmUuNiIsDQogICAgImFzeWx1bS42IiwNCiAgICAiZm9yZWlnbnNvY3NlYy42IiwNCiAgICAidG9vbWFueWZvcmVpZ25lcnMuNiIsDQogICAgImZvcmVpZ25ub3RhY2NlcHRlZC42IiwNCiAgICAiZm9yZWlnbmVjb25vbXkuNiIsDQogICAgIm5laWdoYm9yaG9vZC42IiwNCiAgICAicG9sX2ludC43IgksDQogICAgInBhcmxfZG9ub3RfY2FyZS43IgksDQogICAgInBvbF9wYXJ0X2ludC43IgksDQogICAgIm5vX2luZmx1ZWNlLjciCSwNCiAgICAiY2FwX2FjdF9wb2wuNyIJLA0KICAgICJjbGVhcl9waWN0dXJlLjciCSwNCiAgICAicG9sX2NvbXBsLjciCSwNCiAgICAidm90ZV9pbnQuNyIJLA0KICAgICJscl9zY2FsZS43IgksDQogICAgImV1dGhhbmFzaWEuNyIJLA0KICAgICJpbmNvbWVfZGlmZi43IgksDQogICAgImltbWlncmFudHMuNyIJLA0KICAgICJldV9pbnRlZ3JhdGlvbi43IgksDQogICAgImdvdl9zYXQuNyIsDQogICAgInNhdGRlbS43IiwNCiAgICAicG9sdHJ1c3QuNyIsDQogICAgInBvc3RtYXRmaXJzdC43IiwNCiAgICAicG9zdG1hdHNlY29uZC43IiwNCiAgICAicG9zdG1hdHRoaXJkLjciLA0KICAgICJ3b3JraW5nbW90aGVyLjciLA0KICAgICJjaGlsZGpvYm1vdGhlci43IiwNCiAgICAiZnVsbHRpbWVtb3RoZXIuNyIsDQogICAgImVxdWFsY29udHJpYnV0aW9uLjciLA0KICAgICJmYXRoZXJ3b3Jrcy43IiwNCiAgICAiZmF0aGVyaG91c2Vob2xkLjciLA0KICAgICJmYXRoZXJzY2hpbGRjYXJlLjciLA0KICAgICJkaWZmZXJlbnRjdWx0dXJlLjciLA0KICAgICJmb3JlaWduZXJjdWx0dXJlLjciLA0KICAgICJhc3lsdW0uNyIsDQogICAgImZvcmVpZ25zb2NzZWMuNyIsDQogICAgInRvb21hbnlmb3JlaWduZXJzLjciLA0KICAgICJmb3JlaWdubm90YWNjZXB0ZWQuNyIsDQogICAgImZvcmVpZ25lY29ub215LjciLA0KICAgICJuZWlnaGJvcmhvb2QuNyIsDQogICAgInBvbF9pbnQuOCIJLA0KICAgICJwYXJsX2Rvbm90X2NhcmUuOCIJLA0KICAgICJwb2xfcGFydF9pbnQuOCIJLA0KICAgICJub19pbmZsdWVjZS44IgksDQogICAgImNhcF9hY3RfcG9sLjgiCSwNCiAgICAiY2xlYXJfcGljdHVyZS44IgksDQogICAgInBvbF9jb21wbC44IgksDQogICAgInZvdGVfaW50LjgiCSwNCiAgICAibHJfc2NhbGUuOCIJLA0KICAgICJldXRoYW5hc2lhLjgiCSwNCiAgICAiaW5jb21lX2RpZmYuOCIJLA0KICAgICJpbW1pZ3JhbnRzLjgiCSwNCiAgICAiZXVfaW50ZWdyYXRpb24uOCIJLA0KICAgICJnb3Zfc2F0LjgiLA0KICAgICJzYXRkZW0uOCIsDQogICAgInBvbHRydXN0LjgiLA0KICAgICJwb3N0bWF0Zmlyc3QuOCIsDQogICAgInBvc3RtYXRzZWNvbmQuOCIsDQogICAgInBvc3RtYXR0aGlyZC44IiwNCiAgICAid29ya2luZ21vdGhlci44IiwNCiAgICAiY2hpbGRqb2Jtb3RoZXIuOCIsDQogICAgImZ1bGx0aW1lbW90aGVyLjgiLA0KICAgICJlcXVhbGNvbnRyaWJ1dGlvbi44IiwNCiAgICAiZmF0aGVyd29ya3MuOCIsDQogICAgImZhdGhlcmhvdXNlaG9sZC44IiwNCiAgICAiZmF0aGVyc2NoaWxkY2FyZS44IiwNCiAgICAiZGlmZmVyZW50Y3VsdHVyZS44IiwNCiAgICAiZm9yZWlnbmVyY3VsdHVyZS44IiwNCiAgICAiYXN5bHVtLjgiLA0KICAgICJmb3JlaWduc29jc2VjLjgiLA0KICAgICJ0b29tYW55Zm9yZWlnbmVycy44IiwNCiAgICAiZm9yZWlnbm5vdGFjY2VwdGVkLjgiLA0KICAgICJmb3JlaWduZWNvbm9teS44IiwNCiAgICAibmVpZ2hib3Job29kLjgiLA0KICAgICJwb2xfaW50LjkiCSwNCiAgICAicGFybF9kb25vdF9jYXJlLjkiCSwNCiAgICAicG9sX3BhcnRfaW50LjkiCSwNCiAgICAibm9faW5mbHVlY2UuOSIJLA0KICAgICJjYXBfYWN0X3BvbC45IgksDQogICAgImNsZWFyX3BpY3R1cmUuOSIJLA0KICAgICJwb2xfY29tcGwuOSIJLA0KICAgICJ2b3RlX2ludC45IgksDQogICAgImxyX3NjYWxlLjkiCSwNCiAgICAiZXV0aGFuYXNpYS45IgksDQogICAgImluY29tZV9kaWZmLjkiCSwNCiAgICAiaW1taWdyYW50cy45IgksDQogICAgImV1X2ludGVncmF0aW9uLjkiLA0KICAgICJnb3Zfc2F0LjkiLA0KICAgICJzYXRkZW0uOSIsDQogICAgInBvbHRydXN0LjkiLA0KICAgICJwb3N0bWF0Zmlyc3QuOSIsDQogICAgInBvc3RtYXRzZWNvbmQuOSIsDQogICAgInBvc3RtYXR0aGlyZC45IiwNCiAgICAid29ya2luZ21vdGhlci45IiwNCiAgICAiY2hpbGRqb2Jtb3RoZXIuOSIsDQogICAgImZ1bGx0aW1lbW90aGVyLjkiLA0KICAgICJlcXVhbGNvbnRyaWJ1dGlvbi45IiwNCiAgICAiZmF0aGVyd29ya3MuOSIsDQogICAgImZhdGhlcmhvdXNlaG9sZC45IiwNCiAgICAiZmF0aGVyc2NoaWxkY2FyZS45IiwNCiAgICAiZGlmZmVyZW50Y3VsdHVyZS45IiwNCiAgICAiZm9yZWlnbmVyY3VsdHVyZS45IiwNCiAgICAiYXN5bHVtLjkiLA0KICAgICJmb3JlaWduc29jc2VjLjkiLA0KICAgICJ0b29tYW55Zm9yZWlnbmVycy45IiwNCiAgICAiZm9yZWlnbm5vdGFjY2VwdGVkLjkiLA0KICAgICJmb3JlaWduZWNvbm9teS45IiwNCiAgICAibmVpZ2hib3Job29kLjkiLA0KICAgICJwb2xfaW50LjEwIgksDQogICAgInBhcmxfZG9ub3RfY2FyZS4xMCIJLA0KICAgICJwb2xfcGFydF9pbnQuMTAiCSwNCiAgICAibm9faW5mbHVlY2UuMTAiCSwNCiAgICAiY2FwX2FjdF9wb2wuMTAiCSwNCiAgICAiY2xlYXJfcGljdHVyZS4xMCIJLA0KICAgICJwb2xfY29tcGwuMTAiCSwNCiAgICAidm90ZV9pbnQuMTAiCSwNCiAgICAibHJfc2NhbGUuMTAiCSwNCiAgICAiZXV0aGFuYXNpYS4xMCIJLA0KICAgICJpbmNvbWVfZGlmZi4xMCIJLA0KICAgICJpbW1pZ3JhbnRzLjEwIgksDQogICAgImV1X2ludGVncmF0aW9uLjEwIiwNCiAgICAiZ292X3NhdC4xMCIsDQogICAgInNhdGRlbS4xMCIsDQogICAgInBvbHRydXN0LjEwIiwNCiAgICAicG9zdG1hdGZpcnN0LjEwIiwNCiAgICAicG9zdG1hdHNlY29uZC4xMCIsDQogICAgInBvc3RtYXR0aGlyZC4xMCIsDQogICAgIndvcmtpbmdtb3RoZXIuMTAiLA0KICAgICJjaGlsZGpvYm1vdGhlci4xMCIsDQogICAgImZ1bGx0aW1lbW90aGVyLjEwIiwNCiAgICAiZXF1YWxjb250cmlidXRpb24uMTAiLA0KICAgICJmYXRoZXJ3b3Jrcy4xMCIsDQogICAgImZhdGhlcmhvdXNlaG9sZC4xMCIsDQogICAgImZhdGhlcnNjaGlsZGNhcmUuMTAiLA0KICAgICJkaWZmZXJlbnRjdWx0dXJlLjEwIiwNCiAgICAiZm9yZWlnbmVyY3VsdHVyZS4xMCIsDQogICAgImFzeWx1bS4xMCIsDQogICAgImZvcmVpZ25zb2NzZWMuMTAiLA0KICAgICJ0b29tYW55Zm9yZWlnbmVycy4xMCIsDQogICAgImZvcmVpZ25ub3RhY2NlcHRlZC4xMCIsDQogICAgImZvcmVpZ25lY29ub215LjEwIiwNCiAgICAibmVpZ2hib3Job29kLjEwIiwNCiAgICAicG9sX2ludC4xMSIJLA0KICAgICJwYXJsX2Rvbm90X2NhcmUuMTEiCSwNCiAgICAicG9sX3BhcnRfaW50LjExIgksDQogICAgIm5vX2luZmx1ZWNlLjExIgksDQogICAgImNhcF9hY3RfcG9sLjExIgksDQogICAgImNsZWFyX3BpY3R1cmUuMTEiCSwNCiAgICAicG9sX2NvbXBsLjExIgksDQogICAgInZvdGVfaW50LjExIgksDQogICAgImxyX3NjYWxlLjExIgksDQogICAgImV1dGhhbmFzaWEuMTEiCSwNCiAgICAiaW5jb21lX2RpZmYuMTEiCSwNCiAgICAiaW1taWdyYW50cy4xMSIJLA0KICAgICJldV9pbnRlZ3JhdGlvbi4xMSIsDQogICAgImdvdl9zYXQuMTEiLA0KICAgICJzYXRkZW0uMTEiLA0KICAgICJwb2x0cnVzdC4xMSIsDQogICAgInBvc3RtYXRmaXJzdC4xMSIsDQogICAgInBvc3RtYXRzZWNvbmQuMTEiLA0KICAgICJwb3N0bWF0dGhpcmQuMTEiLA0KICAgICJ3b3JraW5nbW90aGVyLjExIiwNCiAgICAiY2hpbGRqb2Jtb3RoZXIuMTEiLA0KICAgICJmdWxsdGltZW1vdGhlci4xMSIsDQogICAgImVxdWFsY29udHJpYnV0aW9uLjExIiwNCiAgICAiZmF0aGVyd29ya3MuMTEiLA0KICAgICJmYXRoZXJob3VzZWhvbGQuMTEiLA0KICAgICJmYXRoZXJzY2hpbGRjYXJlLjExIiwNCiAgICAiZGlmZmVyZW50Y3VsdHVyZS4xMSIsDQogICAgImZvcmVpZ25lcmN1bHR1cmUuMTEiLA0KICAgICJhc3lsdW0uMTEiLA0KICAgICJmb3JlaWduc29jc2VjLjExIiwNCiAgICAidG9vbWFueWZvcmVpZ25lcnMuMTEiLA0KICAgICJmb3JlaWdubm90YWNjZXB0ZWQuMTEiLA0KICAgICJmb3JlaWduZWNvbm9teS4xMSIsDQogICAgIm5laWdoYm9yaG9vZC4xMSINCiAgKQ0KDQpgYGANCg0KIyMgQmFja2dyb3VuZCBkYXRhDQoNCmBgYHtyIGJhY2tncm91bmQgc2VsZWN0aW9ufQ0KI2dldCB0aGUgYmFja2dyb3VuZCBkYXRhIGFuZCByZW5hbWUgdGhlIGNvbHVtbnMuDQpsaXNzX2F2YXJzIDwtIGxpc3Nfc3Vic2V0ICU+JQ0KICBzZWxlY3QoDQogICAgbm9tZW1fZW5jciwNCiAgICBnZXNsYWNodC4xLA0KICAgIHBvc2l0aWUuMSwNCiAgICBnZWJqYWFyLjEsDQogICAgbGVlZnRpamQuMSwNCiAgICBsZnRkY2F0LjEsDQogICAgYWFudGFsaGguMSwNCiAgICBhYW50YWxraS4xLA0KICAgIHBhcnRuZXIuMSwNCiAgICBidXJnc3RhdC4xLA0KICAgIHdvb252b3JtLjEsDQogICAgd29uaW5nLjEsDQogICAgc3RlZC4xLA0KICAgIGJlbGJlemlnLjEsDQogICAgYnJ1dG9pbmsuMSwNCiAgICBuZXR0b2luay4xLA0KICAgIGJydXRvY2F0LjEsDQogICAgbmV0dG9jYXQuMSwNCiAgICBvcGx6b24uMSwNCiAgICBvcGxtZXQuMSwNCiAgICBvcGxjYXQuMSwNCiAgICBub2hvdXNlX2VuY3IuMSwNCiAgICBnZXNsYWNodC4yLA0KICAgIHBvc2l0aWUuMiwNCiAgICBnZWJqYWFyLjIsDQogICAgbGVlZnRpamQuMiwNCiAgICBsZnRkY2F0LjIsDQogICAgYWFudGFsaGguMiwNCiAgICBhYW50YWxraS4yLA0KICAgIHBhcnRuZXIuMiwNCiAgICBidXJnc3RhdC4yLA0KICAgIHdvb252b3JtLjIsDQogICAgd29uaW5nLjIsDQogICAgc3RlZC4yLA0KICAgIGJlbGJlemlnLjIsDQogICAgYnJ1dG9pbmsuMiwNCiAgICBuZXR0b2luay4yLA0KICAgIGJydXRvY2F0LjIsDQogICAgbmV0dG9jYXQuMiwNCiAgICBvcGx6b24uMiwNCiAgICBvcGxtZXQuMiwNCiAgICBvcGxjYXQuMiwNCiAgICBub2hvdXNlX2VuY3IuMiwNCiAgICBnZXNsYWNodC4zLA0KICAgIHBvc2l0aWUuMywNCiAgICBnZWJqYWFyLjMsDQogICAgbGVlZnRpamQuMywNCiAgICBsZnRkY2F0LjMsDQogICAgYWFudGFsaGguMywNCiAgICBhYW50YWxraS4zLA0KICAgIHBhcnRuZXIuMywNCiAgICBidXJnc3RhdC4zLA0KICAgIHdvb252b3JtLjMsDQogICAgd29uaW5nLjMsDQogICAgc3RlZC4zLA0KICAgIGJlbGJlemlnLjMsDQogICAgYnJ1dG9pbmsuMywNCiAgICBuZXR0b2luay4zLA0KICAgIGJydXRvY2F0LjMsDQogICAgbmV0dG9jYXQuMywNCiAgICBvcGx6b24uMywNCiAgICBvcGxtZXQuMywNCiAgICBvcGxjYXQuMywNCiAgICBub2hvdXNlX2VuY3IuMywNCiAgICBnZXNsYWNodC40LA0KICAgIHBvc2l0aWUuNCwNCiAgICBnZWJqYWFyLjQsDQogICAgbGVlZnRpamQuNCwNCiAgICBsZnRkY2F0LjQsDQogICAgYWFudGFsaGguNCwNCiAgICBhYW50YWxraS40LA0KICAgIHBhcnRuZXIuNCwNCiAgICBidXJnc3RhdC40LA0KICAgIHdvb252b3JtLjQsDQogICAgd29uaW5nLjQsDQogICAgc3RlZC40LA0KICAgIGJlbGJlemlnLjQsDQogICAgYnJ1dG9pbmsuNCwNCiAgICBuZXR0b2luay40LA0KICAgIGJydXRvY2F0LjQsDQogICAgbmV0dG9jYXQuNCwNCiAgICBvcGx6b24uNCwNCiAgICBvcGxtZXQuNCwNCiAgICBvcGxjYXQuNCwNCiAgICBub2hvdXNlX2VuY3IuNCwNCiAgICBnZXNsYWNodC41LA0KICAgIHBvc2l0aWUuNSwNCiAgICBnZWJqYWFyLjUsDQogICAgbGVlZnRpamQuNSwNCiAgICBsZnRkY2F0LjUsDQogICAgYWFudGFsaGguNSwNCiAgICBhYW50YWxraS41LA0KICAgIHBhcnRuZXIuNSwNCiAgICBidXJnc3RhdC41LA0KICAgIHdvb252b3JtLjUsDQogICAgd29uaW5nLjUsDQogICAgc3RlZC41LA0KICAgIGJlbGJlemlnLjUsDQogICAgYnJ1dG9pbmsuNSwNCiAgICBuZXR0b2luay41LA0KICAgIGJydXRvY2F0LjUsDQogICAgbmV0dG9jYXQuNSwNCiAgICBvcGx6b24uNSwNCiAgICBvcGxtZXQuNSwNCiAgICBvcGxjYXQuNSwNCiAgICBub2hvdXNlX2VuY3IuNSwNCiAgICBnZXNsYWNodC42LA0KICAgIHBvc2l0aWUuNiwNCiAgICBnZWJqYWFyLjYsDQogICAgbGVlZnRpamQuNiwNCiAgICBsZnRkY2F0LjYsDQogICAgYWFudGFsaGguNiwNCiAgICBhYW50YWxraS42LA0KICAgIHBhcnRuZXIuNiwNCiAgICBidXJnc3RhdC42LA0KICAgIHdvb252b3JtLjYsDQogICAgd29uaW5nLjYsDQogICAgc3RlZC42LA0KICAgIGJlbGJlemlnLjYsDQogICAgYnJ1dG9pbmsuNiwNCiAgICBuZXR0b2luay42LA0KICAgIGJydXRvY2F0LjYsDQogICAgbmV0dG9jYXQuNiwNCiAgICBvcGx6b24uNiwNCiAgICBvcGxtZXQuNiwNCiAgICBvcGxjYXQuNiwNCiAgICBub2hvdXNlX2VuY3IuNiwNCiAgICBnZXNsYWNodC43LA0KICAgIHBvc2l0aWUuNywNCiAgICBnZWJqYWFyLjcsDQogICAgbGVlZnRpamQuNywNCiAgICBsZnRkY2F0LjcsDQogICAgYWFudGFsaGguNywNCiAgICBhYW50YWxraS43LA0KICAgIHBhcnRuZXIuNywNCiAgICBidXJnc3RhdC43LA0KICAgIHdvb252b3JtLjcsDQogICAgd29uaW5nLjcsDQogICAgc3RlZC43LA0KICAgIGJlbGJlemlnLjcsDQogICAgYnJ1dG9pbmsuNywNCiAgICBuZXR0b2luay43LA0KICAgIGJydXRvY2F0LjcsDQogICAgbmV0dG9jYXQuNywNCiAgICBvcGx6b24uNywNCiAgICBvcGxtZXQuNywNCiAgICBvcGxjYXQuNywNCiAgICBub2hvdXNlX2VuY3IuNywNCiAgICBnZXNsYWNodC44LA0KICAgIHBvc2l0aWUuOCwNCiAgICBnZWJqYWFyLjgsDQogICAgbGVlZnRpamQuOCwNCiAgICBsZnRkY2F0LjgsDQogICAgYWFudGFsaGguOCwNCiAgICBhYW50YWxraS44LA0KICAgIHBhcnRuZXIuOCwNCiAgICBidXJnc3RhdC44LA0KICAgIHdvb252b3JtLjgsDQogICAgd29uaW5nLjgsDQogICAgc3RlZC44LA0KICAgIGJlbGJlemlnLjgsDQogICAgYnJ1dG9pbmsuOCwNCiAgICBuZXR0b2luay44LA0KICAgIGJydXRvY2F0LjgsDQogICAgbmV0dG9jYXQuOCwNCiAgICBvcGx6b24uOCwNCiAgICBvcGxtZXQuOCwNCiAgICBvcGxjYXQuOCwNCiAgICBub2hvdXNlX2VuY3IuOCwNCiAgICBnZXNsYWNodC45LA0KICAgIHBvc2l0aWUuOSwNCiAgICBnZWJqYWFyLjksDQogICAgbGVlZnRpamQuOSwNCiAgICBsZnRkY2F0LjksDQogICAgYWFudGFsaGguOSwNCiAgICBhYW50YWxraS45LA0KICAgIHBhcnRuZXIuOSwNCiAgICBidXJnc3RhdC45LA0KICAgIHdvb252b3JtLjksDQogICAgd29uaW5nLjksDQogICAgc3RlZC45LA0KICAgIGJlbGJlemlnLjksDQogICAgYnJ1dG9pbmsuOSwNCiAgICBuZXR0b2luay45LA0KICAgIGJydXRvY2F0LjksDQogICAgbmV0dG9jYXQuOSwNCiAgICBvcGx6b24uOSwNCiAgICBvcGxtZXQuOSwNCiAgICBvcGxjYXQuOSwNCiAgICBub2hvdXNlX2VuY3IuOSwNCiAgICBnZXNsYWNodC4xMCwNCiAgICBwb3NpdGllLjEwLA0KICAgIGdlYmphYXIuMTAsDQogICAgbGVlZnRpamQuMTAsDQogICAgbGZ0ZGNhdC4xMCwNCiAgICBhYW50YWxoaC4xMCwNCiAgICBhYW50YWxraS4xMCwNCiAgICBwYXJ0bmVyLjEwLA0KICAgIGJ1cmdzdGF0LjEwLA0KICAgIHdvb252b3JtLjEwLA0KICAgIHdvbmluZy4xMCwNCiAgICBzdGVkLjEwLA0KICAgIGJlbGJlemlnLjEwLA0KICAgIGJydXRvaW5rLjEwLA0KICAgIG5ldHRvaW5rLjEwLA0KICAgIGJydXRvY2F0LjEwLA0KICAgIG5ldHRvY2F0LjEwLA0KICAgIG9wbHpvbi4xMCwNCiAgICBvcGxtZXQuMTAsDQogICAgb3BsY2F0LjEwLA0KICAgIG5vaG91c2VfZW5jci4xMCwNCiAgICBnZXNsYWNodC4xMSwNCiAgICBwb3NpdGllLjExLA0KICAgIGdlYmphYXIuMTEsDQogICAgbGVlZnRpamQuMTEsDQogICAgbGZ0ZGNhdC4xMSwNCiAgICBhYW50YWxoaC4xMSwNCiAgICBhYW50YWxraS4xMSwNCiAgICBwYXJ0bmVyLjExLA0KICAgIGJ1cmdzdGF0LjExLA0KICAgIHdvb252b3JtLjExLA0KICAgIHdvbmluZy4xMSwNCiAgICBzdGVkLjExLA0KICAgIGJlbGJlemlnLjExLA0KICAgIGJydXRvaW5rLjExLA0KICAgIG5ldHRvaW5rLjExLA0KICAgIGJydXRvY2F0LjExLA0KICAgIG5ldHRvY2F0LjExLA0KICAgIG9wbHpvbi4xMSwNCiAgICBvcGxtZXQuMTEsDQogICAgb3BsY2F0LjExLA0KICAgIG5vaG91c2VfZW5jci4xMQ0KICApDQoNCiNnZXQgdGhlIGJhY2tncm91bmQgZGF0YSBhbmQgcmVuYW1lIHRoZSBjb2x1bW5zLg0KI0ZvciB0aGUgZmlyc3QgdGhyZWUgd2F2ZXMgdGhlcmUgYXJlIGlzIG5vIGRhdGEgb24gdGhpcyB2YXJpYWJsZQ0KbGlzc19vcmlnaW4gPC0gbGlzc19zdWJzZXQgJT4lDQogIHNlbGVjdCgNCiAgICBub21lbV9lbmNyLA0KICAgIGhlcmtvbXN0Z3JvZXAuNCwNCiAgICBoZXJrb21zdGdyb2VwLjUsDQogICAgaGVya29tc3Rncm9lcC42LA0KICAgIGhlcmtvbXN0Z3JvZXAuNywNCiAgICBoZXJrb21zdGdyb2VwLjgsDQogICAgaGVya29tc3Rncm9lcC45LA0KICAgIGhlcmtvbXN0Z3JvZXAuMTAsDQogICAgaGVya29tc3Rncm9lcC4xMQ0KICApDQpuYW1lcyhsaXNzX29yaWdpbikgPC0NCiAgYygNCiAgICAibm9tZW1fZW5jciIsDQogICAgIm9yaWdpbi40IiwNCiAgICAib3JpZ2luLjUiLA0KICAgICJvcmlnaW4uNiIsDQogICAgIm9yaWdpbi43IiwNCiAgICAib3JpZ2luLjgiLA0KICAgICJvcmlnaW4uOSIsDQogICAgIm9yaWdpbi4xMCIsDQogICAgIm9yaWdpbi4xMSINCiAgKQ0KDQojY3JlYXRlIGVnbyBvcmlnaW4gMS0zIHdpdGggTkEncyBzbyB3ZSBjYW4gbGF0ZXIgbWVyZ2UgdGhlbSBpbnRvIGEgbG9uZyBmaWxlLg0KbGlzc19vcmlnaW4kb3JpZ2luLjEgPC0gTkENCmxpc3Nfb3JpZ2luJG9yaWdpbi4yIDwtIE5BDQpsaXNzX29yaWdpbiRvcmlnaW4uMyA8LSBOQQ0KDQojRm9yIHNvbWUgcmVhc29uIHRoZSByZXNoYXBlIGNvbW1hbmQgYnVncyB3aGVuIHRoZSBvcmRlcmluZyBpcyBub3QgY29ycmVjdC4NCmxpc3Nfb3JpZ2luIDwtIGxpc3Nfb3JpZ2luWywgYygxLCAxMDoxMiwgMjo5KV0NCg0KYGBgDQoNCiMjIEFsdGVyIGlkcw0KDQpgYGB7ciBhbHRlciBpZHN9DQojYWx0ZXIgaWRzDQpsaXNzX2FsdGVyX2lkIDwtIGxpc3Nfc3Vic2V0ICU+JQ0KICBzZWxlY3QoDQogICAgbm9tZW1fZW5jciwNCiAgICBuYW1lMV9yZWMuMSwNCiAgICBuYW1lMl9yZWMuMSwNCiAgICBuYW1lM19yZWMuMSwNCiAgICBuYW1lNF9yZWMuMSwNCiAgICBuYW1lNV9yZWMuMSwNCiAgICBuYW1lMV9yZWMuMiwNCiAgICBuYW1lMl9yZWMuMiwNCiAgICBuYW1lM19yZWMuMiwNCiAgICBuYW1lNF9yZWMuMiwNCiAgICBuYW1lNV9yZWMuMiwNCiAgICBuYW1lMV9yZWMuMywNCiAgICBuYW1lMl9yZWMuMywNCiAgICBuYW1lM19yZWMuMywNCiAgICBuYW1lNF9yZWMuMywNCiAgICBuYW1lNV9yZWMuMywNCiAgICBuYW1lMV9yZWMuNCwNCiAgICBuYW1lMl9yZWMuNCwNCiAgICBuYW1lM19yZWMuNCwNCiAgICBuYW1lNF9yZWMuNCwNCiAgICBuYW1lNV9yZWMuNCwNCiAgICBuYW1lMV9yZWMuNSwNCiAgICBuYW1lMl9yZWMuNSwNCiAgICBuYW1lM19yZWMuNSwNCiAgICBuYW1lNF9yZWMuNSwNCiAgICBuYW1lNV9yZWMuNSwNCiAgICBuYW1lMV9yZWMuNiwNCiAgICBuYW1lMl9yZWMuNiwNCiAgICBuYW1lM19yZWMuNiwNCiAgICBuYW1lNF9yZWMuNiwNCiAgICBuYW1lNV9yZWMuNiwNCiAgICBuYW1lMV9yZWMuNywNCiAgICBuYW1lMl9yZWMuNywNCiAgICBuYW1lM19yZWMuNywNCiAgICBuYW1lNF9yZWMuNywNCiAgICBuYW1lNV9yZWMuNywNCiAgICBuYW1lMV9yZWMuOCwNCiAgICBuYW1lMl9yZWMuOCwNCiAgICBuYW1lM19yZWMuOCwNCiAgICBuYW1lNF9yZWMuOCwNCiAgICBuYW1lNV9yZWMuOCwNCiAgICBuYW1lMV9yZWMuOSwNCiAgICBuYW1lMl9yZWMuOSwNCiAgICBuYW1lM19yZWMuOSwNCiAgICBuYW1lNF9yZWMuOSwNCiAgICBuYW1lNV9yZWMuOSwNCiAgICBuYW1lMV9yZWMuMTAsDQogICAgbmFtZTJfcmVjLjEwLA0KICAgIG5hbWUzX3JlYy4xMCwNCiAgICBuYW1lNF9yZWMuMTAsDQogICAgbmFtZTVfcmVjLjEwLA0KICAgIG5hbWUxX3JlYy4xMSwNCiAgICBuYW1lMl9yZWMuMTEsDQogICAgbmFtZTNfcmVjLjExLA0KICAgIG5hbWU0X3JlYy4xMSwNCiAgICBuYW1lNV9yZWMuMTENCiAgKQ0KDQojcmVuYW1lIHRoZSBhbHRlciBpZCdzDQpuYW1lcyhsaXNzX2FsdGVyX2lkKSA8LQ0KICBjKA0KICAgICJub21lbV9lbmNyIiwNCiAgICAiYWx0ZXJfaWRfMS4xIiwNCiAgICAiYWx0ZXJfaWRfMi4xIiwNCiAgICAiYWx0ZXJfaWRfMy4xIiwNCiAgICAiYWx0ZXJfaWRfNC4xIiwNCiAgICAiYWx0ZXJfaWRfNS4xIiwNCiAgICAiYWx0ZXJfaWRfMS4yIiwNCiAgICAiYWx0ZXJfaWRfMi4yIiwNCiAgICAiYWx0ZXJfaWRfMy4yIiwNCiAgICAiYWx0ZXJfaWRfNC4yIiwNCiAgICAiYWx0ZXJfaWRfNS4yIiwNCiAgICAiYWx0ZXJfaWRfMS4zIiwNCiAgICAiYWx0ZXJfaWRfMi4zIiwNCiAgICAiYWx0ZXJfaWRfMy4zIiwNCiAgICAiYWx0ZXJfaWRfNC4zIiwNCiAgICAiYWx0ZXJfaWRfNS4zIiwNCiAgICAiYWx0ZXJfaWRfMS40IiwNCiAgICAiYWx0ZXJfaWRfMi40IiwNCiAgICAiYWx0ZXJfaWRfMy40IiwNCiAgICAiYWx0ZXJfaWRfNC40IiwNCiAgICAiYWx0ZXJfaWRfNS40IiwNCiAgICAiYWx0ZXJfaWRfMS41IiwNCiAgICAiYWx0ZXJfaWRfMi41IiwNCiAgICAiYWx0ZXJfaWRfMy41IiwNCiAgICAiYWx0ZXJfaWRfNC41IiwNCiAgICAiYWx0ZXJfaWRfNS41IiwNCiAgICAiYWx0ZXJfaWRfMS42IiwNCiAgICAiYWx0ZXJfaWRfMi42IiwNCiAgICAiYWx0ZXJfaWRfMy42IiwNCiAgICAiYWx0ZXJfaWRfNC42IiwNCiAgICAiYWx0ZXJfaWRfNS42IiwNCiAgICAiYWx0ZXJfaWRfMS43IiwNCiAgICAiYWx0ZXJfaWRfMi43IiwNCiAgICAiYWx0ZXJfaWRfMy43IiwNCiAgICAiYWx0ZXJfaWRfNC43IiwNCiAgICAiYWx0ZXJfaWRfNS43IiwNCiAgICAiYWx0ZXJfaWRfMS44IiwNCiAgICAiYWx0ZXJfaWRfMi44IiwNCiAgICAiYWx0ZXJfaWRfMy44IiwNCiAgICAiYWx0ZXJfaWRfNC44IiwNCiAgICAiYWx0ZXJfaWRfNS44IiwNCiAgICAiYWx0ZXJfaWRfMS45IiwNCiAgICAiYWx0ZXJfaWRfMi45IiwNCiAgICAiYWx0ZXJfaWRfMy45IiwNCiAgICAiYWx0ZXJfaWRfNC45IiwNCiAgICAiYWx0ZXJfaWRfNS45IiwNCiAgICAiYWx0ZXJfaWRfMS4xMCIsDQogICAgImFsdGVyX2lkXzIuMTAiLA0KICAgICJhbHRlcl9pZF8zLjEwIiwNCiAgICAiYWx0ZXJfaWRfNC4xMCIsDQogICAgImFsdGVyX2lkXzUuMTAiLA0KICAgICJhbHRlcl9pZF8xLjExIiwNCiAgICAiYWx0ZXJfaWRfMi4xMSIsDQogICAgImFsdGVyX2lkXzMuMTEiLA0KICAgICJhbHRlcl9pZF80LjExIiwNCiAgICAiYWx0ZXJfaWRfNS4xMSINCiAgKQ0KDQpgYGANCg0KIyMgQWx0ZXIgaW5mb3JtYXRpb24NCg0KYGBge3IgYWx0ZXIgaW5mb3JtYXRpb259DQojZXh0cmFjdCB0aGUgYWx0ZXIgdmFyaWFibGVzIGFuZCByZW5hbWUgdGhlbS4NCiNyZW5hbWluZyB0aGUgYWx0ZXIgdmFyaWFibGVzLg0KI3NlbGVjdGluZyB0aGUgYWx0ZXIgZGF0YS4NCmxpc3NfYWx0ZXJzIDwtICBsaXNzICU+JQ0KICBzZWxlY3QoDQogICAgbm9tZW1fZW5jciwNCiAgICBjczA4YTMyNiwNCiAgICBjczA4YTMxNSwNCiAgICBjczA4YTMyMCwNCiAgICBjczA4YTMyOCwNCiAgICBjczA4YTMyOSwNCiAgICBjczA4YTMyNCwNCiAgICBjczA4YTMyMywNCiAgICBjczA4YTMyMSwNCiAgICBjczA4YTMwMCwNCiAgICBjczA4YTMyNywNCiAgICBjczA4YTMzNywNCiAgICBjczA4YTMxNiwNCiAgICBjczA4YTMzMSwNCiAgICBjczA4YTMzOSwNCiAgICBjczA4YTM0MCwNCiAgICBjczA4YTMzNSwNCiAgICBjczA4YTMzNCwNCiAgICBjczA4YTMzMiwNCiAgICBjczA4YTMwMSwNCiAgICBjczA4YTMzOCwNCiAgICBjczA4YTM0OCwNCiAgICBjczA4YTMxNywNCiAgICBjczA4YTM0MiwNCiAgICBjczA4YTM1MCwNCiAgICBjczA4YTM1MSwNCiAgICBjczA4YTM0NiwNCiAgICBjczA4YTM0NSwNCiAgICBjczA4YTM0MywNCiAgICBjczA4YTMwMiwNCiAgICBjczA4YTM0OSwNCiAgICBjczA4YTM1OSwNCiAgICBjczA4YTMxOCwNCiAgICBjczA4YTM1MywNCiAgICBjczA4YTM2MSwNCiAgICBjczA4YTM2MiwNCiAgICBjczA4YTM1NywNCiAgICBjczA4YTM1NiwNCiAgICBjczA4YTM1NCwNCiAgICBjczA4YTMwMywNCiAgICBjczA4YTM2MCwNCiAgICBjczA4YTM3MCwNCiAgICBjczA4YTMxOSwNCiAgICBjczA4YTM2NCwNCiAgICBjczA4YTM3MiwNCiAgICBjczA4YTM3MywNCiAgICBjczA4YTM2OCwNCiAgICBjczA4YTM2NywNCiAgICBjczA4YTM2NSwNCiAgICBjczA4YTMwNCwNCiAgICBjczA4YTM3MSwNCiAgICBjczA5YjMyNiwNCiAgICBjczA5YjMxNSwNCiAgICBjczA5YjMyMCwNCiAgICBjczA5YjMyOCwNCiAgICBjczA5YjMyOSwNCiAgICBjczA5YjMyNCwNCiAgICBjczA5YjMyMywNCiAgICBjczA5YjMyMSwNCiAgICBjczA5YjMwMCwNCiAgICBjczA5YjMyNywNCiAgICBjczA5YjMzNywNCiAgICBjczA5YjMxNiwNCiAgICBjczA5YjMzMSwNCiAgICBjczA5YjMzOSwNCiAgICBjczA5YjM0MCwNCiAgICBjczA5YjMzNSwNCiAgICBjczA5YjMzNCwNCiAgICBjczA5YjMzMiwNCiAgICBjczA5YjMwMSwNCiAgICBjczA5YjMzOCwNCiAgICBjczA5YjM0OCwNCiAgICBjczA5YjMxNywNCiAgICBjczA5YjM0MiwNCiAgICBjczA5YjM1MCwNCiAgICBjczA5YjM1MSwNCiAgICBjczA5YjM0NiwNCiAgICBjczA5YjM0NSwNCiAgICBjczA5YjM0MywNCiAgICBjczA5YjMwMiwNCiAgICBjczA5YjM0OSwNCiAgICBjczA5YjM1OSwNCiAgICBjczA5YjMxOCwNCiAgICBjczA5YjM1MywNCiAgICBjczA5YjM2MSwNCiAgICBjczA5YjM2MiwNCiAgICBjczA5YjM1NywNCiAgICBjczA5YjM1NiwNCiAgICBjczA5YjM1NCwNCiAgICBjczA5YjMwMywNCiAgICBjczA5YjM2MCwNCiAgICBjczA5YjM3MCwNCiAgICBjczA5YjMxOSwNCiAgICBjczA5YjM2NCwNCiAgICBjczA5YjM3MiwNCiAgICBjczA5YjM3MywNCiAgICBjczA5YjM2OCwNCiAgICBjczA5YjM2NywNCiAgICBjczA5YjM2NSwNCiAgICBjczA5YjMwNCwNCiAgICBjczA5YjM3MSwNCiAgICBjczEwYzMyNiwNCiAgICBjczEwYzMxNSwNCiAgICBjczEwYzMyMCwNCiAgICBjczEwYzMyOCwNCiAgICBjczEwYzMyOSwNCiAgICBjczEwYzMyNCwNCiAgICBjczEwYzMyMywNCiAgICBjczEwYzMyMSwNCiAgICBjczEwYzMwMCwNCiAgICBjczEwYzMyNywNCiAgICBjczEwYzMzNywNCiAgICBjczEwYzMxNiwNCiAgICBjczEwYzMzMSwNCiAgICBjczEwYzMzOSwNCiAgICBjczEwYzM0MCwNCiAgICBjczEwYzMzNSwNCiAgICBjczEwYzMzNCwNCiAgICBjczEwYzMzMiwNCiAgICBjczEwYzMwMSwNCiAgICBjczEwYzMzOCwNCiAgICBjczEwYzM0OCwNCiAgICBjczEwYzMxNywNCiAgICBjczEwYzM0MiwNCiAgICBjczEwYzM1MCwNCiAgICBjczEwYzM1MSwNCiAgICBjczEwYzM0NiwNCiAgICBjczEwYzM0NSwNCiAgICBjczEwYzM0MywNCiAgICBjczEwYzMwMiwNCiAgICBjczEwYzM0OSwNCiAgICBjczEwYzM1OSwNCiAgICBjczEwYzMxOCwNCiAgICBjczEwYzM1MywNCiAgICBjczEwYzM2MSwNCiAgICBjczEwYzM2MiwNCiAgICBjczEwYzM1NywNCiAgICBjczEwYzM1NiwNCiAgICBjczEwYzM1NCwNCiAgICBjczEwYzMwMywNCiAgICBjczEwYzM2MCwNCiAgICBjczEwYzM3MCwNCiAgICBjczEwYzMxOSwNCiAgICBjczEwYzM2NCwNCiAgICBjczEwYzM3MiwNCiAgICBjczEwYzM3MywNCiAgICBjczEwYzM2OCwNCiAgICBjczEwYzM2NywNCiAgICBjczEwYzM2NSwNCiAgICBjczEwYzMwNCwNCiAgICBjczEwYzM3MSwNCiAgICBjczExZDMyNiwNCiAgICBjczExZDMxNSwNCiAgICBjczExZDMyMCwNCiAgICBjczExZDMyOCwNCiAgICBjczExZDMyOSwNCiAgICBjczExZDMyNCwNCiAgICBjczExZDMyMywNCiAgICBjczExZDMyMSwNCiAgICBjczExZDMwMCwNCiAgICBjczExZDMyNywNCiAgICBjczExZDMzNywNCiAgICBjczExZDMxNiwNCiAgICBjczExZDMzMSwNCiAgICBjczExZDMzOSwNCiAgICBjczExZDM0MCwNCiAgICBjczExZDMzNSwNCiAgICBjczExZDMzNCwNCiAgICBjczExZDMzMiwNCiAgICBjczExZDMwMSwNCiAgICBjczExZDMzOCwNCiAgICBjczExZDM0OCwNCiAgICBjczExZDMxNywNCiAgICBjczExZDM0MiwNCiAgICBjczExZDM1MCwNCiAgICBjczExZDM1MSwNCiAgICBjczExZDM0NiwNCiAgICBjczExZDM0NSwNCiAgICBjczExZDM0MywNCiAgICBjczExZDMwMiwNCiAgICBjczExZDM0OSwNCiAgICBjczExZDM1OSwNCiAgICBjczExZDMxOCwNCiAgICBjczExZDM1MywNCiAgICBjczExZDM2MSwNCiAgICBjczExZDM2MiwNCiAgICBjczExZDM1NywNCiAgICBjczExZDM1NiwNCiAgICBjczExZDM1NCwNCiAgICBjczExZDMwMywNCiAgICBjczExZDM2MCwNCiAgICBjczExZDM3MCwNCiAgICBjczExZDMxOSwNCiAgICBjczExZDM2NCwNCiAgICBjczExZDM3MiwNCiAgICBjczExZDM3MywNCiAgICBjczExZDM2OCwNCiAgICBjczExZDM2NywNCiAgICBjczExZDM2NSwNCiAgICBjczExZDMwNCwNCiAgICBjczExZDM3MSwNCiAgICBjczEyZTMyNiwNCiAgICBjczEyZTMxNSwNCiAgICBjczEyZTMyMCwNCiAgICBjczEyZTMyOCwNCiAgICBjczEyZTMyOSwNCiAgICBjczEyZTMyNCwNCiAgICBjczEyZTMyMywNCiAgICBjczEyZTMyMSwNCiAgICBjczEyZTMwMCwNCiAgICBjczEyZTMyNywNCiAgICBjczEyZTMzNywNCiAgICBjczEyZTMxNiwNCiAgICBjczEyZTMzMSwNCiAgICBjczEyZTMzOSwNCiAgICBjczEyZTM0MCwNCiAgICBjczEyZTMzNSwNCiAgICBjczEyZTMzNCwNCiAgICBjczEyZTMzMiwNCiAgICBjczEyZTMwMSwNCiAgICBjczEyZTMzOCwNCiAgICBjczEyZTM0OCwNCiAgICBjczEyZTMxNywNCiAgICBjczEyZTM0MiwNCiAgICBjczEyZTM1MCwNCiAgICBjczEyZTM1MSwNCiAgICBjczEyZTM0NiwNCiAgICBjczEyZTM0NSwNCiAgICBjczEyZTM0MywNCiAgICBjczEyZTMwMiwNCiAgICBjczEyZTM0OSwNCiAgICBjczEyZTM1OSwNCiAgICBjczEyZTMxOCwNCiAgICBjczEyZTM1MywNCiAgICBjczEyZTM2MSwNCiAgICBjczEyZTM2MiwNCiAgICBjczEyZTM1NywNCiAgICBjczEyZTM1NiwNCiAgICBjczEyZTM1NCwNCiAgICBjczEyZTMwMywNCiAgICBjczEyZTM2MCwNCiAgICBjczEyZTM3MCwNCiAgICBjczEyZTMxOSwNCiAgICBjczEyZTM2NCwNCiAgICBjczEyZTM3MiwNCiAgICBjczEyZTM3MywNCiAgICBjczEyZTM2OCwNCiAgICBjczEyZTM2NywNCiAgICBjczEyZTM2NSwNCiAgICBjczEyZTMwNCwNCiAgICBjczEyZTM3MSwNCiAgICBjczEzZjMyNiwNCiAgICBjczEzZjMxNSwNCiAgICBjczEzZjMyMCwNCiAgICBjczEzZjMyOCwNCiAgICBjczEzZjMyOSwNCiAgICBjczEzZjMyNCwNCiAgICBjczEzZjMyMywNCiAgICBjczEzZjMyMSwNCiAgICBjczEzZjMwMCwNCiAgICBjczEzZjMyNywNCiAgICBjczEzZjMzNywNCiAgICBjczEzZjMxNiwNCiAgICBjczEzZjMzMSwNCiAgICBjczEzZjMzOSwNCiAgICBjczEzZjM0MCwNCiAgICBjczEzZjMzNSwNCiAgICBjczEzZjMzNCwNCiAgICBjczEzZjMzMiwNCiAgICBjczEzZjMwMSwNCiAgICBjczEzZjMzOCwNCiAgICBjczEzZjM0OCwNCiAgICBjczEzZjMxNywNCiAgICBjczEzZjM0MiwNCiAgICBjczEzZjM1MCwNCiAgICBjczEzZjM1MSwNCiAgICBjczEzZjM0NiwNCiAgICBjczEzZjM0NSwNCiAgICBjczEzZjM0MywNCiAgICBjczEzZjMwMiwNCiAgICBjczEzZjM0OSwNCiAgICBjczEzZjM1OSwNCiAgICBjczEzZjMxOCwNCiAgICBjczEzZjM1MywNCiAgICBjczEzZjM2MSwNCiAgICBjczEzZjM2MiwNCiAgICBjczEzZjM1NywNCiAgICBjczEzZjM1NiwNCiAgICBjczEzZjM1NCwNCiAgICBjczEzZjMwMywNCiAgICBjczEzZjM2MCwNCiAgICBjczEzZjM3MCwNCiAgICBjczEzZjMxOSwNCiAgICBjczEzZjM2NCwNCiAgICBjczEzZjM3MiwNCiAgICBjczEzZjM3MywNCiAgICBjczEzZjM2OCwNCiAgICBjczEzZjM2NywNCiAgICBjczEzZjM2NSwNCiAgICBjczEzZjMwNCwNCiAgICBjczEzZjM3MSwNCiAgICBjczE0ZzMyNiwNCiAgICBjczE0ZzMxNSwNCiAgICBjczE0ZzMyMCwNCiAgICBjczE0ZzMyOCwNCiAgICBjczE0ZzMyOSwNCiAgICBjczE0ZzMyNCwNCiAgICBjczE0ZzMyMywNCiAgICBjczE0ZzMyMSwNCiAgICBjczE0ZzMwMCwNCiAgICBjczE0ZzMyNywNCiAgICBjczE0ZzMzNywNCiAgICBjczE0ZzMxNiwNCiAgICBjczE0ZzMzMSwNCiAgICBjczE0ZzMzOSwNCiAgICBjczE0ZzM0MCwNCiAgICBjczE0ZzMzNSwNCiAgICBjczE0ZzMzNCwNCiAgICBjczE0ZzMzMiwNCiAgICBjczE0ZzMwMSwNCiAgICBjczE0ZzMzOCwNCiAgICBjczE0ZzM0OCwNCiAgICBjczE0ZzMxNywNCiAgICBjczE0ZzM0MiwNCiAgICBjczE0ZzM1MCwNCiAgICBjczE0ZzM1MSwNCiAgICBjczE0ZzM0NiwNCiAgICBjczE0ZzM0NSwNCiAgICBjczE0ZzM0MywNCiAgICBjczE0ZzMwMiwNCiAgICBjczE0ZzM0OSwNCiAgICBjczE0ZzM1OSwNCiAgICBjczE0ZzMxOCwNCiAgICBjczE0ZzM1MywNCiAgICBjczE0ZzM2MSwNCiAgICBjczE0ZzM2MiwNCiAgICBjczE0ZzM1NywNCiAgICBjczE0ZzM1NiwNCiAgICBjczE0ZzM1NCwNCiAgICBjczE0ZzMwMywNCiAgICBjczE0ZzM2MCwNCiAgICBjczE0ZzM3MCwNCiAgICBjczE0ZzMxOSwNCiAgICBjczE0ZzM2NCwNCiAgICBjczE0ZzM3MiwNCiAgICBjczE0ZzM3MywNCiAgICBjczE0ZzM2OCwNCiAgICBjczE0ZzM2NywNCiAgICBjczE0ZzM2NSwNCiAgICBjczE0ZzMwNCwNCiAgICBjczE0ZzM3MSwNCiAgICBjczE1aDMyNiwNCiAgICBjczE1aDMxNSwNCiAgICBjczE1aDMyMCwNCiAgICBjczE1aDMyOCwNCiAgICBjczE1aDMyOSwNCiAgICBjczE1aDMyNCwNCiAgICBjczE1aDMyMywNCiAgICBjczE1aDMyMSwNCiAgICBjczE1aDMwMCwNCiAgICBjczE1aDMyNywNCiAgICBjczE1aDMzNywNCiAgICBjczE1aDMxNiwNCiAgICBjczE1aDMzMSwNCiAgICBjczE1aDMzOSwNCiAgICBjczE1aDM0MCwNCiAgICBjczE1aDMzNSwNCiAgICBjczE1aDMzNCwNCiAgICBjczE1aDMzMiwNCiAgICBjczE1aDMwMSwNCiAgICBjczE1aDMzOCwNCiAgICBjczE1aDM0OCwNCiAgICBjczE1aDMxNywNCiAgICBjczE1aDM0MiwNCiAgICBjczE1aDM1MCwNCiAgICBjczE1aDM1MSwNCiAgICBjczE1aDM0NiwNCiAgICBjczE1aDM0NSwNCiAgICBjczE1aDM0MywNCiAgICBjczE1aDMwMiwNCiAgICBjczE1aDM0OSwNCiAgICBjczE1aDM1OSwNCiAgICBjczE1aDMxOCwNCiAgICBjczE1aDM1MywNCiAgICBjczE1aDM2MSwNCiAgICBjczE1aDM2MiwNCiAgICBjczE1aDM1NywNCiAgICBjczE1aDM1NiwNCiAgICBjczE1aDM1NCwNCiAgICBjczE1aDMwMywNCiAgICBjczE1aDM2MCwNCiAgICBjczE1aDM3MCwNCiAgICBjczE1aDMxOSwNCiAgICBjczE1aDM2NCwNCiAgICBjczE1aDM3MiwNCiAgICBjczE1aDM3MywNCiAgICBjczE1aDM2OCwNCiAgICBjczE1aDM2NywNCiAgICBjczE1aDM2NSwNCiAgICBjczE1aDMwNCwNCiAgICBjczE1aDM3MSwNCiAgICBjczE2aTMyNiwNCiAgICBjczE2aTMxNSwNCiAgICBjczE2aTMyMCwNCiAgICBjczE2aTMyOCwNCiAgICBjczE2aTMyOSwNCiAgICBjczE2aTMyNCwNCiAgICBjczE2aTMyMywNCiAgICBjczE2aTMyMSwNCiAgICBjczE2aTMwMCwNCiAgICBjczE2aTMyNywNCiAgICBjczE2aTMzNywNCiAgICBjczE2aTMxNiwNCiAgICBjczE2aTMzMSwNCiAgICBjczE2aTMzOSwNCiAgICBjczE2aTM0MCwNCiAgICBjczE2aTMzNSwNCiAgICBjczE2aTMzNCwNCiAgICBjczE2aTMzMiwNCiAgICBjczE2aTMwMSwNCiAgICBjczE2aTMzOCwNCiAgICBjczE2aTM0OCwNCiAgICBjczE2aTMxNywNCiAgICBjczE2aTM0MiwNCiAgICBjczE2aTM1MCwNCiAgICBjczE2aTM1MSwNCiAgICBjczE2aTM0NiwNCiAgICBjczE2aTM0NSwNCiAgICBjczE2aTM0MywNCiAgICBjczE2aTMwMiwNCiAgICBjczE2aTM0OSwNCiAgICBjczE2aTM1OSwNCiAgICBjczE2aTMxOCwNCiAgICBjczE2aTM1MywNCiAgICBjczE2aTM2MSwNCiAgICBjczE2aTM2MiwNCiAgICBjczE2aTM1NywNCiAgICBjczE2aTM1NiwNCiAgICBjczE2aTM1NCwNCiAgICBjczE2aTMwMywNCiAgICBjczE2aTM2MCwNCiAgICBjczE2aTM3MCwNCiAgICBjczE2aTMxOSwNCiAgICBjczE2aTM2NCwNCiAgICBjczE2aTM3MiwNCiAgICBjczE2aTM3MywNCiAgICBjczE2aTM2OCwNCiAgICBjczE2aTM2NywNCiAgICBjczE2aTM2NSwNCiAgICBjczE2aTMwNCwNCiAgICBjczE2aTM3MSwNCiAgICBjczE3ajMyNiwNCiAgICBjczE3ajMxNSwNCiAgICBjczE3ajMyMCwNCiAgICBjczE3ajMyOCwNCiAgICBjczE3ajMyOSwNCiAgICBjczE3ajMyNCwNCiAgICBjczE3ajMyMywNCiAgICBjczE3ajMyMSwNCiAgICBjczE3ajMwMCwNCiAgICBjczE3ajMyNywNCiAgICBjczE3ajMzNywNCiAgICBjczE3ajMxNiwNCiAgICBjczE3ajMzMSwNCiAgICBjczE3ajMzOSwNCiAgICBjczE3ajM0MCwNCiAgICBjczE3ajMzNSwNCiAgICBjczE3ajMzNCwNCiAgICBjczE3ajMzMiwNCiAgICBjczE3ajMwMSwNCiAgICBjczE3ajMzOCwNCiAgICBjczE3ajM0OCwNCiAgICBjczE3ajMxNywNCiAgICBjczE3ajM0MiwNCiAgICBjczE3ajM1MCwNCiAgICBjczE3ajM1MSwNCiAgICBjczE3ajM0NiwNCiAgICBjczE3ajM0NSwNCiAgICBjczE3ajM0MywNCiAgICBjczE3ajMwMiwNCiAgICBjczE3ajM0OSwNCiAgICBjczE3ajM1OSwNCiAgICBjczE3ajMxOCwNCiAgICBjczE3ajM1MywNCiAgICBjczE3ajM2MSwNCiAgICBjczE3ajM2MiwNCiAgICBjczE3ajM1NywNCiAgICBjczE3ajM1NiwNCiAgICBjczE3ajM1NCwNCiAgICBjczE3ajMwMywNCiAgICBjczE3ajM2MCwNCiAgICBjczE3ajM3MCwNCiAgICBjczE3ajMxOSwNCiAgICBjczE3ajM2NCwNCiAgICBjczE3ajM3MiwNCiAgICBjczE3ajM3MywNCiAgICBjczE3ajM2OCwNCiAgICBjczE3ajM2NywNCiAgICBjczE3ajM2NSwNCiAgICBjczE3ajMwNCwNCiAgICBjczE3ajM3MSwNCiAgICBjczE4azMyNiwNCiAgICBjczE4azMxNSwNCiAgICBjczE4azMyMCwNCiAgICBjczE4azMyOCwNCiAgICBjczE4azMyOSwNCiAgICBjczE4azMyNCwNCiAgICBjczE4azMyMywNCiAgICBjczE4azMyMSwNCiAgICBjczE4azMwMCwNCiAgICBjczE4azMyNywNCiAgICBjczE4azMzNywNCiAgICBjczE4azMxNiwNCiAgICBjczE4azMzMSwNCiAgICBjczE4azMzOSwNCiAgICBjczE4azM0MCwNCiAgICBjczE4azMzNSwNCiAgICBjczE4azMzNCwNCiAgICBjczE4azMzMiwNCiAgICBjczE4azMwMSwNCiAgICBjczE4azMzOCwNCiAgICBjczE4azM0OCwNCiAgICBjczE4azMxNywNCiAgICBjczE4azM0MiwNCiAgICBjczE4azM1MCwNCiAgICBjczE4azM1MSwNCiAgICBjczE4azM0NiwNCiAgICBjczE4azM0NSwNCiAgICBjczE4azM0MywNCiAgICBjczE4azMwMiwNCiAgICBjczE4azM0OSwNCiAgICBjczE4azM1OSwNCiAgICBjczE4azMxOCwNCiAgICBjczE4azM1MywNCiAgICBjczE4azM2MSwNCiAgICBjczE4azM2MiwNCiAgICBjczE4azM1NywNCiAgICBjczE4azM1NiwNCiAgICBjczE4azM1NCwNCiAgICBjczE4azMwMywNCiAgICBjczE4azM2MCwNCiAgICBjczE4azM3MCwNCiAgICBjczE4azMxOSwNCiAgICBjczE4azM2NCwNCiAgICBjczE4azM3MiwNCiAgICBjczE4azM3MywNCiAgICBjczE4azM2OCwNCiAgICBjczE4azM2NywNCiAgICBjczE4azM2NSwNCiAgICBjczE4azMwNCwNCiAgICBjczE4azM3MSwNCiAgICBjczA4YTMwNSwNCiAgICBjczA4YTMwNiwNCiAgICBjczA4YTMwNywNCiAgICBjczA4YTMwOCwNCiAgICBjczA4YTMwOSwNCiAgICBjczA4YTMxMCwNCiAgICBjczA4YTMxMSwNCiAgICBjczA4YTMxMiwNCiAgICBjczA4YTMxMywNCiAgICBjczA4YTMxNCwNCiAgICBjczA5YjMwNSwNCiAgICBjczA5YjMwNiwNCiAgICBjczA5YjMwNywNCiAgICBjczA5YjMwOCwNCiAgICBjczA5YjMwOSwNCiAgICBjczA5YjMxMCwNCiAgICBjczA5YjMxMSwNCiAgICBjczA5YjMxMiwNCiAgICBjczA5YjMxMywNCiAgICBjczA5YjMxNCwNCiAgICBjczEwYzMwNSwNCiAgICBjczEwYzMwNiwNCiAgICBjczEwYzMwNywNCiAgICBjczEwYzMwOCwNCiAgICBjczEwYzMwOSwNCiAgICBjczEwYzMxMCwNCiAgICBjczEwYzMxMSwNCiAgICBjczEwYzMxMiwNCiAgICBjczEwYzMxMywNCiAgICBjczEwYzMxNCwNCiAgICBjczExZDMwNSwNCiAgICBjczExZDMwNiwNCiAgICBjczExZDMwNywNCiAgICBjczExZDMwOCwNCiAgICBjczExZDMwOSwNCiAgICBjczExZDMxMCwNCiAgICBjczExZDMxMSwNCiAgICBjczExZDMxMiwNCiAgICBjczExZDMxMywNCiAgICBjczExZDMxNCwNCiAgICBjczEyZTMwNSwNCiAgICBjczEyZTMwNiwNCiAgICBjczEyZTMwNywNCiAgICBjczEyZTMwOCwNCiAgICBjczEyZTMwOSwNCiAgICBjczEyZTMxMCwNCiAgICBjczEyZTMxMSwNCiAgICBjczEyZTMxMiwNCiAgICBjczEyZTMxMywNCiAgICBjczEyZTMxNCwNCiAgICBjczEzZjMwNSwNCiAgICBjczEzZjMwNiwNCiAgICBjczEzZjMwNywNCiAgICBjczEzZjMwOCwNCiAgICBjczEzZjMwOSwNCiAgICBjczEzZjMxMCwNCiAgICBjczEzZjMxMSwNCiAgICBjczEzZjMxMiwNCiAgICBjczEzZjMxMywNCiAgICBjczEzZjMxNCwNCiAgICBjczE0ZzMwNSwNCiAgICBjczE0ZzMwNiwNCiAgICBjczE0ZzMwNywNCiAgICBjczE0ZzMwOCwNCiAgICBjczE0ZzMwOSwNCiAgICBjczE0ZzMxMCwNCiAgICBjczE0ZzMxMSwNCiAgICBjczE0ZzMxMiwNCiAgICBjczE0ZzMxMywNCiAgICBjczE0ZzMxNCwNCiAgICBjczE1aDMwNSwNCiAgICBjczE1aDMwNiwNCiAgICBjczE1aDMwNywNCiAgICBjczE1aDMwOCwNCiAgICBjczE1aDMwOSwNCiAgICBjczE1aDMxMCwNCiAgICBjczE1aDMxMSwNCiAgICBjczE1aDMxMiwNCiAgICBjczE1aDMxMywNCiAgICBjczE1aDMxNCwNCiAgICBjczE2aTMwNSwNCiAgICBjczE2aTMwNiwNCiAgICBjczE2aTMwNywNCiAgICBjczE2aTMwOCwNCiAgICBjczE2aTMwOSwNCiAgICBjczE2aTMxMCwNCiAgICBjczE2aTMxMSwNCiAgICBjczE2aTMxMiwNCiAgICBjczE2aTMxMywNCiAgICBjczE2aTMxNCwNCiAgICBjczE3ajMwNSwNCiAgICBjczE3ajMwNiwNCiAgICBjczE3ajMwNywNCiAgICBjczE3ajMwOCwNCiAgICBjczE3ajMwOSwNCiAgICBjczE3ajMxMCwNCiAgICBjczE3ajMxMSwNCiAgICBjczE3ajMxMiwNCiAgICBjczE3ajMxMywNCiAgICBjczE3ajMxNCwNCiAgICBjczE4azMwNSwNCiAgICBjczE4azMwNiwNCiAgICBjczE4azMwNywNCiAgICBjczE4azMwOCwNCiAgICBjczE4azMwOSwNCiAgICBjczE4azMxMCwNCiAgICBjczE4azMxMSwNCiAgICBjczE4azMxMiwNCiAgICBjczE4azMxMywNCiAgICBjczE4azMxNCwNCiAgICBjczA4YTMyNSwNCiAgICBjczA4YTMzNiwNCiAgICBjczA4YTM0NywNCiAgICBjczA4YTM1OCwNCiAgICBjczA4YTM2OSwNCiAgICBjczA5YjMyNSwNCiAgICBjczA5YjMzNiwNCiAgICBjczA5YjM0NywNCiAgICBjczA5YjM1OCwNCiAgICBjczA5YjM2OSwNCiAgICBjczEwYzMyNSwNCiAgICBjczEwYzMzNiwNCiAgICBjczEwYzM0NywNCiAgICBjczEwYzM1OCwNCiAgICBjczEwYzM2OSwNCiAgICBjczExZDMyNSwNCiAgICBjczExZDMzNiwNCiAgICBjczExZDM0NywNCiAgICBjczExZDM1OCwNCiAgICBjczExZDM2OSwNCiAgICBjczEyZTMyNSwNCiAgICBjczEyZTMzNiwNCiAgICBjczEyZTM0NywNCiAgICBjczEyZTM1OCwNCiAgICBjczEyZTM2OSwNCiAgICBjczEzZjMyNSwNCiAgICBjczEzZjMzNiwNCiAgICBjczEzZjM0NywNCiAgICBjczEzZjM1OCwNCiAgICBjczEzZjM2OSwNCiAgICBjczE0ZzMyNSwNCiAgICBjczE0ZzMzNiwNCiAgICBjczE0ZzM0NywNCiAgICBjczE0ZzM1OCwNCiAgICBjczE0ZzM2OSwNCiAgICBjczE1aDMyNSwNCiAgICBjczE1aDMzNiwNCiAgICBjczE1aDM0NywNCiAgICBjczE1aDM1OCwNCiAgICBjczE1aDM2OSwNCiAgICBjczE2aTMyNSwNCiAgICBjczE2aTMzNiwNCiAgICBjczE2aTM0NywNCiAgICBjczE2aTM1OCwNCiAgICBjczE2aTM2OSwNCiAgICBjczE3ajMyNSwNCiAgICBjczE3ajMzNiwNCiAgICBjczE3ajM0NywNCiAgICBjczE3ajM1OCwNCiAgICBjczE3ajM2OSwNCiAgICBjczE4azMyNSwNCiAgICBjczE4azMzNiwNCiAgICBjczE4azM0NywNCiAgICBjczE4azM1OCwNCiAgICBjczE4azM2OSwNCiAgICBjczA4YV9tLA0KICAgIGNzMDliX20sDQogICAgY3MxMGNfbSwNCiAgICBjczExZF9tLA0KICAgIGNzMTJlX20sDQogICAgY3MxM2ZfbSwNCiAgICBjczE0Z19tLA0KICAgIGNzMTVoX20sDQogICAgY3MxNmlfbSwNCiAgICBjczE3al9tLA0KICAgIGNzMThrX20NCiAgKQ0KDQojUmVuYW1lIHRoZSBhbHRlciB2YXJpYWJsZXMuDQpuYW1lcyhsaXNzX2FsdGVycykgPC0NCiAgYygNCiAgICAibm9tZW1fZW5jciIsDQogICAgImVkdWNfYWx0ZXIxLjEiLA0KICAgICJnZW5kZXJfYWx0ZXIxLjEiLA0KICAgICJvcmlnaW5fYWx0ZXIxLjEiLA0KICAgICJwcm9mX2FsdGVyMS4xIiwNCiAgICAiYWdlX2FsdGVyMS4xIiwNCiAgICAicG9sdGFsa19hbHRlcjEuMSIsDQogICAgInRhbGtfYWx0ZXIxLjEiLA0KICAgICJyZWxfYWx0ZXIxLjEiLA0KICAgICJkZWFyX2FsdGVyMS4xIiwNCiAgICAid29ya19hMS4xIiwNCiAgICAiZWR1Y19hbHRlcjIuMSIsDQogICAgImdlbmRlcl9hbHRlcjIuMSIsDQogICAgIm9yaWdpbl9hbHRlcjIuMSIsDQogICAgInByb2ZfYWx0ZXIyLjEiLA0KICAgICJhZ2VfYWx0ZXIyLjEiLA0KICAgICJwb2x0YWxrX2FsdGVyMi4xIiwNCiAgICAidGFsa19hbHRlcjIuMSIsDQogICAgInJlbF9hbHRlcjIuMSIsDQogICAgImRlYXJfYWx0ZXIyLjEiLA0KICAgICJ3b3JrX2EyLjEiLA0KICAgICJlZHVjX2FsdGVyMy4xIiwNCiAgICAiZ2VuZGVyX2FsdGVyMy4xIiwNCiAgICAib3JpZ2luX2FsdGVyMy4xIiwNCiAgICAicHJvZl9hbHRlcjMuMSIsDQogICAgImFnZV9hbHRlcjMuMSIsDQogICAgInBvbHRhbGtfYWx0ZXIzLjEiLA0KICAgICJ0YWxrX2FsdGVyMy4xIiwNCiAgICAicmVsX2FsdGVyMy4xIiwNCiAgICAiZGVhcl9hbHRlcjMuMSIsDQogICAgIndvcmtfYTMuMSIsDQogICAgImVkdWNfYWx0ZXI0LjEiLA0KICAgICJnZW5kZXJfYWx0ZXI0LjEiLA0KICAgICJvcmlnaW5fYWx0ZXI0LjEiLA0KICAgICJwcm9mX2FsdGVyNC4xIiwNCiAgICAiYWdlX2FsdGVyNC4xIiwNCiAgICAicG9sdGFsa19hbHRlcjQuMSIsDQogICAgInRhbGtfYWx0ZXI0LjEiLA0KICAgICJyZWxfYWx0ZXI0LjEiLA0KICAgICJkZWFyX2FsdGVyNC4xIiwNCiAgICAid29ya19hNC4xIiwNCiAgICAiZWR1Y19hbHRlcjUuMSIsDQogICAgImdlbmRlcl9hbHRlcjUuMSIsDQogICAgIm9yaWdpbl9hbHRlcjUuMSIsDQogICAgInByb2ZfYWx0ZXI1LjEiLA0KICAgICJhZ2VfYWx0ZXI1LjEiLA0KICAgICJwb2x0YWxrX2FsdGVyNS4xIiwNCiAgICAidGFsa19hbHRlcjUuMSIsDQogICAgInJlbF9hbHRlcjUuMSIsDQogICAgImRlYXJfYWx0ZXI1LjEiLA0KICAgICJ3b3JrX2E1LjEiLA0KICAgICJlZHVjX2FsdGVyMS4yIiwNCiAgICAiZ2VuZGVyX2FsdGVyMS4yIiwNCiAgICAib3JpZ2luX2FsdGVyMS4yIiwNCiAgICAicHJvZl9hbHRlcjEuMiIsDQogICAgImFnZV9hbHRlcjEuMiIsDQogICAgInBvbHRhbGtfYWx0ZXIxLjIiLA0KICAgICJ0YWxrX2FsdGVyMS4yIiwNCiAgICAicmVsX2FsdGVyMS4yIiwNCiAgICAiZGVhcl9hbHRlcjEuMiIsDQogICAgIndvcmtfYTEuMiIsDQogICAgImVkdWNfYWx0ZXIyLjIiLA0KICAgICJnZW5kZXJfYWx0ZXIyLjIiLA0KICAgICJvcmlnaW5fYWx0ZXIyLjIiLA0KICAgICJwcm9mX2FsdGVyMi4yIiwNCiAgICAiYWdlX2FsdGVyMi4yIiwNCiAgICAicG9sdGFsa19hbHRlcjIuMiIsDQogICAgInRhbGtfYWx0ZXIyLjIiLA0KICAgICJyZWxfYWx0ZXIyLjIiLA0KICAgICJkZWFyX2FsdGVyMi4yIiwNCiAgICAid29ya19hMi4yIiwNCiAgICAiZWR1Y19hbHRlcjMuMiIsDQogICAgImdlbmRlcl9hbHRlcjMuMiIsDQogICAgIm9yaWdpbl9hbHRlcjMuMiIsDQogICAgInByb2ZfYWx0ZXIzLjIiLA0KICAgICJhZ2VfYWx0ZXIzLjIiLA0KICAgICJwb2x0YWxrX2FsdGVyMy4yIiwNCiAgICAidGFsa19hbHRlcjMuMiIsDQogICAgInJlbF9hbHRlcjMuMiIsDQogICAgImRlYXJfYWx0ZXIzLjIiLA0KICAgICJ3b3JrX2EzLjIiLA0KICAgICJlZHVjX2FsdGVyNC4yIiwNCiAgICAiZ2VuZGVyX2FsdGVyNC4yIiwNCiAgICAib3JpZ2luX2FsdGVyNC4yIiwNCiAgICAicHJvZl9hbHRlcjQuMiIsDQogICAgImFnZV9hbHRlcjQuMiIsDQogICAgInBvbHRhbGtfYWx0ZXI0LjIiLA0KICAgICJ0YWxrX2FsdGVyNC4yIiwNCiAgICAicmVsX2FsdGVyNC4yIiwNCiAgICAiZGVhcl9hbHRlcjQuMiIsDQogICAgIndvcmtfYTQuMiIsDQogICAgImVkdWNfYWx0ZXI1LjIiLA0KICAgICJnZW5kZXJfYWx0ZXI1LjIiLA0KICAgICJvcmlnaW5fYWx0ZXI1LjIiLA0KICAgICJwcm9mX2FsdGVyNS4yIiwNCiAgICAiYWdlX2FsdGVyNS4yIiwNCiAgICAicG9sdGFsa19hbHRlcjUuMiIsDQogICAgInRhbGtfYWx0ZXI1LjIiLA0KICAgICJyZWxfYWx0ZXI1LjIiLA0KICAgICJkZWFyX2FsdGVyNS4yIiwNCiAgICAid29ya19hNS4yIiwNCiAgICAiZWR1Y19hbHRlcjEuMyIsDQogICAgImdlbmRlcl9hbHRlcjEuMyIsDQogICAgIm9yaWdpbl9hbHRlcjEuMyIsDQogICAgInByb2ZfYWx0ZXIxLjMiLA0KICAgICJhZ2VfYWx0ZXIxLjMiLA0KICAgICJwb2x0YWxrX2FsdGVyMS4zIiwNCiAgICAidGFsa19hbHRlcjEuMyIsDQogICAgInJlbF9hbHRlcjEuMyIsDQogICAgImRlYXJfYWx0ZXIxLjMiLA0KICAgICJ3b3JrX2ExLjMiLA0KICAgICJlZHVjX2FsdGVyMi4zIiwNCiAgICAiZ2VuZGVyX2FsdGVyMi4zIiwNCiAgICAib3JpZ2luX2FsdGVyMi4zIiwNCiAgICAicHJvZl9hbHRlcjIuMyIsDQogICAgImFnZV9hbHRlcjIuMyIsDQogICAgInBvbHRhbGtfYWx0ZXIyLjMiLA0KICAgICJ0YWxrX2FsdGVyMi4zIiwNCiAgICAicmVsX2FsdGVyMi4zIiwNCiAgICAiZGVhcl9hbHRlcjIuMyIsDQogICAgIndvcmtfYTIuMyIsDQogICAgImVkdWNfYWx0ZXIzLjMiLA0KICAgICJnZW5kZXJfYWx0ZXIzLjMiLA0KICAgICJvcmlnaW5fYWx0ZXIzLjMiLA0KICAgICJwcm9mX2FsdGVyMy4zIiwNCiAgICAiYWdlX2FsdGVyMy4zIiwNCiAgICAicG9sdGFsa19hbHRlcjMuMyIsDQogICAgInRhbGtfYWx0ZXIzLjMiLA0KICAgICJyZWxfYWx0ZXIzLjMiLA0KICAgICJkZWFyX2FsdGVyMy4zIiwNCiAgICAid29ya19hMy4zIiwNCiAgICAiZWR1Y19hbHRlcjQuMyIsDQogICAgImdlbmRlcl9hbHRlcjQuMyIsDQogICAgIm9yaWdpbl9hbHRlcjQuMyIsDQogICAgInByb2ZfYWx0ZXI0LjMiLA0KICAgICJhZ2VfYWx0ZXI0LjMiLA0KICAgICJwb2x0YWxrX2FsdGVyNC4zIiwNCiAgICAidGFsa19hbHRlcjQuMyIsDQogICAgInJlbF9hbHRlcjQuMyIsDQogICAgImRlYXJfYWx0ZXI0LjMiLA0KICAgICJ3b3JrX2E0LjMiLA0KICAgICJlZHVjX2FsdGVyNS4zIiwNCiAgICAiZ2VuZGVyX2FsdGVyNS4zIiwNCiAgICAib3JpZ2luX2FsdGVyNS4zIiwNCiAgICAicHJvZl9hbHRlcjUuMyIsDQogICAgImFnZV9hbHRlcjUuMyIsDQogICAgInBvbHRhbGtfYWx0ZXI1LjMiLA0KICAgICJ0YWxrX2FsdGVyNS4zIiwNCiAgICAicmVsX2FsdGVyNS4zIiwNCiAgICAiZGVhcl9hbHRlcjUuMyIsDQogICAgIndvcmtfYTUuMyIsDQogICAgImVkdWNfYWx0ZXIxLjQiLA0KICAgICJnZW5kZXJfYWx0ZXIxLjQiLA0KICAgICJvcmlnaW5fYWx0ZXIxLjQiLA0KICAgICJwcm9mX2FsdGVyMS40IiwNCiAgICAiYWdlX2FsdGVyMS40IiwNCiAgICAicG9sdGFsa19hbHRlcjEuNCIsDQogICAgInRhbGtfYWx0ZXIxLjQiLA0KICAgICJyZWxfYWx0ZXIxLjQiLA0KICAgICJkZWFyX2FsdGVyMS40IiwNCiAgICAid29ya19hMS40IiwNCiAgICAiZWR1Y19hbHRlcjIuNCIsDQogICAgImdlbmRlcl9hbHRlcjIuNCIsDQogICAgIm9yaWdpbl9hbHRlcjIuNCIsDQogICAgInByb2ZfYWx0ZXIyLjQiLA0KICAgICJhZ2VfYWx0ZXIyLjQiLA0KICAgICJwb2x0YWxrX2FsdGVyMi40IiwNCiAgICAidGFsa19hbHRlcjIuNCIsDQogICAgInJlbF9hbHRlcjIuNCIsDQogICAgImRlYXJfYWx0ZXIyLjQiLA0KICAgICJ3b3JrX2EyLjQiLA0KICAgICJlZHVjX2FsdGVyMy40IiwNCiAgICAiZ2VuZGVyX2FsdGVyMy40IiwNCiAgICAib3JpZ2luX2FsdGVyMy40IiwNCiAgICAicHJvZl9hbHRlcjMuNCIsDQogICAgImFnZV9hbHRlcjMuNCIsDQogICAgInBvbHRhbGtfYWx0ZXIzLjQiLA0KICAgICJ0YWxrX2FsdGVyMy40IiwNCiAgICAicmVsX2FsdGVyMy40IiwNCiAgICAiZGVhcl9hbHRlcjMuNCIsDQogICAgIndvcmtfYTMuNCIsDQogICAgImVkdWNfYWx0ZXI0LjQiLA0KICAgICJnZW5kZXJfYWx0ZXI0LjQiLA0KICAgICJvcmlnaW5fYWx0ZXI0LjQiLA0KICAgICJwcm9mX2FsdGVyNC40IiwNCiAgICAiYWdlX2FsdGVyNC40IiwNCiAgICAicG9sdGFsa19hbHRlcjQuNCIsDQogICAgInRhbGtfYWx0ZXI0LjQiLA0KICAgICJyZWxfYWx0ZXI0LjQiLA0KICAgICJkZWFyX2FsdGVyNC40IiwNCiAgICAid29ya19hNC40IiwNCiAgICAiZWR1Y19hbHRlcjUuNCIsDQogICAgImdlbmRlcl9hbHRlcjUuNCIsDQogICAgIm9yaWdpbl9hbHRlcjUuNCIsDQogICAgInByb2ZfYWx0ZXI1LjQiLA0KICAgICJhZ2VfYWx0ZXI1LjQiLA0KICAgICJwb2x0YWxrX2FsdGVyNS40IiwNCiAgICAidGFsa19hbHRlcjUuNCIsDQogICAgInJlbF9hbHRlcjUuNCIsDQogICAgImRlYXJfYWx0ZXI1LjQiLA0KICAgICJ3b3JrX2E1LjQiLA0KICAgICJlZHVjX2FsdGVyMS41IiwNCiAgICAiZ2VuZGVyX2FsdGVyMS41IiwNCiAgICAib3JpZ2luX2FsdGVyMS41IiwNCiAgICAicHJvZl9hbHRlcjEuNSIsDQogICAgImFnZV9hbHRlcjEuNSIsDQogICAgInBvbHRhbGtfYWx0ZXIxLjUiLA0KICAgICJ0YWxrX2FsdGVyMS41IiwNCiAgICAicmVsX2FsdGVyMS41IiwNCiAgICAiZGVhcl9hbHRlcjEuNSIsDQogICAgIndvcmtfYTEuNSIsDQogICAgImVkdWNfYWx0ZXIyLjUiLA0KICAgICJnZW5kZXJfYWx0ZXIyLjUiLA0KICAgICJvcmlnaW5fYWx0ZXIyLjUiLA0KICAgICJwcm9mX2FsdGVyMi41IiwNCiAgICAiYWdlX2FsdGVyMi41IiwNCiAgICAicG9sdGFsa19hbHRlcjIuNSIsDQogICAgInRhbGtfYWx0ZXIyLjUiLA0KICAgICJyZWxfYWx0ZXIyLjUiLA0KICAgICJkZWFyX2FsdGVyMi41IiwNCiAgICAid29ya19hMi41IiwNCiAgICAiZWR1Y19hbHRlcjMuNSIsDQogICAgImdlbmRlcl9hbHRlcjMuNSIsDQogICAgIm9yaWdpbl9hbHRlcjMuNSIsDQogICAgInByb2ZfYWx0ZXIzLjUiLA0KICAgICJhZ2VfYWx0ZXIzLjUiLA0KICAgICJwb2x0YWxrX2FsdGVyMy41IiwNCiAgICAidGFsa19hbHRlcjMuNSIsDQogICAgInJlbF9hbHRlcjMuNSIsDQogICAgImRlYXJfYWx0ZXIzLjUiLA0KICAgICJ3b3JrX2EzLjUiLA0KICAgICJlZHVjX2FsdGVyNC41IiwNCiAgICAiZ2VuZGVyX2FsdGVyNC41IiwNCiAgICAib3JpZ2luX2FsdGVyNC41IiwNCiAgICAicHJvZl9hbHRlcjQuNSIsDQogICAgImFnZV9hbHRlcjQuNSIsDQogICAgInBvbHRhbGtfYWx0ZXI0LjUiLA0KICAgICJ0YWxrX2FsdGVyNC41IiwNCiAgICAicmVsX2FsdGVyNC41IiwNCiAgICAiZGVhcl9hbHRlcjQuNSIsDQogICAgIndvcmtfYTQuNSIsDQogICAgImVkdWNfYWx0ZXI1LjUiLA0KICAgICJnZW5kZXJfYWx0ZXI1LjUiLA0KICAgICJvcmlnaW5fYWx0ZXI1LjUiLA0KICAgICJwcm9mX2FsdGVyNS41IiwNCiAgICAiYWdlX2FsdGVyNS41IiwNCiAgICAicG9sdGFsa19hbHRlcjUuNSIsDQogICAgInRhbGtfYWx0ZXI1LjUiLA0KICAgICJyZWxfYWx0ZXI1LjUiLA0KICAgICJkZWFyX2FsdGVyNS41IiwNCiAgICAid29ya19hNS41IiwNCiAgICAiZWR1Y19hbHRlcjEuNiIsDQogICAgImdlbmRlcl9hbHRlcjEuNiIsDQogICAgIm9yaWdpbl9hbHRlcjEuNiIsDQogICAgInByb2ZfYWx0ZXIxLjYiLA0KICAgICJhZ2VfYWx0ZXIxLjYiLA0KICAgICJwb2x0YWxrX2FsdGVyMS42IiwNCiAgICAidGFsa19hbHRlcjEuNiIsDQogICAgInJlbF9hbHRlcjEuNiIsDQogICAgImRlYXJfYWx0ZXIxLjYiLA0KICAgICJ3b3JrX2ExLjYiLA0KICAgICJlZHVjX2FsdGVyMi42IiwNCiAgICAiZ2VuZGVyX2FsdGVyMi42IiwNCiAgICAib3JpZ2luX2FsdGVyMi42IiwNCiAgICAicHJvZl9hbHRlcjIuNiIsDQogICAgImFnZV9hbHRlcjIuNiIsDQogICAgInBvbHRhbGtfYWx0ZXIyLjYiLA0KICAgICJ0YWxrX2FsdGVyMi42IiwNCiAgICAicmVsX2FsdGVyMi42IiwNCiAgICAiZGVhcl9hbHRlcjIuNiIsDQogICAgIndvcmtfYTIuNiIsDQogICAgImVkdWNfYWx0ZXIzLjYiLA0KICAgICJnZW5kZXJfYWx0ZXIzLjYiLA0KICAgICJvcmlnaW5fYWx0ZXIzLjYiLA0KICAgICJwcm9mX2FsdGVyMy42IiwNCiAgICAiYWdlX2FsdGVyMy42IiwNCiAgICAicG9sdGFsa19hbHRlcjMuNiIsDQogICAgInRhbGtfYWx0ZXIzLjYiLA0KICAgICJyZWxfYWx0ZXIzLjYiLA0KICAgICJkZWFyX2FsdGVyMy42IiwNCiAgICAid29ya19hMy42IiwNCiAgICAiZWR1Y19hbHRlcjQuNiIsDQogICAgImdlbmRlcl9hbHRlcjQuNiIsDQogICAgIm9yaWdpbl9hbHRlcjQuNiIsDQogICAgInByb2ZfYWx0ZXI0LjYiLA0KICAgICJhZ2VfYWx0ZXI0LjYiLA0KICAgICJwb2x0YWxrX2FsdGVyNC42IiwNCiAgICAidGFsa19hbHRlcjQuNiIsDQogICAgInJlbF9hbHRlcjQuNiIsDQogICAgImRlYXJfYWx0ZXI0LjYiLA0KICAgICJ3b3JrX2E0LjYiLA0KICAgICJlZHVjX2FsdGVyNS42IiwNCiAgICAiZ2VuZGVyX2FsdGVyNS42IiwNCiAgICAib3JpZ2luX2FsdGVyNS42IiwNCiAgICAicHJvZl9hbHRlcjUuNiIsDQogICAgImFnZV9hbHRlcjUuNiIsDQogICAgInBvbHRhbGtfYWx0ZXI1LjYiLA0KICAgICJ0YWxrX2FsdGVyNS42IiwNCiAgICAicmVsX2FsdGVyNS42IiwNCiAgICAiZGVhcl9hbHRlcjUuNiIsDQogICAgIndvcmtfYTUuNiIsDQogICAgImVkdWNfYWx0ZXIxLjciLA0KICAgICJnZW5kZXJfYWx0ZXIxLjciLA0KICAgICJvcmlnaW5fYWx0ZXIxLjciLA0KICAgICJwcm9mX2FsdGVyMS43IiwNCiAgICAiYWdlX2FsdGVyMS43IiwNCiAgICAicG9sdGFsa19hbHRlcjEuNyIsDQogICAgInRhbGtfYWx0ZXIxLjciLA0KICAgICJyZWxfYWx0ZXIxLjciLA0KICAgICJkZWFyX2FsdGVyMS43IiwNCiAgICAid29ya19hMS43IiwNCiAgICAiZWR1Y19hbHRlcjIuNyIsDQogICAgImdlbmRlcl9hbHRlcjIuNyIsDQogICAgIm9yaWdpbl9hbHRlcjIuNyIsDQogICAgInByb2ZfYWx0ZXIyLjciLA0KICAgICJhZ2VfYWx0ZXIyLjciLA0KICAgICJwb2x0YWxrX2FsdGVyMi43IiwNCiAgICAidGFsa19hbHRlcjIuNyIsDQogICAgInJlbF9hbHRlcjIuNyIsDQogICAgImRlYXJfYWx0ZXIyLjciLA0KICAgICJ3b3JrX2EyLjciLA0KICAgICJlZHVjX2FsdGVyMy43IiwNCiAgICAiZ2VuZGVyX2FsdGVyMy43IiwNCiAgICAib3JpZ2luX2FsdGVyMy43IiwNCiAgICAicHJvZl9hbHRlcjMuNyIsDQogICAgImFnZV9hbHRlcjMuNyIsDQogICAgInBvbHRhbGtfYWx0ZXIzLjciLA0KICAgICJ0YWxrX2FsdGVyMy43IiwNCiAgICAicmVsX2FsdGVyMy43IiwNCiAgICAiZGVhcl9hbHRlcjMuNyIsDQogICAgIndvcmtfYTMuNyIsDQogICAgImVkdWNfYWx0ZXI0LjciLA0KICAgICJnZW5kZXJfYWx0ZXI0LjciLA0KICAgICJvcmlnaW5fYWx0ZXI0LjciLA0KICAgICJwcm9mX2FsdGVyNC43IiwNCiAgICAiYWdlX2FsdGVyNC43IiwNCiAgICAicG9sdGFsa19hbHRlcjQuNyIsDQogICAgInRhbGtfYWx0ZXI0LjciLA0KICAgICJyZWxfYWx0ZXI0LjciLA0KICAgICJkZWFyX2FsdGVyNC43IiwNCiAgICAid29ya19hNC43IiwNCiAgICAiZWR1Y19hbHRlcjUuNyIsDQogICAgImdlbmRlcl9hbHRlcjUuNyIsDQogICAgIm9yaWdpbl9hbHRlcjUuNyIsDQogICAgInByb2ZfYWx0ZXI1LjciLA0KICAgICJhZ2VfYWx0ZXI1LjciLA0KICAgICJwb2x0YWxrX2FsdGVyNS43IiwNCiAgICAidGFsa19hbHRlcjUuNyIsDQogICAgInJlbF9hbHRlcjUuNyIsDQogICAgImRlYXJfYWx0ZXI1LjciLA0KICAgICJ3b3JrX2E1LjciLA0KICAgICJlZHVjX2FsdGVyMS44IiwNCiAgICAiZ2VuZGVyX2FsdGVyMS44IiwNCiAgICAib3JpZ2luX2FsdGVyMS44IiwNCiAgICAicHJvZl9hbHRlcjEuOCIsDQogICAgImFnZV9hbHRlcjEuOCIsDQogICAgInBvbHRhbGtfYWx0ZXIxLjgiLA0KICAgICJ0YWxrX2FsdGVyMS44IiwNCiAgICAicmVsX2FsdGVyMS44IiwNCiAgICAiZGVhcl9hbHRlcjEuOCIsDQogICAgIndvcmtfYTEuOCIsDQogICAgImVkdWNfYWx0ZXIyLjgiLA0KICAgICJnZW5kZXJfYWx0ZXIyLjgiLA0KICAgICJvcmlnaW5fYWx0ZXIyLjgiLA0KICAgICJwcm9mX2FsdGVyMi44IiwNCiAgICAiYWdlX2FsdGVyMi44IiwNCiAgICAicG9sdGFsa19hbHRlcjIuOCIsDQogICAgInRhbGtfYWx0ZXIyLjgiLA0KICAgICJyZWxfYWx0ZXIyLjgiLA0KICAgICJkZWFyX2FsdGVyMi44IiwNCiAgICAid29ya19hMi44IiwNCiAgICAiZWR1Y19hbHRlcjMuOCIsDQogICAgImdlbmRlcl9hbHRlcjMuOCIsDQogICAgIm9yaWdpbl9hbHRlcjMuOCIsDQogICAgInByb2ZfYWx0ZXIzLjgiLA0KICAgICJhZ2VfYWx0ZXIzLjgiLA0KICAgICJwb2x0YWxrX2FsdGVyMy44IiwNCiAgICAidGFsa19hbHRlcjMuOCIsDQogICAgInJlbF9hbHRlcjMuOCIsDQogICAgImRlYXJfYWx0ZXIzLjgiLA0KICAgICJ3b3JrX2EzLjgiLA0KICAgICJlZHVjX2FsdGVyNC44IiwNCiAgICAiZ2VuZGVyX2FsdGVyNC44IiwNCiAgICAib3JpZ2luX2FsdGVyNC44IiwNCiAgICAicHJvZl9hbHRlcjQuOCIsDQogICAgImFnZV9hbHRlcjQuOCIsDQogICAgInBvbHRhbGtfYWx0ZXI0LjgiLA0KICAgICJ0YWxrX2FsdGVyNC44IiwNCiAgICAicmVsX2FsdGVyNC44IiwNCiAgICAiZGVhcl9hbHRlcjQuOCIsDQogICAgIndvcmtfYTQuOCIsDQogICAgImVkdWNfYWx0ZXI1LjgiLA0KICAgICJnZW5kZXJfYWx0ZXI1LjgiLA0KICAgICJvcmlnaW5fYWx0ZXI1LjgiLA0KICAgICJwcm9mX2FsdGVyNS44IiwNCiAgICAiYWdlX2FsdGVyNS44IiwNCiAgICAicG9sdGFsa19hbHRlcjUuOCIsDQogICAgInRhbGtfYWx0ZXI1LjgiLA0KICAgICJyZWxfYWx0ZXI1LjgiLA0KICAgICJkZWFyX2FsdGVyNS44IiwNCiAgICAid29ya19hNS44IiwNCiAgICAiZWR1Y19hbHRlcjEuOSIsDQogICAgImdlbmRlcl9hbHRlcjEuOSIsDQogICAgIm9yaWdpbl9hbHRlcjEuOSIsDQogICAgInByb2ZfYWx0ZXIxLjkiLA0KICAgICJhZ2VfYWx0ZXIxLjkiLA0KICAgICJwb2x0YWxrX2FsdGVyMS45IiwNCiAgICAidGFsa19hbHRlcjEuOSIsDQogICAgInJlbF9hbHRlcjEuOSIsDQogICAgImRlYXJfYWx0ZXIxLjkiLA0KICAgICJ3b3JrX2ExLjkiLA0KICAgICJlZHVjX2FsdGVyMi45IiwNCiAgICAiZ2VuZGVyX2FsdGVyMi45IiwNCiAgICAib3JpZ2luX2FsdGVyMi45IiwNCiAgICAicHJvZl9hbHRlcjIuOSIsDQogICAgImFnZV9hbHRlcjIuOSIsDQogICAgInBvbHRhbGtfYWx0ZXIyLjkiLA0KICAgICJ0YWxrX2FsdGVyMi45IiwNCiAgICAicmVsX2FsdGVyMi45IiwNCiAgICAiZGVhcl9hbHRlcjIuOSIsDQogICAgIndvcmtfYTIuOSIsDQogICAgImVkdWNfYWx0ZXIzLjkiLA0KICAgICJnZW5kZXJfYWx0ZXIzLjkiLA0KICAgICJvcmlnaW5fYWx0ZXIzLjkiLA0KICAgICJwcm9mX2FsdGVyMy45IiwNCiAgICAiYWdlX2FsdGVyMy45IiwNCiAgICAicG9sdGFsa19hbHRlcjMuOSIsDQogICAgInRhbGtfYWx0ZXIzLjkiLA0KICAgICJyZWxfYWx0ZXIzLjkiLA0KICAgICJkZWFyX2FsdGVyMy45IiwNCiAgICAid29ya19hMy45IiwNCiAgICAiZWR1Y19hbHRlcjQuOSIsDQogICAgImdlbmRlcl9hbHRlcjQuOSIsDQogICAgIm9yaWdpbl9hbHRlcjQuOSIsDQogICAgInByb2ZfYWx0ZXI0LjkiLA0KICAgICJhZ2VfYWx0ZXI0LjkiLA0KICAgICJwb2x0YWxrX2FsdGVyNC45IiwNCiAgICAidGFsa19hbHRlcjQuOSIsDQogICAgInJlbF9hbHRlcjQuOSIsDQogICAgImRlYXJfYWx0ZXI0LjkiLA0KICAgICJ3b3JrX2E0LjkiLA0KICAgICJlZHVjX2FsdGVyNS45IiwNCiAgICAiZ2VuZGVyX2FsdGVyNS45IiwNCiAgICAib3JpZ2luX2FsdGVyNS45IiwNCiAgICAicHJvZl9hbHRlcjUuOSIsDQogICAgImFnZV9hbHRlcjUuOSIsDQogICAgInBvbHRhbGtfYWx0ZXI1LjkiLA0KICAgICJ0YWxrX2FsdGVyNS45IiwNCiAgICAicmVsX2FsdGVyNS45IiwNCiAgICAiZGVhcl9hbHRlcjUuOSIsDQogICAgIndvcmtfYTUuOSIsDQogICAgImVkdWNfYWx0ZXIxLjEwIiwNCiAgICAiZ2VuZGVyX2FsdGVyMS4xMCIsDQogICAgIm9yaWdpbl9hbHRlcjEuMTAiLA0KICAgICJwcm9mX2FsdGVyMS4xMCIsDQogICAgImFnZV9hbHRlcjEuMTAiLA0KICAgICJwb2x0YWxrX2FsdGVyMS4xMCIsDQogICAgInRhbGtfYWx0ZXIxLjEwIiwNCiAgICAicmVsX2FsdGVyMS4xMCIsDQogICAgImRlYXJfYWx0ZXIxLjEwIiwNCiAgICAid29ya19hMS4xMCIsDQogICAgImVkdWNfYWx0ZXIyLjEwIiwNCiAgICAiZ2VuZGVyX2FsdGVyMi4xMCIsDQogICAgIm9yaWdpbl9hbHRlcjIuMTAiLA0KICAgICJwcm9mX2FsdGVyMi4xMCIsDQogICAgImFnZV9hbHRlcjIuMTAiLA0KICAgICJwb2x0YWxrX2FsdGVyMi4xMCIsDQogICAgInRhbGtfYWx0ZXIyLjEwIiwNCiAgICAicmVsX2FsdGVyMi4xMCIsDQogICAgImRlYXJfYWx0ZXIyLjEwIiwNCiAgICAid29ya19hMi4xMCIsDQogICAgImVkdWNfYWx0ZXIzLjEwIiwNCiAgICAiZ2VuZGVyX2FsdGVyMy4xMCIsDQogICAgIm9yaWdpbl9hbHRlcjMuMTAiLA0KICAgICJwcm9mX2FsdGVyMy4xMCIsDQogICAgImFnZV9hbHRlcjMuMTAiLA0KICAgICJwb2x0YWxrX2FsdGVyMy4xMCIsDQogICAgInRhbGtfYWx0ZXIzLjEwIiwNCiAgICAicmVsX2FsdGVyMy4xMCIsDQogICAgImRlYXJfYWx0ZXIzLjEwIiwNCiAgICAid29ya19hMy4xMCIsDQogICAgImVkdWNfYWx0ZXI0LjEwIiwNCiAgICAiZ2VuZGVyX2FsdGVyNC4xMCIsDQogICAgIm9yaWdpbl9hbHRlcjQuMTAiLA0KICAgICJwcm9mX2FsdGVyNC4xMCIsDQogICAgImFnZV9hbHRlcjQuMTAiLA0KICAgICJwb2x0YWxrX2FsdGVyNC4xMCIsDQogICAgInRhbGtfYWx0ZXI0LjEwIiwNCiAgICAicmVsX2FsdGVyNC4xMCIsDQogICAgImRlYXJfYWx0ZXI0LjEwIiwNCiAgICAid29ya19hNC4xMCIsDQogICAgImVkdWNfYWx0ZXI1LjEwIiwNCiAgICAiZ2VuZGVyX2FsdGVyNS4xMCIsDQogICAgIm9yaWdpbl9hbHRlcjUuMTAiLA0KICAgICJwcm9mX2FsdGVyNS4xMCIsDQogICAgImFnZV9hbHRlcjUuMTAiLA0KICAgICJwb2x0YWxrX2FsdGVyNS4xMCIsDQogICAgInRhbGtfYWx0ZXI1LjEwIiwNCiAgICAicmVsX2FsdGVyNS4xMCIsDQogICAgImRlYXJfYWx0ZXI1LjEwIiwNCiAgICAid29ya19hNS4xMCIsDQogICAgImVkdWNfYWx0ZXIxLjExIiwNCiAgICAiZ2VuZGVyX2FsdGVyMS4xMSIsDQogICAgIm9yaWdpbl9hbHRlcjEuMTEiLA0KICAgICJwcm9mX2FsdGVyMS4xMSIsDQogICAgImFnZV9hbHRlcjEuMTEiLA0KICAgICJwb2x0YWxrX2FsdGVyMS4xMSIsDQogICAgInRhbGtfYWx0ZXIxLjExIiwNCiAgICAicmVsX2FsdGVyMS4xMSIsDQogICAgImRlYXJfYWx0ZXIxLjExIiwNCiAgICAid29ya19hMS4xMSIsDQogICAgImVkdWNfYWx0ZXIyLjExIiwNCiAgICAiZ2VuZGVyX2FsdGVyMi4xMSIsDQogICAgIm9yaWdpbl9hbHRlcjIuMTEiLA0KICAgICJwcm9mX2FsdGVyMi4xMSIsDQogICAgImFnZV9hbHRlcjIuMTEiLA0KICAgICJwb2x0YWxrX2FsdGVyMi4xMSIsDQogICAgInRhbGtfYWx0ZXIyLjExIiwNCiAgICAicmVsX2FsdGVyMi4xMSIsDQogICAgImRlYXJfYWx0ZXIyLjExIiwNCiAgICAid29ya19hMi4xMSIsDQogICAgImVkdWNfYWx0ZXIzLjExIiwNCiAgICAiZ2VuZGVyX2FsdGVyMy4xMSIsDQogICAgIm9yaWdpbl9hbHRlcjMuMTEiLA0KICAgICJwcm9mX2FsdGVyMy4xMSIsDQogICAgImFnZV9hbHRlcjMuMTEiLA0KICAgICJwb2x0YWxrX2FsdGVyMy4xMSIsDQogICAgInRhbGtfYWx0ZXIzLjExIiwNCiAgICAicmVsX2FsdGVyMy4xMSIsDQogICAgImRlYXJfYWx0ZXIzLjExIiwNCiAgICAid29ya19hMy4xMSIsDQogICAgImVkdWNfYWx0ZXI0LjExIiwNCiAgICAiZ2VuZGVyX2FsdGVyNC4xMSIsDQogICAgIm9yaWdpbl9hbHRlcjQuMTEiLA0KICAgICJwcm9mX2FsdGVyNC4xMSIsDQogICAgImFnZV9hbHRlcjQuMTEiLA0KICAgICJwb2x0YWxrX2FsdGVyNC4xMSIsDQogICAgInRhbGtfYWx0ZXI0LjExIiwNCiAgICAicmVsX2FsdGVyNC4xMSIsDQogICAgImRlYXJfYWx0ZXI0LjExIiwNCiAgICAid29ya19hNC4xMSIsDQogICAgImVkdWNfYWx0ZXI1LjExIiwNCiAgICAiZ2VuZGVyX2FsdGVyNS4xMSIsDQogICAgIm9yaWdpbl9hbHRlcjUuMTEiLA0KICAgICJwcm9mX2FsdGVyNS4xMSIsDQogICAgImFnZV9hbHRlcjUuMTEiLA0KICAgICJwb2x0YWxrX2FsdGVyNS4xMSIsDQogICAgInRhbGtfYWx0ZXI1LjExIiwNCiAgICAicmVsX2FsdGVyNS4xMSIsDQogICAgImRlYXJfYWx0ZXI1LjExIiwNCiAgICAid29ya19hNS4xMSIsDQogICAgImNsb3NlXzEyLjEiLA0KICAgICJjbG9zZV8xMy4xIiwNCiAgICAiY2xvc2VfMTQuMSIsDQogICAgImNsb3NlXzE1LjEiLA0KICAgICJjbG9zZV8yMy4xIiwNCiAgICAiY2xvc2VfMjQuMSIsDQogICAgImNsb3NlXzI1LjEiLA0KICAgICJjbG9zZV8zNC4xIiwNCiAgICAiY2xvc2VfMzUuMSIsDQogICAgImNsb3NlXzQ1LjEiLA0KICAgICJjbG9zZV8xMi4yIiwNCiAgICAiY2xvc2VfMTMuMiIsDQogICAgImNsb3NlXzE0LjIiLA0KICAgICJjbG9zZV8xNS4yIiwNCiAgICAiY2xvc2VfMjMuMiIsDQogICAgImNsb3NlXzI0LjIiLA0KICAgICJjbG9zZV8yNS4yIiwNCiAgICAiY2xvc2VfMzQuMiIsDQogICAgImNsb3NlXzM1LjIiLA0KICAgICJjbG9zZV80NS4yIiwNCiAgICAiY2xvc2VfMTIuMyIsDQogICAgImNsb3NlXzEzLjMiLA0KICAgICJjbG9zZV8xNC4zIiwNCiAgICAiY2xvc2VfMTUuMyIsDQogICAgImNsb3NlXzIzLjMiLA0KICAgICJjbG9zZV8yNC4zIiwNCiAgICAiY2xvc2VfMjUuMyIsDQogICAgImNsb3NlXzM0LjMiLA0KICAgICJjbG9zZV8zNS4zIiwNCiAgICAiY2xvc2VfNDUuMyIsDQogICAgImNsb3NlXzEyLjQiLA0KICAgICJjbG9zZV8xMy40IiwNCiAgICAiY2xvc2VfMTQuNCIsDQogICAgImNsb3NlXzE1LjQiLA0KICAgICJjbG9zZV8yMy40IiwNCiAgICAiY2xvc2VfMjQuNCIsDQogICAgImNsb3NlXzI1LjQiLA0KICAgICJjbG9zZV8zNC40IiwNCiAgICAiY2xvc2VfMzUuNCIsDQogICAgImNsb3NlXzQ1LjQiLA0KICAgICJjbG9zZV8xMi41IiwNCiAgICAiY2xvc2VfMTMuNSIsDQogICAgImNsb3NlXzE0LjUiLA0KICAgICJjbG9zZV8xNS41IiwNCiAgICAiY2xvc2VfMjMuNSIsDQogICAgImNsb3NlXzI0LjUiLA0KICAgICJjbG9zZV8yNS41IiwNCiAgICAiY2xvc2VfMzQuNSIsDQogICAgImNsb3NlXzM1LjUiLA0KICAgICJjbG9zZV80NS41IiwNCiAgICAiY2xvc2VfMTIuNiIsDQogICAgImNsb3NlXzEzLjYiLA0KICAgICJjbG9zZV8xNC42IiwNCiAgICAiY2xvc2VfMTUuNiIsDQogICAgImNsb3NlXzIzLjYiLA0KICAgICJjbG9zZV8yNC42IiwNCiAgICAiY2xvc2VfMjUuNiIsDQogICAgImNsb3NlXzM0LjYiLA0KICAgICJjbG9zZV8zNS42IiwNCiAgICAiY2xvc2VfNDUuNiIsDQogICAgImNsb3NlXzEyLjciLA0KICAgICJjbG9zZV8xMy43IiwNCiAgICAiY2xvc2VfMTQuNyIsDQogICAgImNsb3NlXzE1LjciLA0KICAgICJjbG9zZV8yMy43IiwNCiAgICAiY2xvc2VfMjQuNyIsDQogICAgImNsb3NlXzI1LjciLA0KICAgICJjbG9zZV8zNC43IiwNCiAgICAiY2xvc2VfMzUuNyIsDQogICAgImNsb3NlXzQ1LjciLA0KICAgICJjbG9zZV8xMi44IiwNCiAgICAiY2xvc2VfMTMuOCIsDQogICAgImNsb3NlXzE0LjgiLA0KICAgICJjbG9zZV8xNS44IiwNCiAgICAiY2xvc2VfMjMuOCIsDQogICAgImNsb3NlXzI0LjgiLA0KICAgICJjbG9zZV8yNS44IiwNCiAgICAiY2xvc2VfMzQuOCIsDQogICAgImNsb3NlXzM1LjgiLA0KICAgICJjbG9zZV80NS44IiwNCiAgICAiY2xvc2VfMTIuOSIsDQogICAgImNsb3NlXzEzLjkiLA0KICAgICJjbG9zZV8xNC45IiwNCiAgICAiY2xvc2VfMTUuOSIsDQogICAgImNsb3NlXzIzLjkiLA0KICAgICJjbG9zZV8yNC45IiwNCiAgICAiY2xvc2VfMjUuOSIsDQogICAgImNsb3NlXzM0LjkiLA0KICAgICJjbG9zZV8zNS45IiwNCiAgICAiY2xvc2VfNDUuOSIsDQogICAgImNsb3NlXzEyLjEwIiwNCiAgICAiY2xvc2VfMTMuMTAiLA0KICAgICJjbG9zZV8xNC4xMCIsDQogICAgImNsb3NlXzE1LjEwIiwNCiAgICAiY2xvc2VfMjMuMTAiLA0KICAgICJjbG9zZV8yNC4xMCIsDQogICAgImNsb3NlXzI1LjEwIiwNCiAgICAiY2xvc2VfMzQuMTAiLA0KICAgICJjbG9zZV8zNS4xMCIsDQogICAgImNsb3NlXzQ1LjEwIiwNCiAgICAiY2xvc2VfMTIuMTEiLA0KICAgICJjbG9zZV8xMy4xMSIsDQogICAgImNsb3NlXzE0LjExIiwNCiAgICAiY2xvc2VfMTUuMTEiLA0KICAgICJjbG9zZV8yMy4xMSIsDQogICAgImNsb3NlXzI0LjExIiwNCiAgICAiY2xvc2VfMjUuMTEiLA0KICAgICJjbG9zZV8zNC4xMSIsDQogICAgImNsb3NlXzM1LjExIiwNCiAgICAiY2xvc2VfNDUuMTEiLA0KICAgICJsZW5ndGhfMS4xIiwNCiAgICAibGVuZ3RoXzIuMSIsDQogICAgImxlbmd0aF8zLjEiLA0KICAgICJsZW5ndGhfNC4xIiwNCiAgICAibGVuZ3RoXzUuMSIsDQogICAgImxlbmd0aF8xLjIiLA0KICAgICJsZW5ndGhfMi4yIiwNCiAgICAibGVuZ3RoXzMuMiIsDQogICAgImxlbmd0aF80LjIiLA0KICAgICJsZW5ndGhfNS4yIiwNCiAgICAibGVuZ3RoXzEuMyIsDQogICAgImxlbmd0aF8yLjMiLA0KICAgICJsZW5ndGhfMy4zIiwNCiAgICAibGVuZ3RoXzQuMyIsDQogICAgImxlbmd0aF81LjMiLA0KICAgICJsZW5ndGhfMS40IiwNCiAgICAibGVuZ3RoXzIuNCIsDQogICAgImxlbmd0aF8zLjQiLA0KICAgICJsZW5ndGhfNC40IiwNCiAgICAibGVuZ3RoXzUuNCIsDQogICAgImxlbmd0aF8xLjUiLA0KICAgICJsZW5ndGhfMi41IiwNCiAgICAibGVuZ3RoXzMuNSIsDQogICAgImxlbmd0aF80LjUiLA0KICAgICJsZW5ndGhfNS41IiwNCiAgICAibGVuZ3RoXzEuNiIsDQogICAgImxlbmd0aF8yLjYiLA0KICAgICJsZW5ndGhfMy42IiwNCiAgICAibGVuZ3RoXzQuNiIsDQogICAgImxlbmd0aF81LjYiLA0KICAgICJsZW5ndGhfMS43IiwNCiAgICAibGVuZ3RoXzIuNyIsDQogICAgImxlbmd0aF8zLjciLA0KICAgICJsZW5ndGhfNC43IiwNCiAgICAibGVuZ3RoXzUuNyIsDQogICAgImxlbmd0aF8xLjgiLA0KICAgICJsZW5ndGhfMi44IiwNCiAgICAibGVuZ3RoXzMuOCIsDQogICAgImxlbmd0aF80LjgiLA0KICAgICJsZW5ndGhfNS44IiwNCiAgICAibGVuZ3RoXzEuOSIsDQogICAgImxlbmd0aF8yLjkiLA0KICAgICJsZW5ndGhfMy45IiwNCiAgICAibGVuZ3RoXzQuOSIsDQogICAgImxlbmd0aF81LjkiLA0KICAgICJsZW5ndGhfMS4xMCIsDQogICAgImxlbmd0aF8yLjEwIiwNCiAgICAibGVuZ3RoXzMuMTAiLA0KICAgICJsZW5ndGhfNC4xMCIsDQogICAgImxlbmd0aF81LjEwIiwNCiAgICAibGVuZ3RoXzEuMTEiLA0KICAgICJsZW5ndGhfMi4xMSIsDQogICAgImxlbmd0aF8zLjExIiwNCiAgICAibGVuZ3RoXzQuMTEiLA0KICAgICJsZW5ndGhfNS4xMSIsDQogICAgImxlaXN1cmVfcGFydC4xIiwNCiAgICAibGVpc3VyZV9wYXJ0LjIiLA0KICAgICJsZWlzdXJlX3BhcnQuMyIsDQogICAgImxlaXN1cmVfcGFydC40IiwNCiAgICAibGVpc3VyZV9wYXJ0LjUiLA0KICAgICJsZWlzdXJlX3BhcnQuNiIsDQogICAgImxlaXN1cmVfcGFydC43IiwNCiAgICAibGVpc3VyZV9wYXJ0LjgiLA0KICAgICJsZWlzdXJlX3BhcnQuOSIsDQogICAgImxlaXN1cmVfcGFydC4xMCIsDQogICAgImxlaXN1cmVfcGFydC4xMSINCiAgKQ0KYGBgDQoNCiMgQ29tYmluZSBkYXRhZnJhbWVzDQoNCkNvbWJpbmUgYWxsIG1vZHVsZXMgaW50byBvbmUgZGF0YWZpbGUuIA0KDQpgYGB7ciBjb21iaW5lIGRhdGF9DQojY29tYmluZSB0aGUgZGlmZmVyZW50IGRhdGEgc291cmNlcyBpbnRvIG9uZSB3aWRlIGRhdGEgZmlsZS4gDQpsaXNzX3dpZGUgPC0gbGlzc19wb2wgJT4lIA0KICBsZWZ0X2pvaW4obGlzc19hbHRlcnMsIGJ5ID0gIm5vbWVtX2VuY3IiKSAlPiUgDQogIGxlZnRfam9pbihsaXNzX2FsdGVyX2lkLCBieSA9ICJub21lbV9lbmNyIikgJT4lIA0KICBsZWZ0X2pvaW4obGlzc19vcmlnaW4sIGJ5ID0gIm5vbWVtX2VuY3IiKSAlPiUgDQogIGxlZnRfam9pbihsaXNzX2F2YXJzLCBieSA9ICJub21lbV9lbmNyIikNCg0KI3JlbW92ZSBhbGwgbGFiZWxzDQpsaXNzX3dpZGUgPC0gc2psYWJlbGxlZDo6cmVtb3ZlX2FsbF9sYWJlbHMobGlzc193aWRlKQ0KDQpgYGANCg0KIyBFeHBvcnQgDQoNClBpdm90IGRhdGEgaW4gbG9uZyBmb3JtYXQgYW5kIGV4cG9ydCBkYXRhLg0KYGBge3IgZGF0YSBleHBvcnR9DQojLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tIFJlc2hhcGUgdG8gbG9uZyBmaWxlLiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tIw0KI2NyZWF0ZSBhIGxvbmcgZmlsZS4NCmxpc3NfbG9uZyA8LSBsaXNzX3dpZGUgJT4lIA0KICBwaXZvdF9sb25nZXIoY29scyA9IDI6MTM5OCwgDQogICAgICAgICAgICAgICBuYW1lc190byA9IGMoIm1lYXN1cmUiLCAic3VydmV5X3dhdmUiKSwNCiAgICAgICAgICAgICAgIG5hbWVzX3BhdHRlcm4gPSAiKC4rKVxcLiguKykiLA0KICAgICAgICAgICAgICAgdmFsdWVzX3RvID0gInZhbHVlIikgJT4lDQogIHBpdm90X3dpZGVyKG5hbWVzX2Zyb20gPSBtZWFzdXJlLA0KICAgICAgICAgICAgICB2YWx1ZXNfZnJvbSA9IHZhbHVlKSAlPiUgDQogIG11dGF0ZShzdXJ2ZXlfd2F2ZSA9IGFzLm51bWVyaWMoc3VydmV5X3dhdmUpKQ0KDQojY2xlYW4gdGhlIGVudmlyb25tZW50LiANCnJtKGxpc3Q9bHMoKVshIGxzKCkgJWluJSBjKCJsaXNzX3dpZGUiLCAibGlzc19sb25nIildKQ0KDQojc2F2ZSBSRGF0YS4NCnNhdmUuaW1hZ2UoImRhdGEvZGF0YS1wcm9jZXNzZWQvbGlzc19tZXJnZWQvbGlzc19jb3JlX21lcmdlZF9WM18yNDA2MjQuUmRhdGEiKQ0KDQpgYGANCg0KDQo=</div>
+<style>
+.center {
+  text-align: center;
+  color: black;
+}
+</style>
+
+<hr>
+<br>
+<p class="center">Copyright &copy; 2024 Jeroense Thijmen</p>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("02_dataprep-liss.Rmd");
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
